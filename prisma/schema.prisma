@@ -1,0 +1,14 @@
+// Prisma schema for POE Profit (A2 — connection only; Strategy/Run models in B3)
+// https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  // Pooled URL for the app (Neon -pooler host)
+  url       = env("DATABASE_URL")
+  // Direct URL for migrations (Neon non-pooler)
+  directUrl = env("DATABASE_URL_UNPOOLED")
+}

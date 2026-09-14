@@ -27,28 +27,28 @@ Rough order: A1 → A2 → A3 → A4 → A5. A4 can overlap with A2/A3 after sca
 ### A1. Scaffold Next.js + TypeScript app
 **Labels:** `setup`  
 **AC:**
-- [ ] Next.js App Router + TypeScript project exists in repo root (or agreed app folder)
-- [ ] ESLint + Prettier (or project formatter) configured
-- [ ] README with how to run locally
-- [ ] Matches layout intent in ARCHITECTURE.md (`app/`, `src/...`)
+- [x] Next.js App Router + TypeScript project exists in repo root (or agreed app folder)
+- [x] ESLint + Prettier (or project formatter) configured
+- [x] README with how to run locally
+- [x] Matches layout intent in ARCHITECTURE.md (`app/`, `src/...`)
 
 ### A2. Add Prisma + Neon connection
 **Labels:** `setup`  
 **Depends on:** A1  
 **AC:**
-- [ ] Prisma installed; `schema.prisma` present
-- [ ] `DATABASE_URL` documented (`.env.example`, not committed secrets)
-- [ ] Can connect to Neon (or local Postgres) and run a no-op migrate/status
-- [ ] `src/server/db` Prisma client singleton pattern
+- [x] Prisma installed; `schema.prisma` present
+- [x] `DATABASE_URL` documented (`.env.example`, not committed secrets)
+- [x] Can connect to Neon (or local Postgres) and run a no-op migrate/status
+- [x] `src/server/db` Prisma client singleton pattern
 
 ### A3. Add Jest (unit + API) and Playwright (E2E)
 **Labels:** `setup`, `test`  
 **Depends on:** A1  
 **AC:**
-- [ ] Jest runs via npm script; sample/smoke test passes
-- [ ] Playwright installed; smoke config present (may skip real journeys until UI exists)
-- [ ] Scripts documented: `test`, `test:api` (or equivalent), `test:e2e`
-- [ ] Clear separation: Jest ≠ Playwright (ADR-014)
+- [x] Jest runs via npm script; sample/smoke test passes
+- [x] Playwright installed; smoke config present (may skip real journeys until UI exists)
+- [x] Scripts documented: `test`, `test:api` (or equivalent), `test:e2e`
+- [x] Clear separation: Jest ≠ Playwright (ADR-014)
 
 ### A4. Add decimal.js and domain/calc stub
 **Labels:** `setup`, `domain`  
