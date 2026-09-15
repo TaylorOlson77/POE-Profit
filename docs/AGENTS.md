@@ -26,7 +26,7 @@ Next.js App Router + TS · Vercel · Neon Postgres · Prisma · Route Handlers (
 
 ## Current next step
 
-**A4 — decimal.js + domain/calc stub** per [`BACKLOG.md`](./BACKLOG.md) Phase 1 (A1–A3 done). Then A5 CI, then contracts → calc → API → UI → deploy.
+**B1 — Strategy API contracts** per [`BACKLOG.md`](./BACKLOG.md) (Phase 1 A1–A5 done). Then calc engine → API → UI → deploy.
 
 Check off AC in `BACKLOG.md` as you finish each item.
 

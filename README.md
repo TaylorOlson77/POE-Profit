@@ -4,7 +4,7 @@ Farming strategy profitability tracker for Path of Exile (PoE2-first MVP).
 
 ## Requirements
 
-- Node.js 20+ (20.19+ recommended)
+- Node.js 20+ (CI uses **Node 22** LTS)
 - npm
 
 ## Local development
@@ -24,6 +24,7 @@ Open [http://localhost:3000](http://localhost:3000).
 | `npm run build` | Production build |
 | `npm run start` | Serve production build |
 | `npm run lint` | ESLint |
+| `npm run typecheck` | TypeScript (`tsc --noEmit`) |
 | `npm run format` | Prettier write |
 | `npm run format:check` | Prettier check |
 | `npm run test` | Jest unit tests (`src/**/*.test.ts`) |
@@ -39,7 +40,7 @@ Open [http://localhost:3000](http://localhost:3000).
 2. `npm run db:generate`
 3. `npm run db:migrate:status` — should connect; no migrations yet until B3.
 
-`.env.example` documents required vars. Never commit `.env.local`.
+`.env.example` documents required vars. Never commit `.env.local`. CI smoke tests do **not** need Neon secrets yet.
 
 ## Testing layers (ADR-014 / ADR-019)
 
@@ -50,6 +51,21 @@ Open [http://localhost:3000](http://localhost:3000).
 | E2E | Playwright | `e2e/` | `npm run test:e2e` |
 
 Jest does **not** run Playwright specs, and Playwright does **not** run unit/API math cases.
+
+**E2E server:** locally Playwright starts `next dev` (or reuses one already running). In CI the workflow runs `npm run build`, then Playwright starts `next start` (prod-like).
+
+## CI
+
+GitHub Actions (`.github/workflows/ci.yml`) on PRs and `main`:
+
+1. Lint  
+2. Typecheck  
+3. Unit tests  
+4. API tests  
+5. Production build  
+6. Playwright E2E (Chromium)  
+
+On E2E failure, the workflow uploads `playwright-report/` and `test-results/` artifacts.
 
 ## Project docs
 
@@ -69,4 +85,6 @@ src/domain/calc/     # Pure calculation engine
 src/server/db/       # Prisma client singleton
 docs/                # Specs, ADRs, backlog
 prisma/              # schema + migrations
+e2e/                 # Playwright
+tests/api/           # Jest API tests
 ```

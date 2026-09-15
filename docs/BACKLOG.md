@@ -54,18 +54,18 @@ Rough order: A1 → A2 → A3 → A4 → A5. A4 can overlap with A2/A3 after sca
 **Labels:** `setup`, `domain`  
 **Depends on:** A1  
 **AC:**
-- [ ] `decimal.js` (or light) dependency added
-- [ ] `src/domain/calc` folder with placeholder export
-- [ ] Stub unit test proves Jest can import calc module
-- [ ] Calc module has **no** Prisma/Next imports
+- [x] `decimal.js` (or light) dependency added
+- [x] `src/domain/calc` folder with placeholder export
+- [x] Stub unit test proves Jest can import calc module
+- [x] Calc module has **no** Prisma/Next imports
 
 ### A5. CI pipeline (lint, typecheck, unit, api, e2e)
 **Labels:** `ci`, `test`  
 **Depends on:** A1–A3  
 **AC:**
-- [ ] GitHub Actions (or equivalent) on PR
-- [ ] Gates match TEST_STRATEGY: lint → typecheck → unit → api → e2e
-- [ ] E2E artifacts (screenshot/trace) on failure when e2e exists
+- [x] GitHub Actions (or equivalent) on PR
+- [x] Gates match TEST_STRATEGY: lint → typecheck → unit → api → e2e
+- [x] E2E artifacts (screenshot/trace) on failure when e2e exists
 
 ---
 
