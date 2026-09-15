@@ -40,7 +40,7 @@ Long-term path beyond personal spreadsheet replacement:
 1. Someone records a **Strategy** and **Runs** with honest costs, loot, duration method, and price snapshots.
 2. Results become roughly realistic evidence for that strat (not modelled div/hr boards).
 3. Another player **copies** the strategy to try it.
-4. The new **Run** is prefilled with:
+4. The new **MapSession** is prefilled with:
    - Map / Waystone and Tablet / Scarab **cost line items** from the source strategy
    - **Common profit / revenue line items** from the original poster and/or other runners
 5. Later: optional **poe.ninja** fill that **writes price snapshots** (ADR-004-compatible); later still: **stash API** / reconciliation if GGG exposes it.
@@ -49,7 +49,7 @@ Long-term path beyond personal spreadsheet replacement:
 ### Why
 
 - Distinct from Maxroll guides and Exiled Tools modelled ranks: viewers **run the same worksheet**, not only watch a claim.
-- Builds on Strategy vs Run (ADR-005) without changing MVP.
+- Builds on Strategy vs MapSession (ADR-005) without changing MVP.
 - Growth loop: creator link → fork → personal runs → better evidence.
 
 ### Risks / non-goals
@@ -69,7 +69,7 @@ Long-term path beyond personal spreadsheet replacement:
 
 ### MVP compatibility
 
-Keep ADR-004 (snapshots), ADR-005 (Strategy/Run), ADR-006 (duration methods), ADR-008 (calculation engine). Prefer strategy-level defaults so template lines can appear later without rewriting math.
+Keep ADR-004 (snapshots), ADR-005 (Strategy/MapSession), ADR-006 (duration methods), ADR-008 (calculation engine). Prefer strategy-level defaults so template lines can appear later without rewriting math.
 
 ---
 

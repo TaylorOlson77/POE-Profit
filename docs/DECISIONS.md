@@ -114,28 +114,34 @@ Automatic market integrations (e.g. poe.ninja) add scope and flakiness. Spreadsh
 
 ---
 
-## ADR-005: Strategy and Run are separate domain concepts
+## ADR-005: Strategy and MapSession are separate domain concepts
 
 | Field | Value |
 | --- | --- |
 | Status | Accepted |
 | Date | 2026-09-11 |
+| Revised | 2026-09-15 |
 
 ### Context
 
 A farming approach is reusable; each session is a distinct observation. Mixing them (one blob per spreadsheet tab) makes comparison and analytics harder later.
 
+The execution entity was originally named **Run**. We renamed it to **MapSession** for clearer domain language (“a session of maps/waystones under a strategy”) while leaving UI branding free. **MapSet** is reserved for a possible later concept (the maps themselves), not this entity.
+
 ### Decision
 
-- A **Strategy** is a reusable definition of intent (name, game, description, optional defaults).
-- A **Run** is one completed execution of a strategy with timing, line items, and calculated results.
-- One Strategy has many Runs.
+- A **Strategy** is a reusable definition of intent (name, game, description, per-map cost template).
+- A **MapSession** is one completed mapping session of a strategy with timing, line items, and calculated results.
+- One Strategy has many MapSessions.
+- API resource path: `/api/map-sessions`.
+- UI copy may say Waystone / Journey / etc.; domain and API use MapSession.
 
 ### Consequences
 
-- Run history and strategy comparison become natural later features.
-- Creating a run requires selecting (or creating) a strategy.
+- MapSession history and strategy comparison become natural later features.
+- Creating a map session requires selecting (or creating) a strategy.
 - Strategy deletion / archival rules must be defined carefully once data exists (deferred detail for architecture).
+- Docs and code that said “Run” for this entity should say MapSession (historical ADR text may still mention Run as the former name).
 
 ---
 
@@ -157,7 +163,7 @@ Separately, stash before/after snapshots improve **loot/investment truth**; they
 
 ### Decision
 
-MVP supports an explicit **duration method** on each Run. Rate metrics (profit/hour, maps/hour) always use the run’s **effective duration** derived from that method. Methods must never be silently mixed or relabeled as each other.
+MVP supports an explicit **duration method** on each MapSession. Rate metrics (profit/hour, maps/hour) always use the session’s **effective duration** derived from that method. Methods must never be silently mixed or relabeled as each other.
 
 **Default method:** **Extrapolated** (new runs start on this method in the UI/API unless the user changes it).
 
@@ -206,7 +212,7 @@ The project is a resume / portfolio piece and a vehicle to practice deploying a 
 
 - Faster path to a public demo and deployment learning.
 - Privacy risk if real personal economy data is entered on a public instance — use sample/demo data on public deploys, or keep sensitive data on private environments.
-- Adding auth later will require multi-tenancy / ownership on Strategy and Run.
+- Adding auth later will require multi-tenancy / ownership on Strategy and MapSession.
 - Security review for MVP focuses on input validation, abuse basics, and deployment hygiene—not identity.
 
 ---
@@ -352,7 +358,7 @@ The UI must talk to the server for Strategy/Run CRUD. Options considered: Route 
 ### Decision
 
 - Use **Next.js App Router Route Handlers** (`app/api/.../route.ts`) for writes and CRUD-style reads that belong to the HTTP API.
-- Shape endpoints like REST resources aligned with `MVP_SPEC.md` (e.g. `/api/strategies`, `/api/runs`).
+- Shape endpoints like REST resources aligned with `MVP_SPEC.md` (e.g. `/api/strategies`, `/api/map-sessions`).
 - Prefer **contract-first** workflow: agree request/response shapes (and status codes / error body) before building the handler; API tests assert against that contract.
 - Server Components may still load data on the server for pages where that helps UX; they are not a substitute for the documented HTTP API.
 - Server Actions and tRPC are out of scope for MVP.
@@ -457,7 +463,7 @@ Contract-first Route Handlers need a shared way to define request/response shape
 
 ### Decision
 
-Use **Zod** schemas in `src/contracts` (and server validation wiring) as the source of runtime validation and inferred TypeScript types for Strategy/Run APIs.
+Use **Zod** schemas in `src/contracts` (and server validation wiring) as the source of runtime validation and inferred TypeScript types for Strategy/MapSession APIs.
 
 ### Consequences
 
@@ -476,11 +482,11 @@ Use **Zod** schemas in `src/contracts` (and server validation wiring) as the sou
 
 ### Context
 
-Run history needs profit, profit/hour, ROI, and related metrics. Those can be recomputed on every read from raw inputs, or computed once via the shared engine and stored with the run.
+MapSession history needs profit, profit/hour, ROI, and related metrics. Those can be recomputed on every read from raw inputs, or computed once via the shared engine and stored with the map session.
 
 ### Decision
 
-- On **create and update**, run the calculation engine and **persist** derived fields on the Run (and return them in the API response).
+- On **create and update**, run the calculation engine and **persist** derived fields on the MapSession (and return them in the API response).
 - Historical rows keep the results produced by the equations that were in effect when the run was saved (same spirit as price snapshots).
 - The calculation engine remains the only place business math lives; stored fields are denormalized engine output, not a second formula set.
 - If formulas change later, old runs are not silently rewritten; a deliberate recompute/migration would be required.
@@ -564,7 +570,7 @@ Early Strategy drafts used optional metadata defaults (tier, party size, quantit
 
 - Strategy contracts and Prisma models include map cost fields plus a child enhancement-line collection.
 - Aligns with future run prefill / creator templates (FF-001) without implementing sharing in MVP.
-- Run remains the place for full investment, revenue, duration, and observed results (ADR-005).
+- MapSession remains the place for full investment, revenue, duration, and observed results (ADR-005).
 
 ---
 
@@ -584,7 +590,7 @@ Former proposed ADR-013 (creator strategy fork/prefill) was renumbered away; tha
 | ADR-002 | PoE2-first UI; game-agnostic domain | Accepted |
 | ADR-003 | Chaos canonical; Divine secondary | Accepted |
 | ADR-004 | Manual price snapshots | Accepted |
-| ADR-005 | Strategy vs Run | Accepted |
+| ADR-005 | Strategy vs MapSession (formerly Run) | Accepted |
 | ADR-006 | Explicit duration method (observed / extrapolated / manual) | Accepted |
 | ADR-007 | Deployable web app; no auth | Accepted |
 | ADR-008 | Shared calculation engine | Accepted |

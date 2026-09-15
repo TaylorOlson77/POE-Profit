@@ -41,9 +41,9 @@ Related: [`AI_DEVELOPMENT.md`](./AI_DEVELOPMENT.md), [`DECISIONS.md`](./DECISION
 
 **Answer sketch:** Keeps scope small, avoids flaky external deps, and forces honest “price at time” recording. Model still allows other sources later. (ADR-004)
 
-### Q: Why Strategy and Run as separate concepts?
+### Q: Why Strategy and MapSession as separate concepts?
 
-**Answer sketch:** Strategy is reusable intent; Run is one observation/execution. Enables history and future comparison without conflating plan vs result. (ADR-005)
+**Answer sketch:** Strategy is reusable intent (including a per-map cost template); MapSession is one completed mapping session / observation. Enables history and future comparison without conflating plan vs result. Formerly called Run; renamed for clarity. UI can still use branded labels. (ADR-005)
 
 ### Q: Why support Observed, Extrapolated, and Manual duration — with Extrapolated default?
 
