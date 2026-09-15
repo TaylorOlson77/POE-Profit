@@ -79,10 +79,10 @@ Epics B–F below are the rest of the path to MVP. Keep checking them off here. 
 **Labels:** `api`, `docs`  
 **Depends on:** A1  
 **AC:**
-- [ ] `src/contracts` types/Zod for Strategy list/create/get/update/delete
-- [ ] Documented status codes + shared error shape
-- [ ] No handler implementation required in this ticket (contract only is OK)
-- [ ] Interview-ready: contract exists before Route Handlers
+- [x] `src/contracts` types/Zod for Strategy list/create/get/update/delete
+- [x] Documented status codes + shared error shape
+- [x] No handler implementation required in this ticket (contract only is OK)
+- [x] Interview-ready: contract exists before Route Handlers
 
 ### B2. Define Run API contracts (including calculated fields)
 **Labels:** `api`, `docs`  

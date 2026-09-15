@@ -136,6 +136,8 @@ Use one consistent JSON error body for 4xx/5xx, e.g.:
 
 Finalize field names when the first contract is written; keep them stable.
 
+**B1 finalized:** see `src/contracts/errors.ts` (`ApiErrorBody`) and `src/contracts/strategies.ts` (status-code table in file header).
+
 ---
 
 ## 6. Calculation engine

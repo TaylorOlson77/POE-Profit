@@ -537,6 +537,37 @@ Use the full **`decimal.js`** package for MVP money/efficiency math, not `decima
 
 ---
 
+## ADR-020: Strategy is a per-map setup cost template
+
+| Field | Value |
+| --- | --- |
+| Status | Accepted |
+| Date | 2026-09-15 |
+
+### Context
+
+Early Strategy drafts used optional metadata defaults (tier, party size, quantity %, config blob, reference URL). Real logging workflows treat a Strategy as a **reusable per-map cost setup**: waystone/map cost plus a small list of scarabs (PoE1) or tablets (PoE2), with free-text map notes until structured/regex mods exist.
+
+### Decision
+
+- A **Strategy** stores: name, game, description, optional `mapNotes`, required **map/waystone unit cost** (quantity implied = 1), and **enhancement lines** (scarabs for PoE1 / tablets for PoE2).
+- Map/waystone is **not** modeled as a row in the enhancement list — it is a required 1:1 slot on Strategy.
+- Drop MVP fields: default map tier, party size, quantity target, configuration blob, external reference URL (atlas/reference link can return later as its own field).
+- Enhancement line quantities and costs are **per map**; a run of N maps scales them by N when estimating/prefilling run investment.
+- `modifierNotes` is optional on enhancement lines; **UI shows it only for PoE2 tablets**.
+- UI labels (Map vs Waystone, Scarab vs Tablet) come from `game` — no `kind` enum on enhancement lines for MVP.
+- `estimatedCostPerMapChaos` = `mapUnitCostChaos` + sum of enhancement `lineTotalChaos` values, where each `lineTotalChaos` = `quantity × unitCostChaos` (e.g. 2×100c + 1×10c = **210c** of enhancements, then add map/waystone unit cost). Calculated (compute-on-write), not user-edited totals.
+- UI soft-targets ~5 enhancement lines; API enforces a hard max (25) against abuse on the no-auth MVP.
+- Money/quantities on the wire use **`DecimalStringSchema`** (non-negative decimal strings, not JSON floats).
+
+### Consequences
+
+- Strategy contracts and Prisma models include map cost fields plus a child enhancement-line collection.
+- Aligns with future run prefill / creator templates (FF-001) without implementing sharing in MVP.
+- Run remains the place for full investment, revenue, duration, and observed results (ADR-005).
+
+---
+
 ## Future ideas (not ADRs yet)
 
 Product bets that are **not** accepted decisions live in [`FUTURE_FEATURES.md`](./FUTURE_FEATURES.md) (creator fork/prefill, naming ideas, buy-filter regex, etc.). Graduate an idea into an ADR here only when we commit to it for a release.
@@ -568,3 +599,4 @@ Former proposed ADR-013 (creator strategy fork/prefill) was renumbered away; tha
 | ADR-017 | Zod for contracts / validation | Accepted |
 | ADR-018 | Persist calculated fields on write | Accepted |
 | ADR-019 | Test layout: colocated unit; tests/api; e2e/ | Accepted |
+| ADR-020 | Strategy is a per-map setup cost template | Accepted |
