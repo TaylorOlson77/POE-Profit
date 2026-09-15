@@ -1,15 +1,20 @@
 import { defineConfig, devices } from "@playwright/test";
 
+const isCi = !!process.env.CI;
+
 /**
  * Playwright E2E — critical journeys only (TEST_STRATEGY).
  * Jest owns unit + API; Playwright owns browser journeys (ADR-014).
+ *
+ * Local: `next dev` (fast iteration; reuseExistingServer if already running).
+ * CI: `next start` after `npm run build` in the workflow (prod-like).
  */
 export default defineConfig({
   testDir: "./e2e",
   fullyParallel: true,
-  forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 1 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  forbidOnly: isCi,
+  retries: isCi ? 1 : 0,
+  workers: isCi ? 1 : undefined,
   reporter: [["list"], ["html", { open: "never" }]],
   use: {
     baseURL: "http://127.0.0.1:3000",
@@ -23,9 +28,9 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: "npm run dev",
+    command: isCi ? "npm run start" : "npm run dev",
     url: "http://127.0.0.1:3000",
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: !isCi,
     timeout: 120_000,
   },
 });
