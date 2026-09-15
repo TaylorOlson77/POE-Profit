@@ -69,7 +69,7 @@ For MVP v1 we will:
 
 **Owns**
 
-- Strategy and Run CRUD
+- Strategy and MapSession CRUD
 - Validation failures (missing fields, end before start, negative maps/qty/price)
 - Persistence round-trips
 - Response payloads include **server-calculated** fields (ADR-008)
@@ -159,7 +159,7 @@ Given revenue `2787.09c`, investment `513.60c`, duration `99` minutes (`1.65h`),
 | Record run | Enter investments, revenue, price timestamps, start/end, waystone count; summary matches fixture |
 | Edit run | Change quantity; totals update after save |
 | Delete run | Confirmation required; cancelled delete keeps run; confirmed delete removes run |
-| History | Run appears with key columns (profit, duration, strategy) |
+| History | MapSession appears with key columns (profit, duration, strategy) |
 
 ## 7. Acceptance criteria → tests (lightweight traceability)
 

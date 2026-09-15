@@ -84,20 +84,20 @@ Epics B–F below are the rest of the path to MVP. Keep checking them off here. 
 - [x] No handler implementation required in this ticket (contract only is OK)
 - [x] Interview-ready: contract exists before Route Handlers
 
-### B2. Define Run API contracts (including calculated fields)
+### B2. Define MapSession API contracts (including calculated fields)
 **Labels:** `api`, `docs`  
 **Depends on:** B1  
 **AC:**
-- [ ] Contracts for Run CRUD + list
-- [ ] Response includes calculated fields (profit, profit/hr, ROI, duration method label, etc.)
-- [ ] Duration method discriminated fields called out (Observed / Extrapolated / Manual)
-- [ ] Error/validation shape consistent with B1
+- [x] Contracts for MapSession list/create/get/update/delete
+- [x] Response includes calculated fields (profit, profit/hr, ROI, duration method label, etc.)
+- [x] Duration method discriminated fields called out (Observed / Extrapolated / Manual)
+- [x] Error/validation shape consistent with B1
 
-### B3. Prisma schema: Strategy, Run, line items
+### B3. Prisma schema: Strategy, MapSession, line items
 **Labels:** `setup`  
 **Depends on:** A2, B2 (at least draft)  
 **AC:**
-- [ ] Models for Strategy, Run, investment/revenue lines (or unified line item)
+- [ ] Models for Strategy, MapSession, investment/revenue lines (or unified line item)
 - [ ] Enums: game, duration method, valuation type as needed
 - [ ] Decimal-safe money fields (not imprecise float)
 - [ ] Migration applied to Neon/dev DB
@@ -146,11 +146,11 @@ Epics B–F below are the rest of the path to MVP. Keep checking them off here. 
 - [ ] Jest API tests hit HTTP endpoints (or agreed harness)
 - [ ] Handlers stay thin; logic in `src/server/services`
 
-### D2. Run Route Handlers + calc integration + API tests
+### D2. MapSession Route Handlers + calc integration + API tests
 **Labels:** `api`, `test`  
 **Depends on:** B2, B3, C2, D1  
 **AC:**
-- [ ] Run CRUD; create/update runs calc engine and returns calculated fields
+- [ ] MapSession CRUD; create/update runs calc engine and returns calculated fields
 - [ ] Duration method validation per ADR-006
 - [ ] API tests: happy path, validation, calculated field correctness, delete
 - [ ] Users cannot PATCH calculated fields as source of truth
@@ -167,14 +167,14 @@ Epics B–F below are the rest of the path to MVP. Keep checking them off here. 
 - [ ] Uses API contracts; PoE2 terminology in copy
 - [ ] Basic empty/error states
 
-### E2. Run entry UI (spreadsheet-like) + history
+### E2. MapSession entry UI (spreadsheet-like) + history
 **Labels:** `ui`  
 **Depends on:** D2, E1  
 **AC:**
-- [ ] Create/edit run: investment + revenue lines, duration method fields, maps completed
+- [ ] Create/edit map session: investment + revenue lines, duration method fields, maps completed
 - [ ] Displays calculated totals from API (not recomputed ad hoc in UI)
 - [ ] Duration method label visible
-- [ ] Run history table with key columns from MVP_SPEC
+- [ ] MapSession history table with key columns from MVP_SPEC
 
 ### E3. Playwright E2E: strategy + run happy paths
 **Labels:** `test`, `ui`  

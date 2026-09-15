@@ -71,7 +71,7 @@ app/
   (pages, layouts, UI)
   api/
     strategies/
-    runs/
+    map-sessions/
       .../route.ts          # Route Handlers
 
 src/
@@ -115,8 +115,8 @@ Before implementing a handler:
 | --- | --- |
 | `/api/strategies` | `GET` list, `POST` create |
 | `/api/strategies/[id]` | `GET`, `PUT`, `DELETE` |
-| `/api/runs` | `GET` list, `POST` create |
-| `/api/runs/[id]` | `GET`, `PUT`, `DELETE` |
+| `/api/map-sessions` | `GET` list, `POST` create |
+| `/api/map-sessions/[id]` | `GET`, `PUT`, `DELETE` |
 
 Exact query params (filter by strategy, sort) can be added when tickets are cut.
 
@@ -156,7 +156,7 @@ Finalize field names when the first contract is written; keep them stable.
 Conceptual model (MVP_SPEC):
 
 ```text
-Strategy 1──* Run 1──* RunLineItem (investment | revenue)
+Strategy 1──* MapSession 1──* MapSessionLineItem (investment | revenue)
 ```
 
 Details (enums for duration method, valuation type, categories, Decimal column types) land in `schema.prisma` during scaffold — not duplicated here until the first migration ticket.

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { DecimalStringSchema } from "./decimal";
 
 /**
  * Strategy API contracts (contract-first — ADR-013 / ADR-020 / backlog B1).
@@ -19,7 +20,7 @@ import { z } from "zod";
  *
  * Map/waystone is a required 1:1 slot on Strategy (qty always 1 per map).
  * Enhancement lines are scarabs (PoE1) or tablets (PoE2); quantities are per map.
- * A run of N maps scales these costs by N when prefilling/estimating investment.
+ * A map session of N maps scales these costs by N when prefilling/estimating investment.
  */
 
 /** Soft UI target ~5 enhancement lines; hard API cap against abuse (no auth). */
@@ -29,19 +30,6 @@ export const MAX_STRATEGY_ENHANCEMENT_LINES = 25;
 export const GameSchema = z.enum(["POE2", "POE1"]);
 
 export type Game = z.infer<typeof GameSchema>;
-
-/**
- * Non-negative decimal on the wire as a string (ADR-015) — avoids JSON floats.
- * Examples: "0", "10", "0.20", "100.5"
- */
-export const DecimalStringSchema = z
-  .string()
-  .regex(
-    /^(?:0|[1-9]\d*)(?:\.\d+)?$/,
-    "Must be a non-negative decimal string",
-  );
-
-export type DecimalString = z.infer<typeof DecimalStringSchema>;
 
 /**
  * Scarab (PoE1) / tablet (PoE2) line — repeating list only.

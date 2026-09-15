@@ -20,7 +20,7 @@ The initial version focuses on replacing a spreadsheet-based workflow with a pur
 - Revenue
 - Item quantities
 - Item valuations
-- Run duration
+- MapSession duration
 - Maps / Waystones completed
 - Profit
 - Profit per hour
@@ -43,7 +43,7 @@ MVP v1 is a **deployable web application**. Authentication is intentionally out 
 The MVP should allow a player to:
 
 - Create a farming strategy
-- Record an individual farming run
+- Record an individual map session (MapSession)
 - Record investment / cost items
 - Record revenue items
 - Assign quantities and manually recorded market values
@@ -121,23 +121,23 @@ Examples:
 
 A strategy describes what the player intends to do.
 
-### Run
+### MapSession
 
-A specific execution of a strategy.
+A specific execution of a strategy — one completed mapping session.
 
 Example: *Breach Tablet Farming — September 11, 2026 — 40 Waystones*
 
-A strategy may have many runs:
+A strategy may have many map sessions:
 
 ```text
 Strategy
- ├── Run #1
- ├── Run #2
- ├── Run #3
- └── Run #4
+ ├── MapSession #1
+ ├── MapSession #2
+ ├── MapSession #3
+ └── MapSession #4
 ```
 
-This distinction is important for future analytics.
+This distinction is important for future analytics. (Domain name: **MapSession**; UI may brand differently. Former name: Run — ADR-005.)
 
 ### Line Item
 
@@ -178,33 +178,27 @@ Tier / party size / quantity-% defaults and external reference URL are **out of 
 
 The MVP does not need a complex strategy builder — a short form, a required map/waystone cost, and a small scarab/tablet list is enough.
 
-## 7. Run
+## 7. MapSession
 
-A Run represents a single completed farming session.
+A MapSession represents a single completed mapping session (ADR-005).
 
 **Required**
 
 - Strategy
 - Duration method (`Observed` | `Extrapolated` | `Manual`; default **Extrapolated**)
 - Number of maps / Waystones completed
+- Map/waystone unit cost in Chaos
 - Fields required by the chosen duration method (see §8)
 
 **Optional**
 
 - Notes
-- Map / Waystone tier
-- Party size
-- Quantity %
-- Rarity %
-- Strategy configuration
-- Gear / build notes
-- Start / end timestamps when not using Observed (for diary context only)
 
 These contextual fields are recorded for future analysis but are **not** used to mathematically normalize profitability in MVP v1.
 
-## 8. Run Timing
+## 8. MapSession Timing
 
-Wall-clock alone often overstates active farming time (breaks, trading, helping others). Many players time a sample of maps and extrapolate. MVP therefore supports an explicit **duration method** per run (ADR-006).
+Wall-clock alone often overstates active farming time (breaks, trading, helping others). Many players time a sample of maps and extrapolate. MVP therefore supports an explicit **duration method** per map session (ADR-006).
 
 **Default for new runs:** Extrapolated.
 
@@ -444,9 +438,9 @@ Example: display `20.4` chaos rather than `20.400000000000002` chaos.
 
 The calculation engine must have explicit tests around decimal arithmetic.
 
-## 18. MVP Run Screen
+## 18. MVP MapSession Screen
 
-The primary run-entry experience should feel like a spreadsheet that does the annoying math for you.
+The primary map-session entry experience should feel like a spreadsheet that does the annoying math for you.
 
 Suggested layout:
 
@@ -506,9 +500,9 @@ ROI:                               442.55%
 --------------------------------------------------
 ```
 
-## 19. Run History
+## 19. MapSession History
 
-The application should provide a list of historical runs.
+The application should provide a list of historical map sessions.
 
 Example columns:
 
@@ -523,7 +517,7 @@ The user should be able to select a run and view its complete details.
 
 Users should be able to edit:
 
-- Run metadata
+- MapSession metadata
 - Duration method and related timing fields
 - Maps / Waystones completed
 - Investment lines
@@ -537,7 +531,7 @@ Users should never manually edit calculated totals.
 
 ## 21. Deletion
 
-Users should be able to delete a run.
+Users should be able to delete a map session.
 
 Deletion should require confirmation.
 
@@ -550,10 +544,11 @@ The application should not silently delete data.
 - Name required
 - Game required
 
-### Run
+### MapSession
 
 - Strategy required
 - Duration method required (defaults to Extrapolated on create if omitted by client)
+- Map/waystone unit cost required
 - Maps / Waystones completed cannot be negative
 - **Extrapolated:** sample maps completed must be greater than zero; sample duration must be greater than zero
 - **Observed:** start time and end time required; end time cannot precede start time
@@ -579,7 +574,7 @@ Strategy
   |
   | many
   v
-Run
+MapSession
   |
   +-------------------+
   |                   |
@@ -590,8 +585,8 @@ InvestmentLine     RevenueLine
 Possible entities:
 
 - Strategy
-- Run
-- RunLineItem
+- MapSession
+- MapSessionLineItem
 - Item
 - Category
 - PriceSnapshot
@@ -610,13 +605,13 @@ The MVP backend should expose operations equivalent to:
 - `PUT /strategies/:id`
 - `DELETE /strategies/:id`
 
-### Runs
+### MapSessions
 
-- `GET /runs`
-- `POST /runs`
-- `GET /runs/:id`
-- `PUT /runs/:id`
-- `DELETE /runs/:id`
+- `GET /map-sessions`
+- `POST /map-sessions`
+- `GET /map-sessions/:id`
+- `PUT /map-sessions/:id`
+- `DELETE /map-sessions/:id`
 
 The exact REST structure may change during technical design.
 
@@ -627,11 +622,11 @@ The API should return calculated values rather than requiring the frontend to in
 The calculation engine should be isolated from the UI and API layers.
 
 ```text
-Input Run
+Input MapSession
    ↓
 Calculation Engine
    ↓
-Calculated Run
+Calculated MapSession
    ↓
 API / UI
 ```
@@ -699,10 +694,10 @@ Save
 Verify strategy appears
 ```
 
-### Record farming run
+### Record map session
 
 ```text
-Create run
+Create map session
       ↓
 Add investment
       ↓
@@ -885,12 +880,12 @@ The long-term goal is to make it easier to collect enough observations to unders
 MVP v1 is complete when a user can:
 
 1. Create a PoE2 farming strategy
-2. Record a complete farming run
+2. Record a complete map session
 3. Enter investments and revenue
 4. Enter historical prices
-5. Save the run
+5. Save the map session
 6. See automatically calculated profit and efficiency
-7. Reopen the run later
+7. Reopen the map session later
 8. Edit it
 9. Have automated tests verify the core behavior
 

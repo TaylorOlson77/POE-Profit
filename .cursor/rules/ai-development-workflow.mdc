@@ -98,7 +98,7 @@ Tests should provide meaningful confidence, not merely increase coverage numbers
 - Business logic should be isolated and highly testable.
 - Historical financial/price calculations must remain deterministic.
 - Chaos is the canonical calculation currency; Divines are secondary.
-- Strategy and Run are separate domain concepts.
+- Strategy and MapSession are separate domain concepts.
 - PoE2 is the MVP target, but domain design should allow future PoE1 support.
 - MVP scope should remain intentionally small.
 
