@@ -154,7 +154,7 @@ The total should always be calculated by the application.
 
 ## 6. Strategy
 
-A Strategy should contain:
+A Strategy is a reusable **per-map setup cost template** (ADR-020), not a full run log.
 
 **Required**
 
@@ -164,14 +164,19 @@ A Strategy should contain:
 
 **Optional**
 
-- Strategy notes
-- Default map / Waystone tier
-- Default party size
-- Default quantity target
-- Default strategy configuration
-- External reference URL
+- Map notes (free text for now; later structured / regex map–waystone mods)
 
-The MVP does not need a complex strategy builder.
+**Required map/waystone slot (exactly one)**
+
+- Map/waystone unit cost in Chaos (quantity is always 1 per map; UI: Map for PoE1, Waystone for PoE2)
+
+**Enhancement lines (0–N, per map)**
+
+Scarabs (PoE1) or tablets (PoE2): name, quantity, unit cost in Chaos, optional modifier notes (UI: PoE2 tablets only). Each line total is **quantity × unit cost**. **Estimated cost per map** = map/waystone unit cost + sum of enhancement line totals (example: map 2c + 2×100c + 1×10c = 212c). Totals are calculated by the app.
+
+Tier / party size / quantity-% defaults and external reference URL are **out of MVP Strategy** (rare cases can use description or map notes; atlas links may return later as a dedicated field).
+
+The MVP does not need a complex strategy builder — a short form, a required map/waystone cost, and a small scarab/tablet list is enough.
 
 ## 7. Run
 

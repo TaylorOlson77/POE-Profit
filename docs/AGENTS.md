@@ -26,7 +26,7 @@ Next.js App Router + TS · Vercel · Neon Postgres · Prisma · Route Handlers (
 
 ## Current next step
 
-**B1 — Strategy API contracts** per [`BACKLOG.md`](./BACKLOG.md) (Phase 1 A1–A5 done). Then calc engine → API → UI → deploy.
+**B2 — Run API contracts** per [`BACKLOG.md`](./BACKLOG.md) (B1 Strategy contracts done). Then B3 Prisma models → calc → API → UI → deploy.
 
 Check off AC in `BACKLOG.md` as you finish each item.
 
