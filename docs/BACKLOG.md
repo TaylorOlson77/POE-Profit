@@ -111,10 +111,10 @@ Epics B–F below are the rest of the path to MVP. Keep checking them off here. 
 **Labels:** `domain`, `test`  
 **Depends on:** A4  
 **AC:**
-- [ ] Pure functions for line total, totals, profit
-- [ ] decimal.js throughout
-- [ ] Jest tests: basics, fractions, decimals, negative profit, zero lines
-- [ ] No HTTP/DB dependencies
+- [x] Pure functions for line total, totals, profit
+- [x] decimal.js throughout
+- [x] Jest tests: basics, fractions, decimals, negative profit, zero lines
+- [x] No HTTP/DB dependencies
 
 ### C2. Calc engine: duration methods + rate metrics + ROI
 **Labels:** `domain`, `test`  
