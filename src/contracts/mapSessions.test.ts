@@ -194,4 +194,33 @@ describe("MapSession contracts", () => {
 
     expect(parsed.success).toBe(true);
   });
+
+  it("accepts negative profitChaos on a MapSession resource", () => {
+    const parsed = MapSessionSchema.safeParse({
+      id: "ms_loss",
+      strategyId: "strat_1",
+      mapsCompleted: 40,
+      mapUnitCostChaos: "2",
+      divineRateChaos: "200",
+      durationMethod: "MANUAL",
+      manualDurationMinutes: "80",
+      investmentLines: [],
+      revenueLines: [],
+      mapInvestmentChaos: "80",
+      totalInvestmentChaos: "80",
+      totalRevenueChaos: "0",
+      profitChaos: "-80",
+      effectiveDurationMinutes: "80",
+      durationMethodLabel: "Manual",
+      profitPerHourChaos: null,
+      profitPerMapChaos: null,
+      mapsPerHour: null,
+      roiPercent: null,
+      profitDivineApprox: null,
+      createdAt,
+      updatedAt,
+    });
+
+    expect(parsed.success).toBe(true);
+  });
 });

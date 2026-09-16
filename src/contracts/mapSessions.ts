@@ -3,6 +3,7 @@ import {
   DecimalStringSchema,
   NullableDecimalStringSchema,
   PositiveDecimalStringSchema,
+  SignedDecimalStringSchema,
 } from "./decimal";
 
 /**
@@ -182,7 +183,8 @@ export const MapSessionCalculatedFieldsSchema = z.object({
    */
   totalInvestmentChaos: DecimalStringSchema,
   totalRevenueChaos: DecimalStringSchema,
-  profitChaos: DecimalStringSchema,
+  /** May be negative (MVP_SPEC §16). */
+  profitChaos: SignedDecimalStringSchema,
   /** mapsCompleted × mapUnitCostChaos (calculated; not user-edited). */
   mapInvestmentChaos: DecimalStringSchema,
   effectiveDurationMinutes: DecimalStringSchema,

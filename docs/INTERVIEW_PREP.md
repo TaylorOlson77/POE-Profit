@@ -107,6 +107,18 @@ Related: [`AI_DEVELOPMENT.md`](./AI_DEVELOPMENT.md), [`DECISIONS.md`](./DECISION
 
 **Answer sketch:** Single source of truth (calculation engine). Prevents UI/API drift. UI displays; engine computes. (ADR-008)
 
+### Q: Why does the calc engine return decimal.js Decimal instead of API decimal strings?
+
+**Answer sketch:** Three representations exist on purpose. JSON has no decimal type, so the API uses strings (`DecimalStringSchema`). Prisma hydrates `Decimal` objects from `NUMERIC(20, 8)` columns. The engine speaks `decimal.js` so it can `.plus()` / `.times()` without wrapping on every call, and so C3 can round Decimals for display later. Conversion lives in server services at the boundary — never `Number()` a money value, and never import Prisma into `src/domain/calc`. (ADR-015, ADR-016, ADR-021)
+
+### Q: Why is session map spend not an investment line?
+
+**Answer sketch:** Map/waystone cost is a required 1:1 slot (`mapsCompleted × mapUnitCostChaos`). If it were also a line, total investment would double-count it. Enhancement/tablet costs are lines; the map is not. Strategy per-map cost is the same idea: `mapUnitCost + sum(quantity × unitCost)` for enhancements, not a sum of unit costs that ignores quantity. (ADR-020)
+
+### Q: Why doesn’t C1 call Decimal.set() or round results?
+
+**Answer sketch:** `Decimal.set()` is process-global and could surprise Prisma or other code. C1 keeps full precision and does not round; display rounding is C3 and should be per-call (`toDecimalPlaces`), not a global config. Historical financial math stays deterministic that way. (ADR-015)
+
 ---
 
 ## Quiz log
