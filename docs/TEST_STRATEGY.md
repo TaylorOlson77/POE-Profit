@@ -188,6 +188,7 @@ Explicitly **out of scope** for MVP automated testing:
 - Multi-tenant isolation tests
 - Exhaustive cross-browser matrix (one primary browser in CI is enough for MVP; expand later)
 - Statistical / community aggregation features
+- **Prisma schema / generated migration SQL.** Declarative schema is not unit-tested (a test asserting "this column is `Decimal`" only re-reads the schema). Schema correctness is proven by the migration applying cleanly, the seed round-tripping expected values, and API tests validating responses against the Zod contracts.
 
 ## 9. Environments
 
@@ -209,6 +210,8 @@ A pull request should not merge unless:
 4. **Unit tests** pass
 5. **API / integration tests** pass
 6. **Playwright E2E** critical journeys pass
+
+**As implemented (A5 / B3):** CI runs lint → typecheck → unit → API → build → E2E. Gate 2 (format) is **not** enforced yet — `format:check` exists as a script only. CI also has **no database credentials**; it runs `prisma generate` but never applies migrations, so DB-backed API tests need a decision at D1/D2 (in-process mock vs ephemeral Neon branch per PR).
 
 On E2E failure, CI should retain:
 
