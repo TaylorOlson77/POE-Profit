@@ -97,11 +97,11 @@ Epics B–F below are the rest of the path to MVP. Keep checking them off here. 
 **Labels:** `setup`  
 **Depends on:** A2, B2 (at least draft)  
 **AC:**
-- [ ] Models for Strategy, MapSession, investment/revenue lines (or unified line item)
-- [ ] Enums: game, duration method, valuation type as needed
-- [ ] Decimal-safe money fields (not imprecise float)
-- [ ] Migration applied to Neon/dev DB
-- [ ] Seed optional demo data for public deploy later
+- [x] Models for Strategy, MapSession, investment/revenue lines (or unified line item)
+- [x] Enums: game, duration method, valuation type as needed
+- [x] Decimal-safe money fields (not imprecise float)
+- [x] Migration applied to Neon/dev DB
+- [x] Seed optional demo data for public deploy later
 
 ---
 

@@ -26,7 +26,9 @@ Next.js App Router + TS · Vercel · Neon Postgres · Prisma · Route Handlers (
 
 ## Current next step
 
-**B3 — Prisma schema** per [`BACKLOG.md`](./BACKLOG.md) (B1–B2 contracts done). Then calc engine → API → UI → deploy.
+**C1 — calc engine primitives** per [`BACKLOG.md`](./BACKLOG.md) (B1–B3 contracts + Prisma schema done). Then C2 → API → UI → deploy.
+
+When C2 lands, rewrite `prisma/seed.ts` to derive its calculated fields from the calc engine instead of the current hand-computed constants.
 
 Check off AC in `BACKLOG.md` as you finish each item.
 

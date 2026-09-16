@@ -1,4 +1,14 @@
-// Prisma schema for POE Profit (A2 — connection only; Strategy/Run models in B3)
+// Prisma schema for POE Profit (B3).
+//
+// Mirrors the Zod contracts in `src/contracts`:
+// - Strategy + StrategyEnhancementLine  -> src/contracts/strategies.ts
+// - MapSession + investment/revenue lines -> src/contracts/mapSessions.ts
+//
+// Conventions:
+// - IDs: cuid() strings (contracts type ids as z.string()).
+// - Money/quantities: Decimal(20, 8) — never Float (ADR-015).
+// - Calculated columns are persisted compute-on-write results (ADR-018); the
+//   calc engine (Epic C) owns them, users never edit them directly.
 // https://pris.ly/d/prisma-schema
 
 generator client {
@@ -11,4 +21,165 @@ datasource db {
   url       = env("DATABASE_URL")
   // Direct URL for migrations (Neon non-pooler)
   directUrl = env("DATABASE_URL_UNPOOLED")
+}
+
+/// PoE2-first UI; domain allows PoE1 later (ADR-002).
+enum Game {
+  POE2
+  POE1
+}
+
+/// How effective session duration is derived (ADR-006).
+enum DurationMethod {
+  EXTRAPOLATED
+  OBSERVED
+  MANUAL
+}
+
+/// MVP: manual price snapshots only (ADR-004).
+enum PriceSource {
+  MANUAL
+}
+
+/// MVP: what the user actually paid/received.
+enum ValuationType {
+  ACTUAL_PAID
+}
+
+/// Reusable per-map cost template (ADR-020).
+model Strategy {
+  id          String  @id @default(cuid())
+  name        String
+  game        Game
+  description String
+  /// Map/waystone notes; may become structured/regex later.
+  mapNotes    String?
+
+  /// Cost of one map/waystone in Chaos (quantity implied = 1).
+  mapUnitCostChaos Decimal @db.Decimal(20, 8)
+
+  /// Calculated: mapUnitCostChaos + sum(enhancement line totals).
+  estimatedCostPerMapChaos Decimal @db.Decimal(20, 8)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  enhancementLines StrategyEnhancementLine[]
+  mapSessions      MapSession[]
+}
+
+/// Scarab (PoE1) / tablet (PoE2) line. Quantities are per map.
+model StrategyEnhancementLine {
+  id         String   @id @default(cuid())
+  strategyId String
+  strategy   Strategy @relation(fields: [strategyId], references: [id], onDelete: Cascade)
+
+  name          String
+  /// Free-text mods for now; UI shows only for PoE2 tablets.
+  modifierNotes String?
+
+  /// Per-map quantity.
+  quantity      Decimal @db.Decimal(20, 8)
+  unitCostChaos Decimal @db.Decimal(20, 8)
+
+  /// Calculated: quantity × unitCostChaos.
+  lineTotalChaos Decimal @db.Decimal(20, 8)
+
+  /// Stable display order within a strategy.
+  sortOrder Int @default(0)
+
+  @@index([strategyId])
+}
+
+/// One completed mapping session under a Strategy.
+model MapSession {
+  id         String   @id @default(cuid())
+  strategyId String
+  /// Restrict: deleting a strategy with historical sessions would destroy
+  /// recorded results, so the API must refuse it (ADR-018).
+  strategy   Strategy @relation(fields: [strategyId], references: [id], onDelete: Restrict)
+
+  mapsCompleted    Int
+  /// Cost of one map/waystone in Chaos; prefilled from the strategy.
+  mapUnitCostChaos Decimal @db.Decimal(20, 8)
+  /// Divine ↔ Chaos snapshot for this session (ADR-003).
+  divineRateChaos  Decimal @db.Decimal(20, 8)
+  notes            String?
+
+  durationMethod DurationMethod
+
+  // Only the columns for the selected durationMethod are populated; the API
+  // enforces that via the discriminated union in the contracts.
+  sampleMapsCompleted   Int?
+  sampleDurationMinutes Decimal?  @db.Decimal(20, 8)
+  startedAt             DateTime?
+  endedAt               DateTime?
+  manualDurationMinutes Decimal?  @db.Decimal(20, 8)
+
+  // Calculated (compute-on-write). Nullable ones are null when the metric is
+  // not computable, e.g. zero duration or zero maps.
+  mapInvestmentChaos       Decimal  @db.Decimal(20, 8)
+  totalInvestmentChaos     Decimal  @db.Decimal(20, 8)
+  totalRevenueChaos        Decimal  @db.Decimal(20, 8)
+  profitChaos              Decimal  @db.Decimal(20, 8)
+  effectiveDurationMinutes Decimal  @db.Decimal(20, 8)
+  profitPerHourChaos       Decimal? @db.Decimal(20, 8)
+  profitPerMapChaos        Decimal? @db.Decimal(20, 8)
+  mapsPerHour              Decimal? @db.Decimal(20, 8)
+  roiPercent               Decimal? @db.Decimal(20, 8)
+  profitDivineApprox       Decimal? @db.Decimal(20, 8)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  investmentLines MapSessionInvestmentLine[]
+  revenueLines    MapSessionRevenueLine[]
+
+  @@index([strategyId])
+}
+
+/// Session costs other than the map itself (tablets, scarabs, crafting, ...).
+/// The map is priced via MapSession.mapUnitCostChaos — never as a line, or it
+/// would be double-counted.
+model MapSessionInvestmentLine {
+  id           String     @id @default(cuid())
+  mapSessionId String
+  mapSession   MapSession @relation(fields: [mapSessionId], references: [id], onDelete: Cascade)
+
+  name            String
+  quantity        Decimal       @db.Decimal(20, 8)
+  unitValueChaos  Decimal       @db.Decimal(20, 8)
+  priceRecordedAt DateTime
+  priceSource     PriceSource   @default(MANUAL)
+  valuationType   ValuationType @default(ACTUAL_PAID)
+
+  /// Calculated: quantity × unitValueChaos.
+  lineTotalChaos Decimal @db.Decimal(20, 8)
+
+  sortOrder Int @default(0)
+
+  @@index([mapSessionId])
+}
+
+/// Session drops/income. `category` is free text for data-driven expansion
+/// (MVP_SPEC §10), not an enum.
+model MapSessionRevenueLine {
+  id           String     @id @default(cuid())
+  mapSessionId String
+  mapSession   MapSession @relation(fields: [mapSessionId], references: [id], onDelete: Cascade)
+
+  name            String
+  category        String
+  quantity        Decimal       @db.Decimal(20, 8)
+  unitValueChaos  Decimal       @db.Decimal(20, 8)
+  priceRecordedAt DateTime
+  priceSource     PriceSource   @default(MANUAL)
+  valuationType   ValuationType @default(ACTUAL_PAID)
+
+  /// Calculated: quantity × unitValueChaos.
+  lineTotalChaos Decimal @db.Decimal(20, 8)
+
+  sortOrder Int @default(0)
+
+  @@index([mapSessionId])
 }
