@@ -156,10 +156,12 @@ Finalize field names when the first contract is written; keep them stable.
 Conceptual model (MVP_SPEC):
 
 ```text
-Strategy 1──* MapSession 1──* MapSessionLineItem (investment | revenue)
+Strategy 1──* StrategyEnhancementLine
+Strategy 1──* MapSession 1──* MapSessionInvestmentLine
+                        1──* MapSessionRevenueLine
 ```
 
-Details (enums for duration method, valuation type, categories, Decimal column types) land in `schema.prisma` during scaffold — not duplicated here until the first migration ticket.
+Implemented in `prisma/schema.prisma` (B3): cuid string IDs, `Decimal(20, 8)` for all money/quantities, DB enums for `Game` / `DurationMethod` / `PriceSource` / `ValuationType`, free-text revenue `category`, cascade delete on child lines, and `Restrict` on `MapSession → Strategy` — see **ADR-021**.
 
 **Principle:** store enough raw inputs to recompute or explain a run; derived fields always come from the shared engine (ADR-008).
 

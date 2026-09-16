@@ -574,6 +574,35 @@ Early Strategy drafts used optional metadata defaults (tier, party size, quantit
 
 ---
 
+## ADR-021: Persistence shape — cuid IDs, `Decimal(20, 8)` money, separate line tables
+
+| Field | Value |
+| --- | --- |
+| Status | Accepted |
+| Date | 2026-09-16 |
+
+### Context
+
+B3 turned the Zod contracts into Prisma models. Three choices needed locking: primary key type, money column type (ADR-015 left the exact column TBD), and whether investment/revenue lines share one table.
+
+### Decision
+
+- **IDs:** `String @id @default(cuid())` — collision-resistant string IDs generated at insert. Matches `z.string()` in contracts, is URL-safe, roughly time-sortable, and leaks no row counts (vs `autoincrement()`); shorter and more index-friendly than random `uuid()`.
+- **Money / quantities:** `Decimal @db.Decimal(20, 8)` (Postgres `NUMERIC(20, 8)`) everywhere — never `Float`. Satisfies ADR-015's "must not coerce to imprecise float"; 8 fractional digits covers rate metrics and ROI without rounding surprises.
+- **Line items:** separate `MapSessionInvestmentLine` and `MapSessionRevenueLine` tables (revenue adds required `category`), rather than one table with a nullable discriminator. Mirrors the contracts and keeps `NOT NULL` meaningful.
+- **Enums in the DB:** `Game`, `DurationMethod`, `PriceSource`, `ValuationType`. Revenue `category` stays free text (MVP_SPEC §10 data-driven expansion).
+- **Duration columns:** all three method variants live on `MapSession` as nullable columns; the contracts' discriminated union enforces which set is populated.
+- **Delete behavior:** child lines `onDelete: Cascade`; `MapSession → Strategy` is `onDelete: Restrict` so deleting a strategy cannot silently destroy recorded history.
+- **Seed:** `prisma/seed.ts` ships one demo Strategy + MapSession with **hand-computed** calculated fields (round numbers), to be regenerated through the calc engine once C2 lands.
+
+### Consequences
+
+- Prisma returns `Decimal` objects; services must convert to decimal **strings** at the API boundary (`DecimalStringSchema`) — no implicit `Number()`.
+- Adding a valuation/price source later is a migration plus an enum value, not a schema redesign.
+- Hand-computed seed values are a temporary duplication of calc logic and must be replaced in Epic C.
+
+---
+
 ## Future ideas (not ADRs yet)
 
 Product bets that are **not** accepted decisions live in [`FUTURE_FEATURES.md`](./FUTURE_FEATURES.md) (creator fork/prefill, naming ideas, buy-filter regex, etc.). Graduate an idea into an ADR here only when we commit to it for a release.
@@ -606,3 +635,4 @@ Former proposed ADR-013 (creator strategy fork/prefill) was renumbered away; tha
 | ADR-018 | Persist calculated fields on write | Accepted |
 | ADR-019 | Test layout: colocated unit; tests/api; e2e/ | Accepted |
 | ADR-020 | Strategy is a per-map setup cost template | Accepted |
+| ADR-021 | cuid IDs, Decimal(20, 8) money, separate line tables | Accepted |

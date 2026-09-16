@@ -18,37 +18,48 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Scripts
 
-| Script | Purpose |
-| --- | --- |
-| `npm run dev` | Next.js dev server |
-| `npm run build` | Production build |
-| `npm run start` | Serve production build |
-| `npm run lint` | ESLint |
-| `npm run typecheck` | TypeScript (`tsc --noEmit`) |
-| `npm run format` | Prettier write |
-| `npm run format:check` | Prettier check |
-| `npm run test` | Jest unit tests (`src/**/*.test.ts`) |
-| `npm run test:api` | Jest API tests (`tests/api/`) |
-| `npm run test:e2e` | Playwright E2E (`e2e/`) |
-| `npm run db:generate` | Generate Prisma Client |
-| `npm run db:migrate:status` | Check migration status against Neon |
-| `npm run db:studio` | Open Prisma Studio |
+| Script                      | Purpose                              |
+| --------------------------- | ------------------------------------ |
+| `npm run dev`               | Next.js dev server                   |
+| `npm run build`             | Production build                     |
+| `npm run start`             | Serve production build               |
+| `npm run lint`              | ESLint                               |
+| `npm run typecheck`         | TypeScript (`tsc --noEmit`)          |
+| `npm run format`            | Prettier write                       |
+| `npm run format:check`      | Prettier check                       |
+| `npm run test`              | Jest unit tests (`src/**/*.test.ts`) |
+| `npm run test:api`          | Jest API tests (`tests/api/`)        |
+| `npm run test:e2e`          | Playwright E2E (`e2e/`)              |
+| `npm run db:generate`       | Generate Prisma Client               |
+| `npm run db:migrate`        | Create + apply a migration (dev)     |
+| `npm run db:migrate:deploy` | Apply existing migrations (CI/prod)  |
+| `npm run db:migrate:status` | Check migration status against Neon  |
+| `npm run db:seed`           | Insert demo strategy + map session   |
+| `npm run db:studio`         | Open Prisma Studio                   |
 
 ## Database (Neon + Prisma)
 
 1. Link Neon (already done if you have `.env.local` with `DATABASE_URL`).
 2. `npm run db:generate`
-3. `npm run db:migrate:status` — should connect; no migrations yet until B3.
+3. `npm run db:migrate:status` — should report all migrations applied.
+4. `npm run db:seed` — optional demo data (re-runnable; replaces its own rows).
+
+Schema lives in [`prisma/schema.prisma`](./prisma/schema.prisma); committed SQL in
+`prisma/migrations/`. Money and quantities are `Decimal(20, 8)` (ADR-015) and
+calculated fields are persisted compute-on-write results (ADR-018).
+
+The seed's calculated values are **hand-computed** until the calc engine exists
+(Epic C); see the header comment in [`prisma/seed.ts`](./prisma/seed.ts).
 
 `.env.example` documents required vars. Never commit `.env.local`. CI smoke tests do **not** need Neon secrets yet.
 
 ## Testing layers (ADR-014 / ADR-019)
 
-| Layer | Tool | Location | Command |
-| --- | --- | --- | --- |
-| Unit | Jest | colocated `src/**/*.test.ts` | `npm test` |
-| API | Jest | `tests/api/` | `npm run test:api` |
-| E2E | Playwright | `e2e/` | `npm run test:e2e` |
+| Layer | Tool       | Location                     | Command            |
+| ----- | ---------- | ---------------------------- | ------------------ |
+| Unit  | Jest       | colocated `src/**/*.test.ts` | `npm test`         |
+| API   | Jest       | `tests/api/`                 | `npm run test:api` |
+| E2E   | Playwright | `e2e/`                       | `npm run test:e2e` |
 
 Jest does **not** run Playwright specs, and Playwright does **not** run unit/API math cases.
 
@@ -58,12 +69,12 @@ Jest does **not** run Playwright specs, and Playwright does **not** run unit/API
 
 GitHub Actions (`.github/workflows/ci.yml`) on PRs and `main`:
 
-1. Lint  
-2. Typecheck  
-3. Unit tests  
-4. API tests  
-5. Production build  
-6. Playwright E2E (Chromium)  
+1. Lint
+2. Typecheck
+3. Unit tests
+4. API tests
+5. Production build
+6. Playwright E2E (Chromium)
 
 On E2E failure, the workflow uploads `playwright-report/` and `test-results/` artifacts.
 
