@@ -47,6 +47,37 @@ Check off AC in `BACKLOG.md` as you finish each item.
 - **Zod** for contracts / validation — ADR-017
 - **Compute-on-write** (persist calculated fields) — ADR-018
 - Tests: colocated unit `*.test.ts`; `tests/api/`; `e2e/` — ADR-019
+- Persistence: cuid IDs, `Decimal(20, 8)` money, separate line tables — ADR-021
+
+## Tooling gotchas (learned the hard way)
+
+**Windows / PowerShell**
+
+- Taylor's shell is PowerShell: **no heredocs**. Multi-line commit messages go in a temp file via `git commit -F <file>`, not `-m "$(cat <<'EOF' ...)"`.
+
+**Prisma**
+
+- `prisma` / `@prisma/client` are **pinned to 6.19.0**. Do not run `npm install prisma@latest` — it pulls 7.x/8.x release candidates and previously corrupted `node_modules` with hanging installs.
+- This repo blocks postinstall scripts by default. New packages with binaries (`esbuild`, Prisma engines) must be listed in `package.json#allowScripts` and reinstalled, or their binaries never land.
+- Every `db:*` script is wrapped in `dotenv -e .env.local --`. A bare `npx prisma validate` fails with `Environment variable not found: DATABASE_URL_UNPOOLED` — that is a missing env var, **not** schema drift. Use `npm run db:migrate:status` to check drift.
+- `package.json#prisma` (the seed hook) prints a Prisma 7 deprecation warning on every command. Harmless; migrate to `prisma.config.ts` when the version is bumped.
+- `npx prisma format` reformats `schema.prisma` but does not change semantics — re-run `db:migrate:status` after to confirm.
+
+**Zod 4**
+
+- Cannot `.merge()` a `ZodDiscriminatedUnion` into an object. Chain `.and()` instead (see `MapSessionSchema`).
+
+**CI**
+
+- Order is lint → typecheck → unit → API → build → E2E. Typecheck runs **before** `build`, so app code must not depend on Next-generated types like `LayoutProps` (`app/layout.tsx` uses plain React props for this reason).
+- CI has **no database access**; it only runs `prisma generate`. Migrations are applied locally against Neon. Decide at D1/D2 whether API tests get an ephemeral Neon branch instead of mocks.
+- `format:check` is **not** a CI gate, `docs/` is in `.prettierignore`, and a few pre-existing `src/contracts` files fail Prettier. Don't reformat them as drive-by noise.
+- `actions/checkout@v4` / `actions/setup-node@v4` emit a Node 20 deprecation annotation. Runs still pass; bump to `@v5` when convenient.
+
+**Schema/contract parity**
+
+- Prisma returns `Decimal` objects; services must serialize to decimal **strings** at the API boundary (`DecimalStringSchema`). Never `Number()` a money value.
+- Nothing currently guards schema-vs-contract drift. That is the job of the D1/D2 API tests validating responses against the Zod schemas.
 
 ## Do not
 
