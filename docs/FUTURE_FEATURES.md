@@ -4,7 +4,7 @@
 | --- | --- |
 | Status | Living idea backlog (not committed scope) |
 | Started | 2026-09-11 |
-| Related | [`MVP_SPEC.md`](./MVP_SPEC.md), [`DECISIONS.md`](./DECISIONS.md), [`COMPETITIVE_ANALYSIS.md`](./COMPETITIVE_ANALYSIS.md) |
+| Related | [`MVP_SPEC.md`](./MVP_SPEC.md), [`DECISIONS.md`](./DECISIONS.md) |
 
 Ideas we might want in later phases. **None of this is MVP** unless explicitly Accepted in `DECISIONS.md` and pulled into a numbered release.
 

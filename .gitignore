@@ -51,3 +51,7 @@ next-env.d.ts
 
 # local install noise
 npm-prisma-install.log
+
+# Local study notes (not product docs)
+docs/INTERVIEW_PREP.md
+docs/COMPETITIVE_ANALYSIS.md

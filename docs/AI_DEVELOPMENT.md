@@ -17,7 +17,6 @@ The portfolio story is: requirements → decisions → architecture → implemen
 3. **Explain before / after implement** — Before non-trivial implementation: short plan. After: what changed and why it matches the spec.
 4. **Tests prove risk** — Calculation and validation behavior are covered per `TEST_STRATEGY.md`.
 5. **No silent scope creep** — Non-goals in `MVP_SPEC.md` stay out unless we explicitly reopen them.
-6. **Interview trail** — New decisions and concepts get Q&A entries in `INTERVIEW_PREP.md`.
 
 ## What AI may do
 
@@ -25,7 +24,6 @@ The portfolio story is: requirements → decisions → architecture → implemen
 - Draft architecture and tickets
 - Implement code after a decision
 - Generate tests and docs drafts
-- Quiz Taylor from `INTERVIEW_PREP.md`
 
 ## What Taylor owns
 
@@ -41,7 +39,7 @@ Chats do **not** fully remember each other. Carry context via the repo:
 | Mechanism | Use for |
 | --- | --- |
 | [`AGENTS.md`](./AGENTS.md) | **Start here** — product name, process, stack, next step |
-| `docs/*.md` | Specs, ADRs, architecture, backlog checklist, test strategy, interview Qs |
+| `docs/*.md` | Specs, ADRs, architecture, backlog checklist, test strategy |
 | `.cursor/rules` | Always-on working rules (`ai-development-workflow.mdc`) |
 | `@`-mention files | Pull exact docs into a new chat |
 | Same chat | Stay when mid-decision or mid-implementation |
@@ -66,6 +64,4 @@ Chats do **not** fully remember each other. Carry context via the repo:
 - [`ARCHITECTURE.md`](./ARCHITECTURE.md)
 - [`BACKLOG.md`](./BACKLOG.md)
 - [`FUTURE_FEATURES.md`](./FUTURE_FEATURES.md) — post-MVP ideas (not committed scope)
-- [`COMPETITIVE_ANALYSIS.md`](./COMPETITIVE_ANALYSIS.md)
 - [`TEST_STRATEGY.md`](./TEST_STRATEGY.md)
-- [`INTERVIEW_PREP.md`](./INTERVIEW_PREP.md)
