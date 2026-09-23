@@ -26,9 +26,9 @@ Next.js App Router + TS · Vercel · Neon Postgres · Prisma · Route Handlers (
 
 ## Current next step
 
-**C2 — duration methods + rate metrics + ROI** per [`BACKLOG.md`](./BACKLOG.md) (C1 money primitives done). Then C3 → API → UI → deploy.
+**C3 — Divine secondary display + rounding policy** per [`BACKLOG.md`](./BACKLOG.md) (C1 money + C2 duration/rates/ROI done). Then API → UI → deploy.
 
-When C2 lands, rewrite `prisma/seed.ts` to derive its calculated fields from the calc engine instead of the current hand-computed constants.
+`prisma/seed.ts` already derives C1/C2 calculated fields from the calc engine. When C3 lands, replace the hardcoded `profitDivineApprox` the same way.
 
 Check off AC in `BACKLOG.md` as you finish each item.
 

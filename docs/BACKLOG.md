@@ -120,10 +120,10 @@ Epics B–F below are the rest of the path to MVP. Keep checking them off here. 
 **Labels:** `domain`, `test`  
 **Depends on:** C1  
 **AC:**
-- [ ] Extrapolated / Observed / Manual effective duration
-- [ ] profit/hr, profit/map, maps/hr, ROI
-- [ ] N/A (not Infinity/NaN) for zero duration, zero maps, zero investment
-- [ ] Jest coverage per TEST_STRATEGY risk table
+- [x] Extrapolated / Observed / Manual effective duration
+- [x] profit/hr, profit/map, maps/hr, ROI
+- [x] N/A (not Infinity/NaN) for zero duration, zero maps, zero investment
+- [x] Jest coverage per TEST_STRATEGY risk table
 
 ### C3. Calc engine: Divine secondary display + rounding policy
 **Labels:** `domain`, `test`  

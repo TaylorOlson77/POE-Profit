@@ -1,5 +1,6 @@
 import {
   DecimalStringSchema,
+  NullableSignedDecimalStringSchema,
   SignedDecimalStringSchema,
 } from "./decimal";
 
@@ -25,5 +26,16 @@ describe("SignedDecimalStringSchema", () => {
 
   it("rejects JSON numbers", () => {
     expect(SignedDecimalStringSchema.safeParse(-50).success).toBe(false);
+  });
+});
+
+describe("NullableSignedDecimalStringSchema", () => {
+  it("accepts signed strings or null", () => {
+    expect(NullableSignedDecimalStringSchema.safeParse("-60").success).toBe(
+      true,
+    );
+    expect(NullableSignedDecimalStringSchema.safeParse(null).success).toBe(
+      true,
+    );
   });
 });
