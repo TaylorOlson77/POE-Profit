@@ -2,6 +2,7 @@ import { z } from "zod";
 import {
   DecimalStringSchema,
   NullableDecimalStringSchema,
+  NullableSignedDecimalStringSchema,
   PositiveDecimalStringSchema,
   SignedDecimalStringSchema,
 } from "./decimal";
@@ -189,10 +190,10 @@ export const MapSessionCalculatedFieldsSchema = z.object({
   mapInvestmentChaos: DecimalStringSchema,
   effectiveDurationMinutes: DecimalStringSchema,
   durationMethodLabel: DurationMethodLabelSchema,
-  profitPerHourChaos: NullableDecimalStringSchema,
-  profitPerMapChaos: NullableDecimalStringSchema,
+  profitPerHourChaos: NullableSignedDecimalStringSchema,
+  profitPerMapChaos: NullableSignedDecimalStringSchema,
   mapsPerHour: NullableDecimalStringSchema,
-  roiPercent: NullableDecimalStringSchema,
+  roiPercent: NullableSignedDecimalStringSchema,
   /** Secondary display; null when unavailable. */
   profitDivineApprox: NullableDecimalStringSchema,
 });

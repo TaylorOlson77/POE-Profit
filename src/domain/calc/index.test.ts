@@ -1,9 +1,15 @@
 import Decimal from "decimal.js";
 import {
+  calculateSession,
   calculateSessionMoney,
   calculateStrategyCosts,
+  effectiveDurationMinutes,
   lineTotal,
+  mapsPerHour,
   profit,
+  profitPerHourChaos,
+  profitPerMapChaos,
+  roiPercent,
   sumLineTotals,
 } from "./index";
 
@@ -163,5 +169,260 @@ describe("calculateSessionMoney", () => {
     expectDecimal(result.totalInvestmentChaos, "0");
     expectDecimal(result.totalRevenueChaos, "0");
     expectDecimal(result.profitChaos, "0");
+  });
+});
+
+const SEED_SESSION_MONEY = {
+  mapsCompleted: 40,
+  mapUnitCostChaos: "2",
+  investmentLines: [
+    { quantity: "40", unitValueChaos: "7" },
+    { quantity: "40", unitValueChaos: "1" },
+  ],
+  revenueLines: [
+    { quantity: "8", unitValueChaos: "200" },
+    { quantity: "30", unitValueChaos: "14" },
+    { quantity: "60", unitValueChaos: "5" },
+  ],
+} as const;
+
+describe("effectiveDurationMinutes", () => {
+  it("extrapolates sample duration across maps completed", () => {
+    const result = effectiveDurationMinutes(
+      {
+        durationMethod: "EXTRAPOLATED",
+        sampleMapsCompleted: 10,
+        sampleDurationMinutes: "20",
+      },
+      40,
+    );
+
+    expectDecimal(result.minutes, "80");
+    expect(result.durationMethodLabel).toBe("Extrapolated");
+  });
+
+  it("uses observed wall-clock minutes", () => {
+    const result = effectiveDurationMinutes(
+      {
+        durationMethod: "OBSERVED",
+        startedAt: "2026-01-01T00:00:00.000Z",
+        endedAt: "2026-01-01T01:20:00.000Z",
+      },
+      40,
+    );
+
+    expectDecimal(result.minutes, "80");
+    expect(result.durationMethodLabel).toBe("Observed");
+  });
+
+  it("is 0 when observed start and end are the same", () => {
+    const result = effectiveDurationMinutes(
+      {
+        durationMethod: "OBSERVED",
+        startedAt: "2026-01-01T00:00:00.000Z",
+        endedAt: "2026-01-01T00:00:00.000Z",
+      },
+      40,
+    );
+
+    expectDecimal(result.minutes, "0");
+  });
+
+  it("uses manual duration as-is", () => {
+    const result = effectiveDurationMinutes(
+      {
+        durationMethod: "MANUAL",
+        manualDurationMinutes: "80",
+      },
+      40,
+    );
+
+    expectDecimal(result.minutes, "80");
+    expect(result.durationMethodLabel).toBe("Manual");
+  });
+
+  it("allows manual duration of 0", () => {
+    const result = effectiveDurationMinutes(
+      {
+        durationMethod: "MANUAL",
+        manualDurationMinutes: "0",
+      },
+      40,
+    );
+
+    expectDecimal(result.minutes, "0");
+    expect(result.durationMethodLabel).toBe("Manual");
+  });
+
+  it("throws when extrapolated sample maps are 0", () => {
+    expect(() =>
+      effectiveDurationMinutes(
+        {
+          durationMethod: "EXTRAPOLATED",
+          sampleMapsCompleted: 0,
+          sampleDurationMinutes: "20",
+        },
+        40,
+      ),
+    ).toThrow("sampleMapsCompleted must be greater than zero");
+  });
+
+  it("throws when extrapolated sample duration is 0", () => {
+    expect(() =>
+      effectiveDurationMinutes(
+        {
+          durationMethod: "EXTRAPOLATED",
+          sampleMapsCompleted: 10,
+          sampleDurationMinutes: "0",
+        },
+        40,
+      ),
+    ).toThrow("sampleDurationMinutes must be greater than zero");
+  });
+
+  it("throws when observed end precedes start", () => {
+    expect(() =>
+      effectiveDurationMinutes(
+        {
+          durationMethod: "OBSERVED",
+          startedAt: "2026-01-01T01:20:00.000Z",
+          endedAt: "2026-01-01T00:00:00.000Z",
+        },
+        40,
+      ),
+    ).toThrow("endedAt must not precede startedAt");
+  });
+});
+
+describe("rate metrics and ROI", () => {
+  it("matches the seed session rates", () => {
+    expectDecimal(profitPerHourChaos("1920", "80") as Decimal, "1440");
+    expectDecimal(profitPerMapChaos("1920", 40) as Decimal, "48");
+    expectDecimal(mapsPerHour(40, "80") as Decimal, "30");
+    expectDecimal(roiPercent("1920", "400") as Decimal, "480");
+  });
+
+  it("locks TEST_STRATEGY §6.1 golden rates at full precision", () => {
+    const profitChaos = new Decimal("2273.49");
+    const minutes = new Decimal("99");
+    const investment = new Decimal("513.60");
+
+    expectDecimal(
+      profitPerHourChaos(profitChaos, minutes) as Decimal,
+      profitChaos.times(60).div(minutes),
+    );
+    expectDecimal(profitPerMapChaos(profitChaos, 40) as Decimal, "56.83725");
+    expectDecimal(
+      mapsPerHour(40, minutes) as Decimal,
+      new Decimal(40).times(60).div(minutes),
+    );
+    expectDecimal(
+      roiPercent(profitChaos, investment) as Decimal,
+      profitChaos.div(investment).times(100),
+    );
+  });
+
+  it("returns null profit/hour and maps/hour when duration is 0", () => {
+    expect(profitPerHourChaos("1920", "0")).toBeNull();
+    expect(mapsPerHour(40, "0")).toBeNull();
+    expectDecimal(profitPerMapChaos("1920", 40) as Decimal, "48");
+  });
+
+  it("returns null profit/map and maps/hour when maps are 0", () => {
+    expect(profitPerMapChaos("100", 0)).toBeNull();
+    expect(mapsPerHour(0, "80")).toBeNull();
+    expectDecimal(profitPerHourChaos("100", "80") as Decimal, "75");
+  });
+
+  it("returns null ROI when investment is 0, including zero profit", () => {
+    expect(roiPercent("100", "0")).toBeNull();
+    expect(roiPercent("0", "0")).toBeNull();
+  });
+
+  it("keeps signed rates when profit is negative", () => {
+    expectDecimal(profitPerHourChaos("-80", "80") as Decimal, "-60");
+    expectDecimal(profitPerMapChaos("-80", 40) as Decimal, "-2");
+    expectDecimal(roiPercent("-80", "80") as Decimal, "-100");
+  });
+});
+
+describe("calculateSession", () => {
+  it("composes seed money, extrapolated duration, and rates", () => {
+    const result = calculateSession({
+      ...SEED_SESSION_MONEY,
+      duration: {
+        durationMethod: "EXTRAPOLATED",
+        sampleMapsCompleted: 10,
+        sampleDurationMinutes: "20",
+      },
+    });
+
+    expectDecimal(result.profitChaos, "1920");
+    expectDecimal(result.effectiveDurationMinutes, "80");
+    expect(result.durationMethodLabel).toBe("Extrapolated");
+    expectDecimal(result.profitPerHourChaos as Decimal, "1440");
+    expectDecimal(result.profitPerMapChaos as Decimal, "48");
+    expectDecimal(result.mapsPerHour as Decimal, "30");
+    expectDecimal(result.roiPercent as Decimal, "480");
+  });
+
+  it("labels observed duration without mixing methods", () => {
+    const result = calculateSession({
+      ...SEED_SESSION_MONEY,
+      duration: {
+        durationMethod: "OBSERVED",
+        startedAt: "2026-01-01T00:00:00.000Z",
+        endedAt: "2026-01-01T01:20:00.000Z",
+      },
+    });
+
+    expectDecimal(result.effectiveDurationMinutes, "80");
+    expect(result.durationMethodLabel).toBe("Observed");
+  });
+
+  it("labels manual duration", () => {
+    const result = calculateSession({
+      ...SEED_SESSION_MONEY,
+      duration: {
+        durationMethod: "MANUAL",
+        manualDurationMinutes: "80",
+      },
+    });
+
+    expect(result.durationMethodLabel).toBe("Manual");
+    expectDecimal(result.effectiveDurationMinutes, "80");
+  });
+
+  it("nulls duration-based rates when effective duration is 0", () => {
+    const result = calculateSession({
+      ...SEED_SESSION_MONEY,
+      duration: {
+        durationMethod: "MANUAL",
+        manualDurationMinutes: "0",
+      },
+    });
+
+    expectDecimal(result.effectiveDurationMinutes, "0");
+    expect(result.profitPerHourChaos).toBeNull();
+    expect(result.mapsPerHour).toBeNull();
+    expectDecimal(result.profitPerMapChaos as Decimal, "48");
+  });
+
+  it("nulls map-based rates when mapsCompleted is 0", () => {
+    const result = calculateSession({
+      mapsCompleted: 0,
+      mapUnitCostChaos: "2",
+      investmentLines: [],
+      revenueLines: [{ quantity: "1", unitValueChaos: "100" }],
+      duration: {
+        durationMethod: "MANUAL",
+        manualDurationMinutes: "80",
+      },
+    });
+
+    expect(result.profitPerMapChaos).toBeNull();
+    expect(result.mapsPerHour).toBeNull();
+    expect(result.roiPercent).toBeNull();
+    expectDecimal(result.profitPerHourChaos as Decimal, "75");
   });
 });

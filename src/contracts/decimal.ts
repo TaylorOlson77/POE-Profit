@@ -49,3 +49,11 @@ export type PositiveDecimalString = z.infer<typeof PositiveDecimalStringSchema>;
 export const NullableDecimalStringSchema = DecimalStringSchema.nullable();
 
 export type NullableDecimalString = z.infer<typeof NullableDecimalStringSchema>;
+
+/** Same as SignedDecimalString, or null when a calculated metric is N/A. */
+export const NullableSignedDecimalStringSchema =
+  SignedDecimalStringSchema.nullable();
+
+export type NullableSignedDecimalString = z.infer<
+  typeof NullableSignedDecimalStringSchema
+>;
