@@ -194,8 +194,11 @@ export const MapSessionCalculatedFieldsSchema = z.object({
   profitPerMapChaos: NullableSignedDecimalStringSchema,
   mapsPerHour: NullableDecimalStringSchema,
   roiPercent: NullableSignedDecimalStringSchema,
-  /** Secondary display; null when unavailable. */
-  profitDivineApprox: NullableDecimalStringSchema,
+  /**
+   * Secondary display from the session-stored rate (ADR-003).
+   * Null when that rate is not positive. Negative when profit is negative.
+   */
+  profitDivineApprox: NullableSignedDecimalStringSchema,
 });
 
 export type MapSessionCalculatedFields = z.infer<

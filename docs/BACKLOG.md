@@ -129,9 +129,9 @@ Epics B–F below are the rest of the path to MVP. Keep checking them off here. 
 **Labels:** `domain`, `test`  
 **Depends on:** C1  
 **AC:**
-- [ ] Chaos canonical; Divine approx from run-stored rate
-- [ ] Documented display rounding vs internal precision
-- [ ] Tests for conversion and display helpers
+- [x] Chaos canonical; Divine approx from run-stored rate
+- [x] Documented display rounding vs internal precision
+- [x] Tests for conversion and display helpers
 
 ---
 

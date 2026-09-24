@@ -543,6 +543,29 @@ Use the full **`decimal.js`** package for MVP money/efficiency math, not `decima
 
 ---
 
+## ADR-015 clarification: display rounding vs internal precision
+
+| Field | Value |
+| --- | --- |
+| Status | Accepted (clarification of ADR-015) |
+| Date | 2026-09-23 |
+
+### Decision
+
+- Engine results stay at full `decimal.js` precision. That includes `profitDivineApprox = profitChaos / divineRateChaos`. C1 and C2 formulas are not rounded.
+- Display rounding is `roundForDisplay`: `toDecimalPlaces(2, ROUND_HALF_UP)` on that call only. No `Decimal.set()`.
+- `Decimal.toString()` after display rounding trims trailing zeros (`20.40` displays as `20.4`).
+- A Divine rate that is zero or negative yields `null` (unavailable). Zero profit with a positive rate is `0`. Negative profit yields a negative quotient.
+- `profitDivineApprox` is a signed nullable decimal string, same as the other signed profit metrics.
+- Postgres `NUMERIC(20, 8)` remains the storage cap at write time (ADR-021). That cap is separate from the 2-place display rule.
+
+### Consequences
+
+- The UI formats through `roundForDisplay`. It does not invent a second scale.
+- `TEST_STRATEGY.md` §6.1 golden figures display as profit/hour `1377.87`, profit/map `56.84`, Divine `11.37`, ROI `442.66`. The internal quotients stay exact.
+
+---
+
 ## ADR-020: Strategy is a per-map setup cost template
 
 | Field | Value |

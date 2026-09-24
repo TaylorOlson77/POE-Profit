@@ -26,11 +26,13 @@ Next.js App Router + TS · Vercel · Neon Postgres · Prisma · Route Handlers (
 
 ## Current next step
 
-**C3 — Divine secondary display + rounding policy** per [`BACKLOG.md`](./BACKLOG.md) (C1 money + C2 duration/rates/ROI done). Then API → UI → deploy.
+**D1 — Strategy Route Handlers + API tests** per [`BACKLOG.md`](./BACKLOG.md) (C1–C3 calc engine done). Then D2 MapSession API → UI → deploy.
 
-`prisma/seed.ts` already derives C1/C2 calculated fields from the calc engine. When C3 lands, replace the hardcoded `profitDivineApprox` the same way.
+C3 is in the engine: `profitDivineApprox = profitChaos / divineRateChaos` (null when the rate is not positive), signed nullable on the contract, `roundForDisplay` is 2 dp half-up and is not applied inside C1/C2. Seed derives `9.6` from the engine. See the ADR-015 display-rounding clarification.
 
-Check off AC in `BACKLOG.md` as you finish each item.
+Plan and wait for Taylor’s review before modifying files (`.cursor/rules/ai-development-workflow.mdc`). Check off AC in `BACKLOG.md` as you finish each item. Do not commit until Taylor asks.
+
+`docs/INTERVIEW_PREP.md` is **gitignored** local study notes. Do not add it back to git.
 
 ## Required reading (build chat)
 

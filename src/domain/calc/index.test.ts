@@ -7,9 +7,11 @@ import {
   lineTotal,
   mapsPerHour,
   profit,
+  profitDivineApprox,
   profitPerHourChaos,
   profitPerMapChaos,
   roiPercent,
+  roundForDisplay,
   sumLineTotals,
 } from "./index";
 
@@ -186,6 +188,11 @@ const SEED_SESSION_MONEY = {
   ],
 } as const;
 
+const SEED_SESSION = {
+  ...SEED_SESSION_MONEY,
+  divineRateChaos: "200",
+} as const;
+
 describe("effectiveDurationMinutes", () => {
   it("extrapolates sample duration across maps completed", () => {
     const result = effectiveDurationMinutes(
@@ -346,10 +353,74 @@ describe("rate metrics and ROI", () => {
   });
 });
 
+describe("profitDivineApprox", () => {
+  it("divides seed profit by the stored rate: 1920 / 200 = 9.6", () => {
+    expectDecimal(profitDivineApprox("1920", "200") as Decimal, "9.6");
+  });
+
+  it("keeps the spec example unrounded: 2273.49 / 200 = 11.36745", () => {
+    expectDecimal(profitDivineApprox("2273.49", "200") as Decimal, "11.36745");
+  });
+
+  it("follows the session snapshot, so the same profit and a different rate differ", () => {
+    expectDecimal(profitDivineApprox("1920", "100") as Decimal, "19.2");
+    expectDecimal(profitDivineApprox("1920", "200") as Decimal, "9.6");
+  });
+
+  it("returns null when the rate is zero or negative", () => {
+    expect(profitDivineApprox("1920", "0")).toBeNull();
+    expect(profitDivineApprox("1920", "-1")).toBeNull();
+  });
+
+  it("returns 0 when profit is zero and the rate is positive", () => {
+    expectDecimal(profitDivineApprox("0", "200") as Decimal, "0");
+  });
+
+  it("returns a negative quotient when profit is negative", () => {
+    expectDecimal(profitDivineApprox("-80", "200") as Decimal, "-0.4");
+  });
+
+  it("keeps a repeating quotient at full precision", () => {
+    expectDecimal(profitDivineApprox("100", "3") as Decimal, new Decimal("100").div("3"));
+  });
+});
+
+describe("roundForDisplay", () => {
+  it("rounds the spec Divine example to 11.37", () => {
+    const exact = profitDivineApprox("2273.49", "200") as Decimal;
+    expect(roundForDisplay(exact).toString()).toBe("11.37");
+    expectDecimal(exact, "11.36745");
+  });
+
+  it("rounds golden rate metrics to 2 dp half up", () => {
+    const profitChaos = new Decimal("2273.49");
+    const minutes = new Decimal("99");
+    const investment = new Decimal("513.60");
+
+    expect(roundForDisplay(profitChaos.times(60).div(minutes)).toString()).toBe(
+      "1377.87",
+    );
+    expect(roundForDisplay(profitChaos.div(40)).toString()).toBe("56.84");
+    expect(
+      roundForDisplay(profitChaos.div(investment).times(100)).toString(),
+    ).toBe("442.66");
+  });
+
+  it("trims trailing zeros so 20.4 stays 20.4", () => {
+    expect(roundForDisplay("20.4").toString()).toBe("20.4");
+    expect(roundForDisplay("20.40").toString()).toBe("20.4");
+  });
+
+  it("rounds a half-up boundary away from zero", () => {
+    expect(roundForDisplay("1.225").toString()).toBe("1.23");
+    expect(roundForDisplay("-1.225").toString()).toBe("-1.23");
+  });
+});
+
 describe("calculateSession", () => {
-  it("composes seed money, extrapolated duration, and rates", () => {
+  it("composes seed money, extrapolated duration, rates, and Divine approx", () => {
     const result = calculateSession({
-      ...SEED_SESSION_MONEY,
+      ...SEED_SESSION,
       duration: {
         durationMethod: "EXTRAPOLATED",
         sampleMapsCompleted: 10,
@@ -364,11 +435,12 @@ describe("calculateSession", () => {
     expectDecimal(result.profitPerMapChaos as Decimal, "48");
     expectDecimal(result.mapsPerHour as Decimal, "30");
     expectDecimal(result.roiPercent as Decimal, "480");
+    expectDecimal(result.profitDivineApprox as Decimal, "9.6");
   });
 
   it("labels observed duration without mixing methods", () => {
     const result = calculateSession({
-      ...SEED_SESSION_MONEY,
+      ...SEED_SESSION,
       duration: {
         durationMethod: "OBSERVED",
         startedAt: "2026-01-01T00:00:00.000Z",
@@ -382,7 +454,7 @@ describe("calculateSession", () => {
 
   it("labels manual duration", () => {
     const result = calculateSession({
-      ...SEED_SESSION_MONEY,
+      ...SEED_SESSION,
       duration: {
         durationMethod: "MANUAL",
         manualDurationMinutes: "80",
@@ -395,7 +467,7 @@ describe("calculateSession", () => {
 
   it("nulls duration-based rates when effective duration is 0", () => {
     const result = calculateSession({
-      ...SEED_SESSION_MONEY,
+      ...SEED_SESSION,
       duration: {
         durationMethod: "MANUAL",
         manualDurationMinutes: "0",
@@ -418,11 +490,28 @@ describe("calculateSession", () => {
         durationMethod: "MANUAL",
         manualDurationMinutes: "80",
       },
+      divineRateChaos: "200",
     });
 
     expect(result.profitPerMapChaos).toBeNull();
     expect(result.mapsPerHour).toBeNull();
     expect(result.roiPercent).toBeNull();
     expectDecimal(result.profitPerHourChaos as Decimal, "75");
+    expectDecimal(result.profitDivineApprox as Decimal, "0.5");
+  });
+
+  it("nulls Divine approx when the stored rate is 0 and leaves Chaos profit exact", () => {
+    const result = calculateSession({
+      ...SEED_SESSION,
+      divineRateChaos: "0",
+      duration: {
+        durationMethod: "MANUAL",
+        manualDurationMinutes: "80",
+      },
+    });
+
+    expect(result.profitDivineApprox).toBeNull();
+    expectDecimal(result.profitChaos, "1920");
+    expectDecimal(result.profitPerHourChaos as Decimal, "1440");
   });
 });

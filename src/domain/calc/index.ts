@@ -6,9 +6,11 @@ import Decimal from "decimal.js";
  *
  * C1 owns line totals, strategy per-map cost, session investment/revenue, and
  * profit. C2 owns duration methods, rate metrics, and ROI (null when N/A —
- * never Infinity/NaN). Divine conversion and display rounding are C3 — this
- * module does not round and does not call Decimal.set() (that config is
- * process-global).
+ * never Infinity/NaN). C3 owns Divine conversion and display rounding.
+ *
+ * C1/C2 results and profitDivineApprox stay at full decimal.js precision.
+ * roundForDisplay is the only rounding step (2 dp, half up, per call).
+ * This module does not call Decimal.set() (that config is process-global).
  *
  * Conversion boundary (D1/D2 services, not here):
  * API JSON uses decimal strings (DecimalStringSchema); Prisma returns Decimal
@@ -84,6 +86,11 @@ export type EffectiveDurationResult = {
 
 export type SessionCalcInput = SessionMoneyInput & {
   duration: SessionDurationInput;
+  /**
+   * Divine ↔ Chaos snapshot stored on this session (ADR-003).
+   * Not a live market rate.
+   */
+  divineRateChaos: Decimal.Value;
 };
 
 export type SessionCalcResult = SessionMoneyResult & {
@@ -93,7 +100,15 @@ export type SessionCalcResult = SessionMoneyResult & {
   profitPerMapChaos: Decimal | null;
   mapsPerHour: Decimal | null;
   roiPercent: Decimal | null;
+  /** Unrounded profitChaos / divineRateChaos. Null when the rate is not positive. */
+  profitDivineApprox: Decimal | null;
 };
+
+/**
+ * Chaos, Divine, and rate metrics share this display scale (ADR-015).
+ * Storage stays NUMERIC(20, 8) (ADR-021). Engine results stay unrounded.
+ */
+export const DISPLAY_DECIMAL_PLACES = 2;
 
 /** lineTotal = quantity × unitValue (Chaos). */
 export function lineTotal(
@@ -272,7 +287,36 @@ export function roiPercent(
   return new Decimal(profitChaos).div(investment).times(100);
 }
 
-/** C1 money + C2 duration and rates. Divine approx is C3. */
+/**
+ * profitDivineApprox = profitChaos / divineRateChaos (ADR-003).
+ * Unrounded. Null when the rate is zero or negative (unavailable — do not
+ * divide by zero). Zero profit with a positive rate is 0, not null.
+ * Negative profit yields a negative quotient.
+ */
+export function profitDivineApprox(
+  profitChaos: Decimal.Value,
+  divineRateChaos: Decimal.Value,
+): Decimal | null {
+  const rate = new Decimal(divineRateChaos);
+  if (rate.lte(0)) {
+    return null;
+  }
+  return new Decimal(profitChaos).div(rate);
+}
+
+/**
+ * Presentation rounding only. Not applied inside C1/C2 or profitDivineApprox.
+ * 2 decimal places, half away from zero, on this value only — never Decimal.set().
+ * Decimal.toString() after this trims trailing zeros ("20.40" → "20.4").
+ */
+export function roundForDisplay(value: Decimal.Value): Decimal {
+  return new Decimal(value).toDecimalPlaces(
+    DISPLAY_DECIMAL_PLACES,
+    Decimal.ROUND_HALF_UP,
+  );
+}
+
+/** C1 money + C2 duration and rates + unrounded C3 Divine approx. */
 export function calculateSession(input: SessionCalcInput): SessionCalcResult {
   const money = calculateSessionMoney(input);
   const duration = effectiveDurationMinutes(
@@ -294,5 +338,9 @@ export function calculateSession(input: SessionCalcInput): SessionCalcResult {
     ),
     mapsPerHour: mapsPerHour(input.mapsCompleted, duration.minutes),
     roiPercent: roiPercent(money.profitChaos, money.totalInvestmentChaos),
+    profitDivineApprox: profitDivineApprox(
+      money.profitChaos,
+      input.divineRateChaos,
+    ),
   };
 }
