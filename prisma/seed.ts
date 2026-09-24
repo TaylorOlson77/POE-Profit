@@ -25,7 +25,7 @@ import {
  *   profit / map        1920 ÷ 40                =    48
  *   maps / hour         40 ÷ (80/60)             =    30
  *   ROI %               1920 ÷ 400 × 100         =   480
- *   profit in divine    1920 ÷ 200               =     9.6  (C3 — hardcoded)
+ *   profit in divine    1920 ÷ 200               =     9.6
  */
 
 const prisma = new PrismaClient();
@@ -122,6 +122,7 @@ async function main() {
       sampleMapsCompleted: 10,
       sampleDurationMinutes: "20",
     },
+    divineRateChaos: "200",
   });
 
   // Re-runnable: drop the seed rows (lines cascade) before recreating them.
@@ -171,8 +172,7 @@ async function main() {
       profitPerMapChaos: decimalString(session.profitPerMapChaos),
       mapsPerHour: decimalString(session.mapsPerHour),
       roiPercent: decimalString(session.roiPercent),
-      // C3 will derive this from profit ÷ divineRateChaos.
-      profitDivineApprox: "9.6",
+      profitDivineApprox: decimalString(session.profitDivineApprox),
       investmentLines: {
         create: SESSION_INVESTMENT_LINES.map((line, index) => ({
           name: line.name,

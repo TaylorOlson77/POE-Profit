@@ -248,6 +248,6 @@ These are intentionally deferred until stack selection:
 - API test harness (in-process vs HTTP against test container)
 - Playwright project layout and CI browser install
 - Deploy smoke URL and secrets handling
-- Precise rounding policy constants (decimal places for Chaos display vs internal)
+- Precise rounding policy constants — decided 2026-09-23: internal full precision; display is 2 dp half-up via `roundForDisplay` (ADR-015 clarification)
 
 Those decisions will land in `ARCHITECTURE.md` and may add follow-up ADRs.
