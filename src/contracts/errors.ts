@@ -15,6 +15,7 @@ import { z } from "zod";
 export const ApiErrorCodeSchema = z.enum([
   "VALIDATION_ERROR",
   "NOT_FOUND",
+  "CONFLICT",
   "INTERNAL_ERROR",
 ]);
 

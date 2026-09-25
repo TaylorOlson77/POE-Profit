@@ -174,7 +174,7 @@ Implemented in `prisma/schema.prisma` (B3): cuid string IDs, `Decimal(20, 8)` fo
 | Layer | Tool | Location (ADR-019) |
 | --- | --- | --- |
 | Unit | Jest | Colocated `*.test.ts` (e.g. under `src/domain/calc`) |
-| API | Jest (+ fetch/supertest-style HTTP) | `tests/api/` |
+| API | Jest, in-process Route Handlers (D1: Prisma fake, no `DATABASE_URL` in CI) | `tests/api/` |
 | E2E | Playwright | `e2e/` |
 
 CI (when set up): lint → typecheck → unit → API → E2E (see `TEST_STRATEGY.md`).

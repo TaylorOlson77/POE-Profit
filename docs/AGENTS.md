@@ -9,9 +9,7 @@ Read this first in a new chat, then the docs listed under **Required reading**.
 | Product name | **POE Profit** |
 | GitHub repo | https://github.com/TaylorOlson77/POE-Profit |
 | Project board | https://github.com/users/TaylorOlson77/projects/1 — **do not seed foundation tickets** |
-| Local workspace | Often `d:\POE Strategy Tracker` (folder name may still be old) |
-
-If the workspace is not a git clone of `POE-Profit` yet, clone or connect remotes before scaffolding so work lands in the right repo.
+| Local workspace | `d:\POE Profit` (older copies may still be named `POE Strategy Tracker`) |
 
 ## Process (locked)
 
@@ -26,13 +24,37 @@ Next.js App Router + TS · Vercel · Neon Postgres · Prisma · Route Handlers (
 
 ## Current next step
 
-**D1 — Strategy Route Handlers + API tests** per [`BACKLOG.md`](./BACKLOG.md) (C1–C3 calc engine done). Then D2 MapSession API → UI → deploy.
+**D2 — MapSession Route Handlers + calc integration + API tests** per [`BACKLOG.md`](./BACKLOG.md) (D1 strategy API done). Then UI → deploy.
 
-C3 is in the engine: `profitDivineApprox = profitChaos / divineRateChaos` (null when the rate is not positive), signed nullable on the contract, `roundForDisplay` is 2 dp half-up and is not applied inside C1/C2. Seed derives `9.6` from the engine. See the ADR-015 display-rounding clarification.
+### D1 decisions (locked unless Taylor reopens them)
 
-Plan and wait for Taylor’s review before modifying files (`.cursor/rules/ai-development-workflow.mdc`). Check off AC in `BACKLOG.md` as you finish each item. Do not commit until Taylor asks.
+- API tests call Route Handlers in-process with the Prisma fake in `tests/api/strategyDbMock.ts`. CI still has no `DATABASE_URL`. A Neon round-trip is deferred.
+- `DELETE` of a strategy that still has map sessions returns **409 `CONFLICT`**. 404 is an unknown id. 204 is a delete with no sessions. E1 should show `error.message`.
+- Money on the wire goes through `decimalToWire` (`src/server/money.ts`): plain decimal strings, no `Number()`, no `roundForDisplay`.
 
-`docs/INTERVIEW_PREP.md` is **gitignored** local study notes. Do not add it back to git.
+### D2 handoff (start a new chat with this)
+
+Follow `.cursor/rules/ai-development-workflow.mdc`: **plan and wait for Taylor’s review before modifying files.**
+
+**Read first:** this file (especially Tooling gotchas), then `ARCHITECTURE.md` §5, `DECISIONS.md` (**ADR-006, 008, 013, 018**), `TEST_STRATEGY.md` §4.2 and §4.4, `src/contracts/mapSessions.ts`, `src/domain/calc` (`calculateSession` — do not reimplement it), and the D1 strategy routes as the pattern (`app/api/strategies`, `src/server/services/strategies.ts`, `tests/api/strategies.test.ts`). Before writing Route Handlers, read the Next.js guide under `node_modules/next/dist/docs/` — `params` is a `Promise`. Do not use generated `RouteContext` types; typecheck runs before `next build`.
+
+**Copy from D1:** thin handlers, a service that takes `PrismaClient`, `decimalToWire` on every money field (including signed and nullable session fields), API tests that `jest.mock` `@/src/server/db/prisma` with an in-memory fake, and responses parsed with the Zod schema. One example per contract outcome. Do not add a Neon CI database unless Taylor asks.
+
+**D2 specifics:** duration method is the discriminated union in the contract (ADR-006). Calculated fields are server-owned; a client must not be able to supply them as the source of truth. `profitDivineApprox` stays null when the divine rate is not positive. Deleting a map session is `204` or `404` (sessions are the child; Restrict applies when deleting a strategy that still has sessions, which D1 already returns as `409`).
+
+**Constraints:**
+
+- Do **not** start UI or Playwright flows.
+- Do **not** change C1–C3 formulas or call `Decimal.set()`.
+- Users cannot PATCH calculated fields as source of truth.
+- Colocated unit tests stay next to services if you add pure helpers; HTTP tests stay in `tests/api/`.
+- Run `npm run lint`, `npm run typecheck`, `npm test`, and `npm run test:api`. Do not commit until Taylor asks.
+- `.cursor/settings.json` is local editor config. Do not commit it.
+- `docs/INTERVIEW_PREP.md` is **gitignored** local study notes. Do not add it back to git.
+
+**C3 (done, for D2):** `profitDivineApprox = profitChaos / divineRateChaos` (null when the rate is not positive), signed nullable on the MapSession contract, `roundForDisplay` is 2 dp half-up and is not applied inside the engine. Seed derives `9.6` from the engine. ADR-015 display-rounding clarification.
+
+**Windows:** Taylor’s shell is PowerShell — no bash heredocs. Prisma is pinned at 6.19.0.
 
 ## Required reading (build chat)
 
@@ -69,17 +91,25 @@ Plan and wait for Taylor’s review before modifying files (`.cursor/rules/ai-de
 
 - Cannot `.merge()` a `ZodDiscriminatedUnion` into an object. Chain `.and()` instead (see `MapSessionSchema`).
 
+**decimal.js**
+
+- `Decimal.toString()` uses scientific notation for small values (`"0.00000001"` becomes `"1e-8"`). `DecimalStringSchema` rejects that. Serialize with `decimalToWire` in `src/server/money.ts` (`toFixed`, then strip storage-scale zeros). Never `Number()` a money value.
+
+**Jest API tests**
+
+- `jest.mock("@/...")` needs `moduleNameMapper` in `jest.api.config.mjs` (`^@/(.*)$` → `<rootDir>/$1`). Load the fake with `jest.requireActual`. A raw `require()` fails `@typescript-eslint/no-require-imports`.
+
 **CI**
 
 - Order is lint → typecheck → unit → API → build → E2E. Typecheck runs **before** `build`, so app code must not depend on Next-generated types like `LayoutProps` (`app/layout.tsx` uses plain React props for this reason).
-- CI has **no database access**; it only runs `prisma generate`. Migrations are applied locally against Neon. Decide at D1/D2 whether API tests get an ephemeral Neon branch instead of mocks.
+- CI has **no database access**; it only runs `prisma generate`. Migrations are applied locally against Neon. D1 API tests use an in-process Prisma fake. A Neon round-trip is still deferred.
 - `format:check` is **not** a CI gate, `docs/` is in `.prettierignore`, and a few pre-existing `src/contracts` files fail Prettier. Don't reformat them as drive-by noise.
 - `actions/checkout@v4` / `actions/setup-node@v4` emit a Node 20 deprecation annotation. Runs still pass; bump to `@v5` when convenient.
 
 **Schema/contract parity**
 
-- Prisma returns `Decimal` objects; services must serialize to decimal **strings** at the API boundary (`DecimalStringSchema`). Never `Number()` a money value.
-- Nothing currently guards schema-vs-contract drift. That is the job of the D1/D2 API tests validating responses against the Zod schemas.
+- Prisma returns `Decimal` objects; services must serialize to decimal **strings** at the API boundary via `decimalToWire`. Never `Number()` a money value.
+- D1 strategy API tests parse responses with the Zod schemas. D2 map-session tests must do the same. The fake still does not prove Postgres `Restrict` or `Decimal(20, 8)` scale.
 
 ## Do not
 
