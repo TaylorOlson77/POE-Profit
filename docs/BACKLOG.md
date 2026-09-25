@@ -141,10 +141,10 @@ Epics B–F below are the rest of the path to MVP. Keep checking them off here. 
 **Labels:** `api`, `test`  
 **Depends on:** B1, B3, A3  
 **AC:**
-- [ ] `app/api/strategies` CRUD implemented against contracts
-- [ ] Validation errors return shared error shape
-- [ ] Jest API tests hit HTTP endpoints (or agreed harness)
-- [ ] Handlers stay thin; logic in `src/server/services`
+- [x] `app/api/strategies` CRUD implemented against contracts
+- [x] Validation errors return shared error shape
+- [x] Jest API tests hit HTTP endpoints (or agreed harness)
+- [x] Handlers stay thin; logic in `src/server/services`
 
 ### D2. MapSession Route Handlers + calc integration + API tests
 **Labels:** `api`, `test`  

@@ -4,8 +4,7 @@ import { DecimalStringSchema } from "./decimal";
 /**
  * Strategy API contracts (contract-first — ADR-013 / ADR-020 / backlog B1).
  *
- * Handlers are not implemented here (D1). These schemas are the handshake
- * between future Route Handlers, UI, and API tests.
+ * These schemas are the handshake between Route Handlers, UI, and API tests.
  *
  * Status codes (MVP):
  * | Method | Path                      | Success      | Common errors        |
@@ -14,7 +13,10 @@ import { DecimalStringSchema } from "./decimal";
  * | POST   | /api/strategies           | 201          | 400 validation, 500  |
  * | GET    | /api/strategies/:id       | 200          | 404, 500             |
  * | PUT    | /api/strategies/:id       | 200          | 400, 404, 500        |
- * | DELETE | /api/strategies/:id       | 204 no body  | 404, 500             |
+ * | DELETE | /api/strategies/:id       | 204 no body  | 404, 409, 500        |
+ *
+ * 409 CONFLICT: the strategy still has map sessions (`onDelete: Restrict`).
+ * The UI should show `error.message`. 404 is an unknown id.
  *
  * Error bodies use `ApiErrorBody` from `./errors`.
  *

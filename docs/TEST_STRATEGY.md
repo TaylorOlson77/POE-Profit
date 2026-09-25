@@ -82,6 +82,8 @@ For MVP v1 we will:
 - Exhaustive floating-point matrix already covered by unit tests
 - Full browser workflows
 
+One example of each contract outcome is enough: a valid write, one invalid field, one bad decimal, unknown id, delete, and a blocked delete. Repeating every decimal format here does not add confidence in the route.
+
 ### 4.3 E2E — Playwright
 
 **Owns**
@@ -98,6 +100,13 @@ For MVP v1 we will:
 - Auth flows (none in MVP)
 - External market APIs
 - Visual regression of the entire app
+- Every field-level validation message, when a unit test already owns that rule. One journey that shows an error and blocks submit is enough to prove the input is wired up. Add another UI case only when that message exists only on the screen (or must show a specific server error, such as `409 CONFLICT`) and nothing below the UI asserts it.
+
+### 4.4 How deep each layer goes
+
+- **Unit:** the boundaries of one function (empty, zero, negative, cap, fractions).
+- **API:** one example per outcome the contract promises (status code, error body, calculated fields stored and returned). The handler, Zod schema, and service run together. Postgres may be faked.
+- **UI:** one path per user journey. Do not re-list every validation message the unit tests already cover.
 
 ## 5. Priority risks
 
@@ -211,7 +220,7 @@ A pull request should not merge unless:
 5. **API / integration tests** pass
 6. **Playwright E2E** critical journeys pass
 
-**As implemented (A5 / B3):** CI runs lint → typecheck → unit → API → build → E2E. Gate 2 (format) is **not** enforced yet — `format:check` exists as a script only. CI also has **no database credentials**; it runs `prisma generate` but never applies migrations, so DB-backed API tests need a decision at D1/D2 (in-process mock vs ephemeral Neon branch per PR).
+**As implemented (A5 / B3 / D1):** CI runs lint → typecheck → unit → API → build → E2E on every push to `main` and every pull request. That API step is `npm run test:api`. It does not run again as part of the Vercel deploy. Gate 2 (format) is **not** enforced yet — `format:check` exists as a script only. CI has **no database credentials**; it runs `prisma generate` but never applies migrations. D1 API tests call Route Handlers in-process with a Prisma fake (`tests/api/strategyDbMock.ts`). A Neon round-trip is deferred and is not part of D2 unless Taylor asks.
 
 On E2E failure, CI should retain:
 
@@ -242,10 +251,10 @@ MVP v1 product DoD in `MVP_SPEC.md` §34 additionally requires the calculation e
 
 ## 13. Open items for architecture phase
 
-These are intentionally deferred until stack selection:
+Stack selection is done. Items below are closed unless still marked open:
 
-- Exact unit test runner and decimal/money library
-- API test harness (in-process vs HTTP against test container)
+- Exact unit test runner and decimal/money library — Jest + `decimal.js` (ADR-014 / ADR-015)
+- API test harness — decided with D1 (2026-09-23): in-process Route Handlers plus a Prisma fake. No `DATABASE_URL` in CI. Real Neon round-trip deferred.
 - Playwright project layout and CI browser install
 - Deploy smoke URL and secrets handling
 - Precise rounding policy constants — decided 2026-09-23: internal full precision; display is 2 dp half-up via `roundForDisplay` (ADR-015 clarification)
