@@ -220,7 +220,7 @@ A pull request should not merge unless:
 5. **API / integration tests** pass
 6. **Playwright E2E** critical journeys pass
 
-**As implemented (A5 / B3 / D1):** CI runs lint → typecheck → unit → API → build → E2E on every push to `main` and every pull request. That API step is `npm run test:api`. It does not run again as part of the Vercel deploy. Gate 2 (format) is **not** enforced yet — `format:check` exists as a script only. CI has **no database credentials**; it runs `prisma generate` but never applies migrations. D1 API tests call Route Handlers in-process with a Prisma fake (`tests/api/strategyDbMock.ts`). A Neon round-trip is deferred and is not part of D2 unless Taylor asks.
+**As implemented (A5 / B3 / D1):** CI runs lint → typecheck → unit → API → build → E2E on every push to `main` and every pull request. That API step is `npm run test:api`. It does not run again as part of the Vercel deploy. Gate 2 (format) is **not** enforced yet — `format:check` exists as a script only. CI has **no database credentials**; it runs `prisma generate` but never applies migrations. D1 and D2 API tests call Route Handlers in-process with a Prisma fake (`tests/api/strategyDbMock.ts`, `tests/api/mapSessionDbMock.ts`). A Neon round-trip is still deferred.
 
 On E2E failure, CI should retain:
 

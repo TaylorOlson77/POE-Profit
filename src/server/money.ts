@@ -18,3 +18,10 @@ export function decimalToWire(value: { toString(): string }): string {
   const trimmed = fixed.replace(/0+$/, "").replace(/\.$/, "");
   return trimmed === "" || trimmed === "-" ? "0" : trimmed;
 }
+
+/** Null stays null. A present value uses the same plain-decimal wire form. */
+export function nullableDecimalToWire(
+  value: { toString(): string } | null,
+): string | null {
+  return value === null ? null : decimalToWire(value);
+}

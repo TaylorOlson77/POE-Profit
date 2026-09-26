@@ -150,10 +150,10 @@ Epics B–F below are the rest of the path to MVP. Keep checking them off here. 
 **Labels:** `api`, `test`  
 **Depends on:** B2, B3, C2, D1  
 **AC:**
-- [ ] MapSession CRUD; create/update runs calc engine and returns calculated fields
-- [ ] Duration method validation per ADR-006
-- [ ] API tests: happy path, validation, calculated field correctness, delete
-- [ ] Users cannot PATCH calculated fields as source of truth
+- [x] MapSession CRUD; create/update runs calc engine and returns calculated fields
+- [x] Duration method validation per ADR-006
+- [x] API tests: happy path, validation, calculated field correctness, delete
+- [x] Users cannot PATCH calculated fields as source of truth
 
 ---
 
