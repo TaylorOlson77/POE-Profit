@@ -17,10 +17,10 @@ import {
  * | Method | Path                        | Success      | Common errors        |
  * | ------ | --------------------------- | ------------ | -------------------- |
  * | GET    | /api/map-sessions           | 200          | 500                  |
- * | POST   | /api/map-sessions           | 201          | 400 validation, 500  |
- * | GET    | /api/map-sessions/:id       | 200          | 404, 500             |
- * | PUT    | /api/map-sessions/:id       | 200          | 400, 404, 500        |
- * | DELETE | /api/map-sessions/:id       | 204 no body  | 404, 500             |
+ * | POST   | /api/map-sessions           | 201          | 400 validation, 404 unknown strategy, 500 |
+ * | GET    | /api/map-sessions/:id       | 200          | 404 unknown session, 500 |
+ * | PUT    | /api/map-sessions/:id       | 200          | 400, 404 unknown session or strategy, 500 |
+ * | DELETE | /api/map-sessions/:id       | 204 no body  | 404 unknown session, 500 |
  *
  * Error bodies use `ApiErrorBody` from `./errors`.
  *
