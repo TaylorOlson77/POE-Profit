@@ -24,7 +24,16 @@ Next.js App Router + TS · Vercel · Neon Postgres · Prisma · Route Handlers (
 
 ## Current next step
 
-**E1 — Strategies list + create/edit** per [`BACKLOG.md`](./BACKLOG.md) (D2 map-session API done). Then E2 → E3 → deploy.
+**E2 — MapSession entry UI** per [`BACKLOG.md`](./BACKLOG.md) (E1 strategies UI done). Then E3 → deploy.
+
+### E1 decisions (locked unless Taylor reopens them)
+
+- The list is `/`. Create is `/strategies/new`. Edit is `/strategies/[id]`. Client components `fetch` the strategy routes and parse responses with the Zod contracts. They do not import Prisma or services.
+- `lineTotalChaos` and `estimatedCostPerMapChaos` on screen come from the last API payload. A live preview while typing is **FF-005**, and it must call `calculateStrategyCosts`.
+- Display money with `formatChaos` (`roundForDisplay` + `c`). No `Number()`.
+- Delete asks in the row. **204** removes it. **409** and **404** show `error.message`.
+- New strategies default to `POE2`. Labels follow `game`: Waystone / Tablets for PoE2, Map / Scarabs for PoE1. Modifier notes are sent only for PoE2.
+- Unit tests cover `buildStrategyWriteBody` and `formDetailPath` in `src/ui/strategyForm.test.ts`. Those transforms never reach the API (blank rows dropped, PoE1 notes omitted, Zod line indexes mapped back to the form row). `detailsFromZod` only joins Zod paths; the validation rules stay in the contract tests. The create/edit/delete browser journey is E3.
 
 ### D1 decisions (locked unless Taylor reopens them)
 
@@ -74,6 +83,10 @@ Next.js App Router + TS · Vercel · Neon Postgres · Prisma · Route Handlers (
 **Zod 4**
 
 - Cannot `.merge()` a `ZodDiscriminatedUnion` into an object. Chain `.and()` instead (see `MapSessionSchema`).
+
+**Dark-mode native `<select>` (Windows)**
+
+- The page text is light (`--foreground`). Windows paints the dropdown on a white panel, and `<option>` inherits that light text, so the unselected row disappears. `app/globals.css` sets `select { color-scheme: light }` and `option { background: #fff; color: #171717 }`. The closed control still uses the page text color.
 
 **decimal.js**
 

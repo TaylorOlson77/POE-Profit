@@ -24,3 +24,17 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/*
+ * Windows draws the native <select> popup on a light panel even when the page
+ * is dark, and options inherit the light page text. Force a light menu with
+ * dark text so both rows stay readable. The closed control keeps the page color.
+ */
+select {
+  color-scheme: light;
+}
+
+select option {
+  background-color: #ffffff;
+  color: #171717;
+}
