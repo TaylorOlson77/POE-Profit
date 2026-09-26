@@ -225,6 +225,37 @@ Displayed as counts or a net “prophecy score” on the strategy page (exact UI
 
 ---
 
+## FF-005: Live strategy cost preview on the form
+
+| Field | Value |
+| --- | --- |
+| Status | Idea |
+| Horizon | After the thin strategy UI (post-E1) |
+| Date | 2026-09-26 |
+
+### Summary
+
+On the strategy create/edit form, show each enhancement line total and the estimated cost per waystone/map while the inputs are dirty, before save. E1 shows those figures only from the last API response.
+
+### Why
+
+The setup cost should be visible while editing tablet or scarab quantities and prices, without a save round-trip.
+
+### Rule
+
+Call `calculateStrategyCosts` in the shared engine (ADR-008). Display with `roundForDisplay`. The saved strategy and the list still come from the API response. Do not add a second formula in the UI.
+
+### Out of scope
+
+MapSession totals stay API-displayed (E2).
+
+### Open questions
+
+1. Update on each keystroke, or when a cost field blurs?
+2. Should a dirty form mark the preview as unsaved so it is not confused with the last saved total?
+
+---
+
 ## Index
 
 | ID | Title | Status |
@@ -233,3 +264,4 @@ Displayed as counts or a net “prophecy score” on the strategy page (exact UI
 | FF-002 | Name candidate: POE Profit / Poe Prophet | Idea |
 | FF-003 | Buy-filter regex paste, decode, display, copy | Idea |
 | FF-004 | Truth-sayer vs Deceiver strategy signals | Idea |
+| FF-005 | Live strategy cost preview on the form | Idea |

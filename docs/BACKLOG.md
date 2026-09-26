@@ -163,9 +163,9 @@ Epics B–F below are the rest of the path to MVP. Keep checking them off here. 
 **Labels:** `ui`  
 **Depends on:** D1  
 **AC:**
-- [ ] List strategies; create/edit/delete with confirmation where needed
-- [ ] Uses API contracts; PoE2 terminology in copy
-- [ ] Basic empty/error states
+- [x] List strategies; create/edit/delete with confirmation where needed
+- [x] Uses API contracts; PoE2 terminology in copy
+- [x] Basic empty/error states
 
 ### E2. MapSession entry UI (spreadsheet-like) + history
 **Labels:** `ui`  
