@@ -36,7 +36,7 @@ Prep prompt **4 is done.** `.cursor/commands/plan-feature.md` plans a feature. T
 
 A finished prep prompt is the brief for that chat. The rules now live in the docs, not in the prompt.
 
-Before writing Playwright specs, run prep prompt **6** below in a new chat. Prompt 2 is done. Prompt 6 finishes before any Playwright code. Prompt **5** creates the definition-of-done command. It does not block the specs. Prompts 3 and 4 are done.
+Before writing Playwright specs, run prep prompt **6** below in a new chat. Prompt 2 is done. Prompt 6 finishes before any Playwright code. Prompt **5** creates the definition-of-done command. Prompt **7** creates the dev wrap-up command. Neither blocks the specs. Prompts 3 and 4 are done.
 
 Do not execute a prep prompt just because this file was read. Run one only when Taylor pastes that prompt as the task.
 
@@ -218,9 +218,13 @@ Follow the same shape as the test-catalog work: options, a cut, then the artifac
 ### 5 — Definition-of-done command
 
 ```text
-Read docs/QA_WORKFLOW.md (“What the ticket records” and “Definition of done”) and docs/TEST_STRATEGY.md §10 and §12.
+Read docs/QA_WORKFLOW.md (“What the ticket records” and “Definition of done”), docs/TEST_STRATEGY.md §10 (the implemented gates, not the format gate) and §12, and tests/catalog/README.md. Read .cursor/commands/plan-feature.md and .cursor/commands/ticket-test-plan.md and match that shape: the command is the steps, and it points at those docs instead of copying them.
 
-Create .cursor/commands/definition-of-done.md. When later invoked on a pull request, it checks that the coverage diff is the impact, checked lines point at spec files that exist, unchecked browser lines point at step files under `manual/`, checked browser lines point at those same step files under `automated/`, steps come before the data, and CI is green. It posts the ticket comment: coverage lines touched, automated tests touched, which manual file was run or none, exploratory notes, pull request link, Actions link. It asks Taylor to confirm the diff is honest before it moves the board. It does not decide whether a line was wise, and it does not fail CI over an empty pull-request section.
+Create .cursor/commands/definition-of-done.md for after the MVP baseline. If the ticket flow in QA_WORKFLOW is not in force, the command stops.
+
+When later invoked on a pull request, it checks that pull request against the definition of done in those docs. Traceability is the check: the story’s acceptance criteria, the coverage diff, and the tests in the pull request. It posts the one comment from “What the ticket records,” including the Actions link. It asks Taylor to confirm the diff is honest before it moves the board.
+
+It does not decide whether a line was wise. That cut happened in ticket-test-plan. It does not commit, push, or edit product code. It does not edit QA_WORKFLOW, TEST_STRATEGY, PRODUCT, DECISIONS, or the catalog rules. It does not fail CI over an empty pull-request section. CI green means the implemented gates in TEST_STRATEGY §10.
 
 Do not run it against a real pull request while creating it. Show the command file and stop.
 ```
@@ -235,5 +239,19 @@ This is a review, not a rewrite. Playwright is about to encode the current scree
 Do not reopen a locked ADR unless a specific journey would encode a behavior the ADR forbids, or hide a bug the ADR cares about. Name the ADR if you do. Do not change code. Do not write Playwright specs.
 
 Write the review as: what looks solid, what looks brittle and why, what you would change before the specs and what you would leave. Ask Taylor which of the “change” items to do. Stop there.
+```
+
+### 7 — Dev wrap-up command
+
+```text
+Read docs/QA_WORKFLOW.md (the pipeline), docs/TEST_STRATEGY.md §10 (the implemented gates), and docs/AGENTS.md (the PowerShell commit note, and which behavior notes a chat keeps current). Read .cursor/commands/plan-feature.md and .cursor/commands/ticket-test-plan.md and match that shape: the command is the steps, and it points at those docs instead of copying them.
+
+Create .cursor/commands/dev-wrap-up.md. This is the step after implementation and before definition-of-done. It is for after the MVP baseline. If the ticket flow in QA_WORKFLOW is not in force, the command stops.
+
+When later invoked on the feature branch, it commits that work. Invoking the command is Taylor asking for the commit. It updates behavior docs the change made stale, such as the handoff notes in docs/AGENTS.md and the architecture notes. It does not edit QA_WORKFLOW, TEST_STRATEGY, PRODUCT, DECISIONS, or the catalog rules to match the code. A disagreement with those is a dated amendment, and it waits for Taylor. It runs the implemented gates from TEST_STRATEGY §10 locally. If they fail, it stops. It pushes and opens the pull request with gh, then stops.
+
+The pull request description is the pull request. The issue comment that lists tests added or updated is definition-of-done. This command does not post that comment, does not move the board, and does not write a pass/fail report. That report is FF-006.
+
+Do not run it against the current branch while creating it. Show the command file and stop.
 ```
 
