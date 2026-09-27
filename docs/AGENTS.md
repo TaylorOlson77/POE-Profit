@@ -14,7 +14,7 @@ Read this first in a new chat, then the docs listed under **Required reading**.
 ## Process (locked)
 
 - **Until MVP baseline ships:** track work by checking off items in [`BACKLOG.md`](./BACKLOG.md). No per-chore GitHub Issues for scaffold / Prisma / Jest / CI.
-- **After MVP baseline:** GitHub Issues + POE Profit board for features/fixes (ADR-009). Feature work follows [`QA_WORKFLOW.md`](./QA_WORKFLOW.md) (catalog, ticket flow, commands). That workflow is not in force during the MVP backlog.
+- **After MVP baseline:** GitHub Issues + POE Profit board for features/fixes (ADR-009). Feature work follows [`QA_WORKFLOW.md`](./QA_WORKFLOW.md) (catalog, ticket flow, commands). Epic and story rules are in [`PRODUCT.md`](./PRODUCT.md). That workflow is not in force during the MVP backlog.
 - **Options before code** for material decisions; durable choices go in [`DECISIONS.md`](./DECISIONS.md).
 - Do **not** implement FF-* items in [`FUTURE_FEATURES.md`](./FUTURE_FEATURES.md) unless Taylor asks.
 
@@ -25,6 +25,14 @@ Next.js App Router + TS · Vercel · Neon Postgres · Prisma · Route Handlers (
 ## Current next step
 
 **E3 — Playwright E2E** per [`BACKLOG.md`](./BACKLOG.md) (E2 map-session UI done). Then deploy.
+
+Prep prompt **1 is done.** `poc/test-catalog/` has strategies and sessions (create, update, delete). The only manual case is still create a strategy. The five judgment calls from that chat stay off the pages.
+
+Prep prompt **4 is done.** `.cursor/commands/plan-feature.md` plans a feature. The rules are [`PRODUCT.md`](./PRODUCT.md). It files issues only after Taylor accepts, and it is not used during the MVP backlog.
+
+Before writing Playwright specs, run prep prompts **2, then 6** below. Each one is a new chat. Prompt 2 writes the browser journeys into the catalog and waits for a cut. Prompt 6 finishes before any Playwright code. Prompts **3, 4, and 5** create the post-MVP commands. They do not block the specs.
+
+Do not execute a prep prompt just because this file was read. Run one only when Taylor pastes that prompt as the task.
 
 ### E2 decisions (locked unless Taylor reopens them)
 
@@ -139,3 +147,77 @@ Next.js App Router + TS · Vercel · Neon Postgres · Prisma · Route Handlers (
 - Duplicate profit math in the UI
 - Add auth, tRPC, Server Actions-as-API, or poe.ninja in MVP
 - Create a flood of GitHub Issues for Phase 1
+- Run a prep prompt below unless Taylor pasted that prompt as the task
+
+## Prep prompts
+
+Paste one prompt into a new chat. They assume this file and `docs/QA_WORKFLOW.md` are the rules.
+
+### 1 — Catalog the tests that already exist
+
+```text
+Read docs/AGENTS.md, docs/QA_WORKFLOW.md, docs/TEST_STRATEGY.md, and poc/test-catalog/. The create-strategy page is the density to copy. Do not copy its content into sessions.
+
+Extend poc/test-catalog/ so strategies and sessions match the tests that already exist. Read the test names. Do not invent behavior.
+
+Write or extend coverage.md for strategies and sessions. Sections are create, update, and delete, and only when those tests exist. A line is the it sentence plus a link to the file. A checked box means the automated test exists. manual/ is the only case-file folder. Automated tests stay where they are. No case numbers. No second regression file. Do not list every calculation example. A second example of the same rule does not get a line. A line exists only when someone might otherwise recheck that behavior by hand.
+
+Do not add a manual file unless a person still has to look at the screen and the lower layers do not already lock it. The existing create-strategy manual file can stay. Do not write Playwright specs. Do not move the catalog to tests/catalog/. Do not edit product code.
+
+When a line is a judgment call, list it and ask before adding it. Then show the pages and stop.
+```
+
+### 2 — Write the Playwright cases into the catalog
+
+```text
+Read docs/AGENTS.md (E1 and E2 decisions), docs/QA_WORKFLOW.md (the browser set and the manual-file rules), docs/TEST_STRATEGY.md §4.3 and §6.3, and poc/test-catalog/ after prompt 1.
+
+Propose the browser journeys for the MVP. Start from the four in the workflow, and change a journey when the real UI in the E1/E2 notes disagrees. Do not add a journey whose only new fact is a validation message the API or unit tests already lock.
+
+Stop after the list: for each journey, the sentence name, the feature section it belongs on, and whether a manual file already exists. Wait for Taylor to cut it.
+
+After the cut, add the manual files and the coverage lines. Box unchecked. The line links to the manual file. Steps first, data at the bottom, one When, a sentence that still makes sense without the heading. No case numbers. Do not write Playwright specs. Do not change product code.
+```
+
+### 3 — Ticket test-plan command
+
+```text
+Read docs/QA_WORKFLOW.md and poc/test-catalog/. Create .cursor/commands/ticket-test-plan.md so a later chat can run that command.
+
+The command is for after the MVP baseline. It must: read the ticket, stop if acceptance criteria are not observable, create the feature branch, edit the existing feature coverage page on that branch (not a new folder per ticket), add a manual file only for a new case a person would run, and stop for Taylor to cut the list before writing case bodies. The coverage diff is the impact. It does not write product code or a separate impact table. It does not assign case numbers.
+
+Do not run the command against a real ticket while creating it. Show the command file and stop.
+```
+
+### 4 — Feature-to-tickets command
+
+```text
+Read docs/QA_WORKFLOW.md (the pipeline), docs/DECISIONS.md ADR-009, docs/MVP_SPEC.md non-goals, and docs/FUTURE_FEATURES.md.
+
+Create .cursor/commands/plan-feature.md for after the MVP baseline. When that command is later invoked with a feature idea, it must talk before it files anything: what problem the feature is, what is out of scope, how the work splits into an epic and tickets, and acceptance criteria that are observable. It writes GitHub issues only after Taylor accepts that split. It does not write coverage lines, test cases, or product code.
+
+Follow the same shape as the test-catalog work: options, a cut, then the artifact. Do not create GitHub issues while building this command. Show the command file and stop.
+```
+
+### 5 — Definition-of-done command
+
+```text
+Read docs/QA_WORKFLOW.md (“What the ticket records” and “Definition of done”) and docs/TEST_STRATEGY.md §10 and §12.
+
+Create .cursor/commands/definition-of-done.md. When later invoked on a pull request, it checks that the coverage diff is the impact, checked lines point at files that exist, manual lines point at case files whose steps come before the data, and CI is green. It posts the ticket comment: coverage lines touched, automated tests touched, which manual file was run or none, exploratory notes, pull request link, Actions link. It asks Taylor to confirm the diff is honest before it moves the board. It does not decide whether a line was wise, and it does not fail CI over an empty pull-request section.
+
+Do not run it against a real pull request while creating it. Show the command file and stop.
+```
+
+### 6 — Question the bones before Playwright code
+
+```text
+Read docs/AGENTS.md, docs/ARCHITECTURE.md, docs/DECISIONS.md, docs/TEST_STRATEGY.md, docs/QA_WORKFLOW.md, and poc/test-catalog/ including the Playwright cases from prompt 2.
+
+This is a review, not a rewrite. Playwright is about to encode the current screens. Look for decisions that are brittle once those journeys exist: math duplicated or about to be asserted in the browser, journeys that repeat API rules, routes or labels the specs would freeze, and catalog lines that do not match the UI described in the E1/E2 notes.
+
+Do not reopen a locked ADR unless a specific journey would encode a behavior the ADR forbids, or hide a bug the ADR cares about. Name the ADR if you do. Do not change code. Do not write Playwright specs.
+
+Write the review as: what looks solid, what looks brittle and why, what you would change before the specs and what you would leave. Ask Taylor which of the “change” items to do. Stop there.
+```
+
