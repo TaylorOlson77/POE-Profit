@@ -81,4 +81,4 @@ Name fields, forgot password, settings, GGG login, and making existing strategie
 
 ## Filing
 
-[`.cursor/commands/plan-feature.md`](../.cursor/commands/plan-feature.md) files the issues after Taylor accepts the split. It places them on the POE Profit board in Backlog ([ADR-009](./DECISIONS.md)). It does not write coverage lines, tests, or product code.
+[`.cursor/commands/plan-feature.md`](../.cursor/commands/plan-feature.md) files the issues after Taylor accepts the split. Stories are sub-issues of the epic. It places them on the POE Profit board in Backlog ([ADR-009](./DECISIONS.md)). It does not write coverage lines, tests, or product code.
