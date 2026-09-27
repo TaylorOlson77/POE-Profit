@@ -26,7 +26,7 @@ Next.js App Router + TS · Vercel · Neon Postgres · Prisma · Route Handlers (
 
 **E3 — Playwright E2E** per [`BACKLOG.md`](./BACKLOG.md) (E2 map-session UI done). Then deploy.
 
-Prep prompt **1 is done.** `poc/test-catalog/` has strategies and sessions (create, update, delete). The five judgment calls from that chat stay off the pages.
+Prep prompt **1 is done.** `tests/catalog/` has strategies and sessions (create, update, delete). The five judgment calls from that chat stay off the pages.
 
 Prep prompt **2 is done.** The coverage pages have unchecked Playwright lines for create, update, and delete of a strategy and of a session, plus the conflict message when a strategy still has sessions. The spec files are not written. A missing id shows the API sentence in place of the form. There is no 404 page, and that path is not a browser line.
 
@@ -158,13 +158,13 @@ Paste one prompt into a new chat. They assume this file and `docs/QA_WORKFLOW.md
 ### 1 — Catalog the tests that already exist
 
 ```text
-Read docs/AGENTS.md, docs/QA_WORKFLOW.md, docs/TEST_STRATEGY.md, and poc/test-catalog/. The create-strategy page is the density to copy. Do not copy its content into sessions.
+Read docs/AGENTS.md, docs/QA_WORKFLOW.md, docs/TEST_STRATEGY.md, and tests/catalog/. The create-strategy page is the density to copy. Do not copy its content into sessions.
 
-Extend poc/test-catalog/ so strategies and sessions match the tests that already exist. Read the test names. Do not invent behavior.
+Extend tests/catalog/ so strategies and sessions match the tests that already exist. Read the test names. Do not invent behavior.
 
 Write or extend coverage.md for strategies and sessions. Sections are create, update, and delete, and only when those tests exist. A line is the it sentence plus a link to the file. A checked box means the automated test exists. manual/ is the only case-file folder. Automated tests stay where they are. No case numbers. No second regression file. Do not list every calculation example. A second example of the same rule does not get a line. A line exists only when someone might otherwise recheck that behavior by hand.
 
-Do not add a manual file unless a person still has to look at the screen and the lower layers do not already lock it. The existing create-strategy manual file can stay. Do not write Playwright specs. Do not move the catalog to tests/catalog/. Do not edit product code.
+Do not add a manual file unless a person still has to look at the screen and the lower layers do not already lock it. The existing create-strategy manual file can stay. Do not write Playwright specs. The catalog lives in tests/catalog/. Do not edit product code.
 
 When a line is a judgment call, list it and ask before adding it. Then show the pages and stop.
 ```
@@ -172,7 +172,7 @@ When a line is a judgment call, list it and ask before adding it. Then show the 
 ### 2 — Write the Playwright cases into the catalog
 
 ```text
-Read docs/AGENTS.md (E1 and E2 decisions), docs/QA_WORKFLOW.md (the browser set and the manual-file rules), docs/TEST_STRATEGY.md §4.3 and §6.3, and poc/test-catalog/ after prompt 1.
+Read docs/AGENTS.md (E1 and E2 decisions), docs/QA_WORKFLOW.md (the browser set and the manual-file rules), docs/TEST_STRATEGY.md §4.3 and §6.3, and tests/catalog/ after prompt 1.
 
 Propose the browser journeys for the MVP. Start from the four in the workflow, and change a journey when the real UI in the E1/E2 notes disagrees. Do not add a journey whose only new fact is a validation message the API or unit tests already lock.
 
@@ -194,7 +194,7 @@ Propose the lines before writing any case file. Include create, update, and dele
 
 Leave off a line whose only new fact is a field-validation message, or a not-found sentence for an id a person cannot reach on purpose. There is no 404 page. A missing strategy or session shows the API sentence in place of the form. That stays an API line.
 
-Stop for Taylor to cut the list, including edge cases, before writing case bodies. A manual file is only for a case a person would still run. A Playwright line stays unchecked and links to the spec file the implementation chat will write. The coverage diff is the impact. A case that creates a row says the row stays until it is deleted. The database is not wiped between runs.
+Stop for Taylor to cut the list, including edge cases, before writing case bodies. Every accepted browser line gets a step file under `manual/` before the case is accepted. Steps come first, the values sit at the bottom, one When. API and unit lines do not get a step file. A Playwright line stays unchecked and links to the spec the implementation chat will write, and also links to that step file. When that chat adds the spec, it checks the box, links the line to the spec, and moves the step file from `manual/` to `automated/`. The file stays. It is not archived and it is not deleted. The coverage diff is the impact. A case that creates a row says the row stays until it is deleted. The database is not wiped between runs.
 
 It does not write product code, Playwright specs, or a separate impact table. It does not assign case numbers.
 
@@ -216,7 +216,7 @@ Follow the same shape as the test-catalog work: options, a cut, then the artifac
 ```text
 Read docs/QA_WORKFLOW.md (“What the ticket records” and “Definition of done”) and docs/TEST_STRATEGY.md §10 and §12.
 
-Create .cursor/commands/definition-of-done.md. When later invoked on a pull request, it checks that the coverage diff is the impact, checked lines point at files that exist, manual lines point at case files whose steps come before the data, and CI is green. It posts the ticket comment: coverage lines touched, automated tests touched, which manual file was run or none, exploratory notes, pull request link, Actions link. It asks Taylor to confirm the diff is honest before it moves the board. It does not decide whether a line was wise, and it does not fail CI over an empty pull-request section.
+Create .cursor/commands/definition-of-done.md. When later invoked on a pull request, it checks that the coverage diff is the impact, checked lines point at spec files that exist, unchecked browser lines point at step files under `manual/`, checked browser lines point at those same step files under `automated/`, steps come before the data, and CI is green. It posts the ticket comment: coverage lines touched, automated tests touched, which manual file was run or none, exploratory notes, pull request link, Actions link. It asks Taylor to confirm the diff is honest before it moves the board. It does not decide whether a line was wise, and it does not fail CI over an empty pull-request section.
 
 Do not run it against a real pull request while creating it. Show the command file and stop.
 ```
@@ -224,7 +224,7 @@ Do not run it against a real pull request while creating it. Show the command fi
 ### 6 — Question the bones before Playwright code
 
 ```text
-Read docs/AGENTS.md, docs/ARCHITECTURE.md, docs/DECISIONS.md, docs/TEST_STRATEGY.md, docs/QA_WORKFLOW.md, and poc/test-catalog/ including the Playwright cases from prompt 2.
+Read docs/AGENTS.md, docs/ARCHITECTURE.md, docs/DECISIONS.md, docs/TEST_STRATEGY.md, docs/QA_WORKFLOW.md, and tests/catalog/ including the Playwright cases from prompt 2.
 
 This is a review, not a rewrite. Playwright is about to encode the current screens. Look for decisions that are brittle once those journeys exist: math duplicated or about to be asserted in the browser, journeys that repeat API rules, routes or labels the specs would freeze, and catalog lines that do not match the UI described in the E1/E2 notes.
 

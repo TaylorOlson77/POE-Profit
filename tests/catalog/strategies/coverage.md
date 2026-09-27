@@ -35,12 +35,12 @@ This page does not list every unit test in the repo. A line is a behavior someon
 
 ## Update a strategy
 
-- [ ] [shows the updated cost per waystone on the home list](../../../e2e/strategies.spec.ts) — Playwright
+- [ ] [shows the updated cost per waystone on the home list](../../../e2e/strategies.spec.ts) — Playwright. Steps: [manual](./manual/shows-the-updated-cost-per-waystone-on-the-home-list.md)
 - [x] replaces the lines and recalculates both totals — [`PUT /api/strategies/:id`](../../../tests/api/strategies.test.ts)
 
 ## Delete a strategy
 
-- [ ] [removes the strategy from the home list only after delete is confirmed](../../../e2e/strategies.spec.ts) — Playwright
-- [ ] [shows the conflict message when a strategy still has sessions](../../../e2e/strategies.spec.ts) — Playwright
+- [ ] [removes the strategy from the home list only after delete is confirmed](../../../e2e/strategies.spec.ts) — Playwright. Steps: [manual](./manual/removes-the-strategy-from-the-home-list-only-after-delete-is-confirmed.md)
+- [ ] [shows the conflict message when a strategy still has sessions](../../../e2e/strategies.spec.ts) — Playwright. Steps: [manual](./manual/shows-the-conflict-message-when-a-strategy-still-has-sessions.md)
 - [x] deletes a strategy that has no sessions — [`DELETE /api/strategies/:id`](../../../tests/api/strategies.test.ts)
 - [x] refuses to delete a strategy that still has sessions — [`DELETE /api/strategies/:id`](../../../tests/api/strategies.test.ts)
