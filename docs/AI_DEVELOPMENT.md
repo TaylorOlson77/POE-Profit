@@ -65,3 +65,4 @@ Chats do **not** fully remember each other. Carry context via the repo:
 - [`BACKLOG.md`](./BACKLOG.md)
 - [`FUTURE_FEATURES.md`](./FUTURE_FEATURES.md) — post-MVP ideas (not committed scope)
 - [`TEST_STRATEGY.md`](./TEST_STRATEGY.md)
+- [`QA_WORKFLOW.md`](./QA_WORKFLOW.md) — post-MVP ticket flow and test catalog (not in force during MVP)
