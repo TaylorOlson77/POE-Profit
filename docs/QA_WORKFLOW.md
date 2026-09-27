@@ -6,7 +6,7 @@
 | Applies | After the MVP baseline ships. Not the current backlog. |
 | Related | [`TEST_STRATEGY.md`](./TEST_STRATEGY.md), [`PRODUCT.md`](./PRODUCT.md), [`AI_DEVELOPMENT.md`](./AI_DEVELOPMENT.md), [ADR-009](./DECISIONS.md) |
 
-How a ticket moves once GitHub Issues are the tracker, and where the coverage pages live. The picture of a page is [`poc/test-catalog/`](../poc/test-catalog/README.md). That sketch moves to `tests/catalog/` after MVP. It is not used during the current backlog.
+How a ticket moves once GitHub Issues are the tracker, and where the coverage pages live. The pages are [`tests/catalog/`](../tests/catalog/README.md). This ticket flow is not in force during the current backlog.
 
 ## How this fits the test strategy
 
@@ -95,8 +95,10 @@ Stood up after MVP, from the automation that already exists, so the first featur
 tests/catalog/
   strategies/coverage.md
   strategies/manual/shows-the-new-strategy-on-the-home-list.md
+  strategies/automated/shows-the-new-strategy-on-the-home-list.md
   sessions/coverage.md
   sessions/manual/...
+  sessions/automated/...
 ```
 
 Folders are product areas, not sprints, ticket numbers, or epics. There is no `calculations/` page. A calculation earns a line on the capability it belongs to when someone might recheck that rule, or it stays only in the unit file.
@@ -107,8 +109,8 @@ Folders are product areas, not sprints, ticket numbers, or epics. There is no `c
 | --- | --- | --- |
 | Unit or API already locks it, and someone might recheck it by hand | One line: the `it` sentence and a link. Box checked. | None |
 | Same rule, different numbers | No extra line | None |
-| A person still has to look at the screen | One manual line. Box unchecked until a browser test exists. | Steps, then the data to type |
-| Browser test exists for that manual case | Box checked, link to the spec. The steps file can stay. | Keep it if someone will still run it by hand |
+| A person still has to look at the screen | One browser line. Box unchecked until a Playwright spec exists. | Steps under `manual/`, then the data to type |
+| Browser test exists for that case | Box checked, link to the spec, and the same steps file moved from `manual/` to `automated/`. | The steps stay. The folder says the spec now runs them. |
 
 ### Names
 
@@ -176,7 +178,7 @@ A post-MVP ticket is done when the quality bar in [`TEST_STRATEGY.md`](./TEST_ST
 
 1. The coverage page diff is the impact: lines added, retargeted, or removed, and a removed line says why in the pull request.
 2. Every checked line links to a test file that exists.
-3. Every manual line links to a case file whose steps come before its data.
+3. Every browser line links to a step file whose steps come before its data. An unchecked line's file is under `manual/`. A checked line's file is under `automated/`, and the line also links to a spec that exists.
 4. CI is green on that pull request (lint, typecheck, unit, API, build, Playwright — test strategy §10).
 5. The issue has the comment from "What the ticket records," including the Actions link.
 
@@ -194,6 +196,5 @@ Do not scrape case text onto the ticket. The definition-of-done comment links th
 
 - `ticket-test-plan` and `definition-of-done` (`plan-feature` exists; do not run it during the MVP backlog)
 - Using this workflow, or [`PRODUCT.md`](./PRODUCT.md), to cut issues before the baseline ships
-- Moving the sketch from `poc/test-catalog/` to `tests/catalog/`
 - The deploy report
 - Any change to the current MVP backlog or to E3

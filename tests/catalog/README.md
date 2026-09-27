@@ -1,10 +1,10 @@
 # Test catalog sketch
 
-The shape is agreed. It still lives here until it moves to `tests/catalog/` after the MVP baseline. Not wired to CI.
+The shape is agreed. It lives here, in `tests/catalog/`. Not wired to CI.
 
 Picture so far: strategies and sessions, each with create, update, and delete, plus the conflict message when a strategy still has sessions. Those are unchecked Playwright lines. The spec files are not written yet. A checked box still means an automated test exists.
 
-Open [`strategies/coverage.md`](./strategies/coverage.md) and [`sessions/coverage.md`](./sessions/coverage.md). Each page is a product area. Create, update, and delete are capabilities on that page. A line is a rule of that capability, linked to the test that locks it. Manual cases are the other files, under `manual/`. Steps are first. The values you type are at the bottom of that case.
+Open [`strategies/coverage.md`](./strategies/coverage.md) and [`sessions/coverage.md`](./sessions/coverage.md). Each page is a product area. Create, update, and delete are capabilities on that page. A line is a rule of that capability, linked to the test that locks it. Browser steps are the other files, under `manual/` until a Playwright spec exists. Then that file moves to `automated/`. Steps are first. The values you type are at the bottom of that case.
 
 A box on the list means an automated test exists. It does not mean the test passed last night. Results stay in CI.
 
