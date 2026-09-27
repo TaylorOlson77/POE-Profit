@@ -110,6 +110,13 @@ export function StrategiesList() {
               </div>
               <div className="flex flex-wrap items-center gap-2">
                 <Link
+                  href={`/sessions/new?strategyId=${encodeURIComponent(strategy.id)}`}
+                  className={buttonClass}
+                  aria-label={`Log session for ${strategy.name}`}
+                >
+                  Log session
+                </Link>
+                <Link
                   href={`/strategies/${strategy.id}`}
                   className={buttonClass}
                   aria-label={`Edit ${strategy.name}`}
