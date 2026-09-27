@@ -52,6 +52,9 @@ next-env.d.ts
 # local install noise
 npm-prisma-install.log
 
+# local Cursor IDE state
+.cursor/settings.json
+
 # Local study notes (not product docs)
 docs/INTERVIEW_PREP.md
 docs/RECOMMENDED_READING.md
