@@ -14,9 +14,14 @@ export default function Home() {
             Farming strategies and the cost to run one waystone.
           </p>
         </div>
-        <Link href="/strategies/new" className={buttonClass}>
-          New strategy
-        </Link>
+        <div className="flex flex-wrap gap-2">
+          <Link href="/sessions" className={buttonClass}>
+            Sessions
+          </Link>
+          <Link href="/strategies/new" className={buttonClass}>
+            New strategy
+          </Link>
+        </div>
       </header>
       <StrategiesList />
     </main>

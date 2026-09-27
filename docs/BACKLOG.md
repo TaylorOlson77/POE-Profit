@@ -171,10 +171,10 @@ Epics B–F below are the rest of the path to MVP. Keep checking them off here. 
 **Labels:** `ui`  
 **Depends on:** D2, E1  
 **AC:**
-- [ ] Create/edit map session: investment + revenue lines, duration method fields, maps completed
-- [ ] Displays calculated totals from API (not recomputed ad hoc in UI)
-- [ ] Duration method label visible
-- [ ] MapSession history table with key columns from MVP_SPEC
+- [x] Create/edit map session: investment + revenue lines, duration method fields, maps completed
+- [x] Displays calculated totals from API (not recomputed ad hoc in UI)
+- [x] Duration method label visible
+- [x] MapSession history table with key columns from MVP_SPEC
 
 ### E3. Playwright E2E: strategy + run happy paths
 **Labels:** `test`, `ui`  

@@ -14,7 +14,7 @@ Read this first in a new chat, then the docs listed under **Required reading**.
 ## Process (locked)
 
 - **Until MVP baseline ships:** track work by checking off items in [`BACKLOG.md`](./BACKLOG.md). No per-chore GitHub Issues for scaffold / Prisma / Jest / CI.
-- **After MVP baseline:** GitHub Issues + POE Profit board for features/fixes (ADR-009).
+- **After MVP baseline:** GitHub Issues + POE Profit board for features/fixes (ADR-009). Feature work follows [`QA_WORKFLOW.md`](./QA_WORKFLOW.md) (catalog, ticket flow, commands). That workflow is not in force during the MVP backlog.
 - **Options before code** for material decisions; durable choices go in [`DECISIONS.md`](./DECISIONS.md).
 - Do **not** implement FF-* items in [`FUTURE_FEATURES.md`](./FUTURE_FEATURES.md) unless Taylor asks.
 
@@ -24,7 +24,20 @@ Next.js App Router + TS · Vercel · Neon Postgres · Prisma · Route Handlers (
 
 ## Current next step
 
-**E2 — MapSession entry UI** per [`BACKLOG.md`](./BACKLOG.md) (E1 strategies UI done). Then E3 → deploy.
+**E3 — Playwright E2E** per [`BACKLOG.md`](./BACKLOG.md) (E2 map-session UI done). Then deploy.
+
+### E2 decisions (locked unless Taylor reopens them)
+
+- History is `/sessions`. Create is `/sessions/new` (optional `?strategyId=`). Edit is `/sessions/[id]`, and that page is also the detail view. Client components `fetch` `/api/map-sessions` and parse with the Zod contracts.
+- Home links to Sessions. Each strategy row links to Log session with that strategy preselected. Changing the strategy copies its `mapUnitCostChaos` into the cost field.
+- Calculated totals, line totals, and the duration method label come from the last API payload. They do not update while typing. A dirty form says the figures are from the last save. After create, the URL becomes `/sessions/[id]` so those figures are on screen.
+- Map/waystone cost is `mapsCompleted` × `mapUnitCostChaos` from the API (`mapInvestmentChaos`). It is not an investment line. No waystone tier and no separate session date; history Date is `createdAt`.
+- Revenue categories are a select of the MVP seed list. A stored category outside that list stays as an extra option. Category subtotals are not shown.
+- `priceSource` is `MANUAL` and `valuationType` is `ACTUAL_PAID`. `priceRecordedAt` is stamped now for a new line or when the unit value changes; otherwise the stored timestamp is kept.
+- The write body includes only the active duration method. Other method inputs stay in component state until save. New sessions default to Extrapolated. Observed times use `datetime-local` and are converted to ISO.
+- Form labels follow the selected strategy's game. The history column header stays Waystones. Nullable rates render as `N/A`. Effective duration is `formatDuration` (`1h 20m`) plus minutes.
+- Delete asks in the history row. **204** removes it. **404** shows `error.message`. No 409.
+- Unit tests cover `buildMapSessionWriteBody`, `formDetailPath`, datetime conversion, and the display formatters. The browser journey is E3.
 
 ### E1 decisions (locked unless Taylor reopens them)
 
@@ -79,6 +92,18 @@ Next.js App Router + TS · Vercel · Neon Postgres · Prisma · Route Handlers (
 - Every `db:*` script is wrapped in `dotenv -e .env.local --`. A bare `npx prisma validate` fails with `Environment variable not found: DATABASE_URL_UNPOOLED` — that is a missing env var, **not** schema drift. Use `npm run db:migrate:status` to check drift.
 - `package.json#prisma` (the seed hook) prints a Prisma 7 deprecation warning on every command. Harmless; migrate to `prisma.config.ts` when the version is bumped.
 - `npx prisma format` reformats `schema.prisma` but does not change semantics — re-run `db:migrate:status` after to confirm.
+
+**Next.js dev server**
+
+- A second `npm run dev` exits with code 1 when one is already running. The message names the existing PID and `http://localhost:3000`. Use that server. Local Playwright sets `reuseExistingServer`, so `npm run test:e2e` attaches to it.
+
+**Playwright browsers**
+
+- `npm install` does not download Chromium. The first local `npm run test:e2e` fails with `Executable doesn't exist` until `npx playwright install chromium`. CI already runs `npx playwright install --with-deps chromium` before E2E.
+
+**Observed session times**
+
+- `<input type="datetime-local">` has no timezone. `new Date(value)` reads it as local time; `toISOString()` is what `z.string().datetime()` accepts. Round-trip tests go through `Date` in the runner's timezone. Do not hardcode an offset.
 
 **Zod 4**
 
