@@ -77,6 +77,14 @@ PM command  →  ticket test-plan command  →  implement in Cursor  →  defini
 
 The test-plan command reads this file, [`TEST_STRATEGY.md`](./TEST_STRATEGY.md), and `tests/catalog/`. When a session disagrees with a rule here, the command proposes a dated amendment in this file. The amendment is not in force until Taylor accepts it.
 
+Name the branch from the story, because that issue is the one the pull request closes.
+
+```text
+42-register-and-sign-in
+```
+
+The number, a hyphen, then a few words from the story title. Lowercase. The epic does not get a branch. A story with no epic uses that single issue's number. The implementation chat stays on that branch.
+
 Shared facts for a product area (the app is running, there is no login, the demo seed) live at the top of that area's coverage page. If the command lacks one, it asks, and the answer is written there before the case is accepted.
 
 ## Catalog

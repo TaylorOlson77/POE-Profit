@@ -188,6 +188,8 @@ Read docs/QA_WORKFLOW.md, docs/TEST_STRATEGY.md §4.3, and the feature coverage 
 
 The command is for after the MVP baseline. It must: read the ticket, stop if acceptance criteria are not observable, create the feature branch, and edit the existing feature coverage page on that branch (not a new folder per ticket).
 
+Name the branch from the story, because that issue is the one the pull request closes: `42-register-and-sign-in`. The number, a hyphen, then a few words from the story title. Lowercase. The epic does not get a branch. A story with no epic uses that single issue's number.
+
 Propose the lines before writing any case file. Include create, update, and delete when the ticket's screens have them and the page does not already watch them. A browser line is a fact the screen shows: saved figures, a confirm step, a row leaving or staying, or a server error a person can hit on a normal journey (the conflict message when a strategy still has sessions). The API locking the status code is not a reason to skip that line. The API does not open the page.
 
 Leave off a line whose only new fact is a field-validation message, or a not-found sentence for an id a person cannot reach on purpose. There is no 404 page. A missing strategy or session shows the API sentence in place of the form. That stays an API line.

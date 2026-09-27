@@ -24,4 +24,4 @@ File only after Taylor accepts. If they change the split, file theirs.
 
 Use `gh`. Create the epic first and label it `epic`. Create each story with `--parent` set to that epic, so GitHub records the sub-issue. Do not write `Part of #` in the body. One story and no siblings: file that one issue, and skip the epic label and the parent. Add the issues to the POE Profit board, Backlog column. If that column is missing, ask. Leave them in Backlog.
 
-Then stop. No branch, no coverage page, no tests, no product code.
+Then stop. No branch, no coverage page, no tests, no product code. The test-plan command names the branch later, from the story number, not the epic.
