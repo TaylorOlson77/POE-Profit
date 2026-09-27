@@ -6,6 +6,8 @@ App running locally, no login. The demo seed may already be on the list as "Expe
 
 Rows you save stay in the database until you delete them. A test run or a deploy does not clear them. Re-seeding replaces only that demo strategy and its demo session.
 
+The create, update, and delete lines for `POC Expedition Tablet Farming` are one ordered pass on that row. The spec group is serial. A retry starts by removing a leftover row of that name. The conflict line is not part of that pass. It uses the demo strategy, and confirming delete leaves that row in place.
+
 This page does not list every unit test in the repo. A line is a behavior someone might otherwise recheck by hand.
 
 ## Create a strategy

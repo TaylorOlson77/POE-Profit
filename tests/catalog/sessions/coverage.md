@@ -6,6 +6,8 @@ App running locally, no login. The demo seed may already include a session for "
 
 Rows you save stay in the database until you delete them. A test run or a deploy does not clear them. Re-seeding replaces only that demo strategy and its demo session.
 
+The create, update, and delete lines are one ordered pass on one session. The spec group is serial. A retry starts by removing a leftover session on the demo strategy that is not the demo session. The demo session stays.
+
 This page does not list every unit test in the repo. A line is a behavior someone might otherwise recheck by hand.
 
 ## Create a session

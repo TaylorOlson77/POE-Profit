@@ -30,9 +30,13 @@ Prep prompt **1 is done.** `tests/catalog/` has strategies and sessions (create,
 
 Prep prompt **2 is done.** The coverage pages have unchecked Playwright lines for create, update, and delete of a strategy and of a session, plus the conflict message when a strategy still has sessions. The spec files are not written. A missing id shows the API sentence in place of the form. There is no 404 page, and that path is not a browser line.
 
+Prep prompt **3 is done.** `.cursor/commands/ticket-test-plan.md` plans tests for one story. The rules are [`QA_WORKFLOW.md`](./QA_WORKFLOW.md), [`TEST_STRATEGY.md`](./TEST_STRATEGY.md) §4, and [`tests/catalog/README.md`](../tests/catalog/README.md). It is not used during the MVP backlog.
+
 Prep prompt **4 is done.** `.cursor/commands/plan-feature.md` plans a feature. The rules are [`PRODUCT.md`](./PRODUCT.md). It files issues only after Taylor accepts, and it is not used during the MVP backlog.
 
-Before writing Playwright specs, run prep prompt **6** below in a new chat. Prompt 2 is done. Prompt 6 finishes before any Playwright code. Prompts **3 and 5** create the post-MVP commands. They do not block the specs. Prompt 4 is done.
+A finished prep prompt is the brief for that chat. The rules now live in the docs, not in the prompt.
+
+Before writing Playwright specs, run prep prompt **6** below in a new chat. Prompt 2 is done. Prompt 6 finishes before any Playwright code. Prompt **5** creates the definition-of-done command. It does not block the specs. Prompts 3 and 4 are done.
 
 Do not execute a prep prompt just because this file was read. Run one only when Taylor pastes that prompt as the task.
 
@@ -178,7 +182,7 @@ Propose the browser journeys for the MVP. Start from the four in the workflow, a
 
 Stop after the list: for each journey, the sentence name, the feature section it belongs on, and whether a manual file already exists. Wait for Taylor to cut it.
 
-After the cut, add the manual files and the coverage lines. Box unchecked. The line links to the manual file. Steps first, data at the bottom, one When, a sentence that still makes sense without the heading. No case numbers. Do not write Playwright specs. Do not change product code.
+After the cut, add the manual files and the coverage lines. Box unchecked. The line links to the manual file. Write the step file the way [`tests/catalog/README.md`](../tests/catalog/README.md) says. No case numbers. Do not write Playwright specs. Do not change product code.
 ```
 
 ### 3 — Ticket test-plan command
@@ -194,7 +198,7 @@ Propose the lines before writing any case file. Include create, update, and dele
 
 Leave off a line whose only new fact is a field-validation message, or a not-found sentence for an id a person cannot reach on purpose. There is no 404 page. A missing strategy or session shows the API sentence in place of the form. That stays an API line.
 
-Stop for Taylor to cut the list, including edge cases, before writing case bodies. Every accepted browser line gets a step file under `manual/` before the case is accepted. Steps come first, the values sit at the bottom, one When. API and unit lines do not get a step file. A Playwright line stays unchecked and links to the spec the implementation chat will write, and also links to that step file. When that chat adds the spec, it checks the box, links the line to the spec, and moves the step file from `manual/` to `automated/`. The file stays. It is not archived and it is not deleted. The coverage diff is the impact. A case that creates a row says the row stays until it is deleted. The database is not wiped between runs.
+Stop for Taylor to cut the list, including edge cases, before writing case bodies. Every accepted browser line gets a step file under `manual/` before the case is accepted. Write it the way [`tests/catalog/README.md`](../tests/catalog/README.md) says. API and unit lines do not get a step file. A Playwright line stays unchecked and links to the spec the implementation chat will write, and also links to that step file. When that chat adds the spec, it checks the box, links the line to the spec, and moves the step file from `manual/` to `automated/`. The file stays. It is not archived and it is not deleted. The coverage diff is the impact. A case that creates a row says the row stays until it is deleted. The database is not wiped between runs.
 
 It does not write product code, Playwright specs, or a separate impact table. It does not assign case numbers.
 
