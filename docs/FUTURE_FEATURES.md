@@ -256,6 +256,37 @@ MapSession totals stay API-displayed (E2).
 
 ---
 
+## FF-006: Deploy test report
+
+| Field | Value |
+| --- | --- |
+| Status | Idea |
+| Horizon | First testing feature after the post-MVP catalog exists |
+| Date | 2026-09-27 |
+| Related | [`QA_WORKFLOW.md`](./QA_WORKFLOW.md) |
+
+### Summary
+
+Generate a report for each deploy. The summary is the feature and the action (create, update, delete), with a pass rate and counts by layer. Counts come from the test run. The drill-down is the feature coverage page, with each line marked manual, browser, API, or unit, plus pass or fail. Manual results are a short log: the case file name, pass or fail, date, deploy. There is no separate case number. Cases added or updated come from the git diff of the catalog, not from a rewritten list.
+
+### Why
+
+Actions history shows that CI ran. It does not give a visitor one page that says which behaviors were checked for this deploy, including the few manual cases someone actually ran.
+
+### Risks
+
+- Hand-written reports, and hand-typed counts, will be skipped or wrong. The report has to be generated.
+- A summary that counts every unit test in the repo against one action overstates what that action covers.
+- Copying case text onto GitHub issues creates a second source that drifts. The report links to the case files.
+- Committing every full run log into the repo will get noisy. Prefer the deploy workflow's output or a published page, with a tiny manual log as the only human input.
+
+### Open questions
+
+1. GitHub Actions summary, GitHub Pages, or a release asset?
+2. Where does the manual pass/fail line get entered so it stays small enough to actually fill in?
+
+---
+
 ## Index
 
 | ID | Title | Status |
@@ -265,3 +296,4 @@ MapSession totals stay API-displayed (E2).
 | FF-003 | Buy-filter regex paste, decode, display, copy | Idea |
 | FF-004 | Truth-sayer vs Deceiver strategy signals | Idea |
 | FF-005 | Live strategy cost preview on the form | Idea |
+| FF-006 | Deploy test report | Idea |

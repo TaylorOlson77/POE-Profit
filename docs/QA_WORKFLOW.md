@@ -125,12 +125,17 @@ Per ticket, agree the lines before writing a case file:
 
 Cut a line when you would not run it, when it cannot fail on its own, or when the steps describe widgets.
 
-The browser set to aim for when the catalog is stood up, adjusted to whatever the MVP end-to-end tests actually cover:
+The browser set for the current screens is create, update, and delete for a strategy and for a session. The coverage pages are that list. An unchecked Playwright line is a journey the spec does not contain yet.
 
 1. Create a strategy and see it on the home list with its cost per waystone.
-2. Record a session whose summary matches the golden fixture.
-3. Edit a quantity and see the totals change.
-4. Delete a session: cancel keeps it, confirm removes it.
+2. Update a strategy and see the new cost per waystone on the home list.
+3. Delete a strategy: cancel keeps it, confirm removes it.
+4. Record a session and see the saved performance totals.
+5. Edit a session quantity and see the new totals after save.
+6. Delete a session: cancel keeps it, confirm removes it.
+7. Delete a strategy that still has sessions: the home list shows the conflict message and the strategy stays.
+
+A screen fact the happy path does not show is an edge case. Propose it, and add the line only after Taylor accepts it.
 
 ### Regression
 

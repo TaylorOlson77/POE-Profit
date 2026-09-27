@@ -4,12 +4,14 @@
 | --- | --- |
 | Status | Draft |
 | Scope | MVP v1 |
-| Related | [`MVP_SPEC.md`](./MVP_SPEC.md), [`DECISIONS.md`](./DECISIONS.md) |
+| Related | [`MVP_SPEC.md`](./MVP_SPEC.md), [`DECISIONS.md`](./DECISIONS.md), [`QA_WORKFLOW.md`](./QA_WORKFLOW.md) (post-MVP catalog and ticket flow; not in force during MVP) |
 | Primary risk | Incorrect money, time, or efficiency calculations |
 
 ## 1. Purpose
 
-This document defines how we will prove MVP behavior with automation, what each test layer owns, what we deliberately do **not** automate yet, and how CI will gate merges.
+This document defines how we prove behavior, what each test layer owns, what we deliberately do not automate, and how CI gates merges.
+
+The living inventory of those tests is the feature coverage page in [`QA_WORKFLOW.md`](./QA_WORKFLOW.md). This document is the rules. The coverage page is the list. A ticket updates the coverage page. It does not add a row to the tables in §6 or §7.
 
 The project is intentionally a portfolio demonstration of senior QA / SDET practice: clear requirements, acceptance criteria, risk-based coverage, and traceability—not only a working UI.
 
@@ -88,9 +90,12 @@ One example of each contract outcome is enough: a valid write, one invalid field
 
 **Owns**
 
-- Create strategy → appears in list
+- Create strategy → appears in list with its cost per waystone
+- Update strategy → after save, the home list shows the new cost per waystone
+- Delete strategy with no sessions → confirmation required → strategy gone from the home list
+- Delete strategy that still has sessions → the home list shows the conflict message and the strategy stays
 - Record run with investment + revenue + prices + duration → displayed totals match expected fixture
-- Edit quantity → totals recalculate
+- Edit quantity → totals recalculate after save
 - Delete run → confirmation required → run gone from history
 - Basic accessibility smoke where cheap (e.g. critical controls named / reachable)—not a full a11y audit in MVP
 
@@ -100,7 +105,7 @@ One example of each contract outcome is enough: a valid write, one invalid field
 - Auth flows (none in MVP)
 - External market APIs
 - Visual regression of the entire app
-- Every field-level validation message, when a unit test already owns that rule. One journey that shows an error and blocks submit is enough to prove the input is wired up. Add another UI case only when that message exists only on the screen (or must show a specific server error, such as `409 CONFLICT`) and nothing below the UI asserts it.
+- Field-level validation. A missing name, a bad decimal, and the other input rules stay in unit and API tests. A browser case for a validation message exists only when that message cannot be asserted below the UI (a specific server error such as `409 CONFLICT` that the screen must show).
 
 ### 4.4 How deep each layer goes
 
@@ -121,6 +126,8 @@ One example of each contract outcome is enough: a valid write, one invalid field
 | Flaky E2E | CI distrust | Few journeys; stable fixtures; artifacts on failure |
 
 ## 6. Test suites mapped to MVP behavior
+
+These tables are the MVP plan: the behaviors automation should cover before the baseline ships. After that, the coverage pages are the inventory. Do not keep both lists in sync by hand.
 
 ### 6.1 Calculation engine (unit)
 
@@ -164,13 +171,18 @@ Given revenue `2787.09c`, investment `513.60c`, duration `99` minutes (`1.65h`),
 
 | Journey | Assertions |
 | --- | --- |
-| Create strategy | Form validation; strategy visible after save |
-| Record run | Enter investments, revenue, price timestamps, start/end, waystone count; summary matches fixture |
+| Create strategy | After save, the home list shows the strategy and its cost per waystone |
+| Update strategy | After save, the home list shows the new cost per waystone |
+| Delete strategy | Confirmation required; cancelled delete keeps the strategy; confirmed delete removes it when it has no sessions |
+| Record run | Enter investments, revenue, and an extrapolated duration; the session page shows the saved totals |
 | Edit run | Change quantity; totals update after save |
 | Delete run | Confirmation required; cancelled delete keeps run; confirmed delete removes run |
-| History | MapSession appears with key columns (profit, duration, strategy) |
 
-## 7. Acceptance criteria → tests (lightweight traceability)
+The unchecked Playwright lines on the coverage pages are the journey list for the current screens, including the conflict message when a strategy still has sessions.
+
+## 7. Acceptance criteria → tests (MVP snapshot)
+
+This table records how the MVP requirements were assigned to layers. Post-MVP tickets do not extend it. They update the feature coverage page.
 
 | Requirement (MVP) | Acceptance criteria (summary) | Primary tests |
 | --- | --- | --- |
@@ -179,6 +191,8 @@ Given revenue `2787.09c`, investment `513.60c`, duration `99` minutes (`1.65h`),
 | Chaos / Divine | Chaos canonical; Divine via run rate snapshot | Unit + API |
 | Duration metrics | Effective duration from chosen method; method labeled; zero duration → N/A rates | Unit + API |
 | ROI | Unavailable when investment = 0 | Unit + API |
+| Update strategy | After save, the home list shows the new cost per waystone | API + E2E |
+| Delete strategy | Requires confirmation; a strategy with no sessions leaves the home list; a strategy that still has sessions shows the conflict message and stays | E2E (+ API delete) |
 | Edit run | Derived values recalculate | API + E2E |
 | Delete run | Requires confirmation | E2E (+ API delete) |
 | PoE2 terminology | UI shows Waystone/Tablet labels | E2E smoke |
@@ -239,15 +253,17 @@ Exact tooling (Vitest, Jest, Playwright reporters, etc.) is deferred to `ARCHITE
 
 ## 12. Definition of done (testing)
 
-A feature is not done when the UI “looks right.” It is done when:
+A feature is not done when the UI looks right. The quality bar is:
 
 1. Acceptance criteria are written.
-2. Unit and/or API tests cover the risk.
-3. Critical path E2E coverage exists if the feature is user-facing and journey-critical.
+2. Unit and/or API tests cover the risk, at the depth in §4.
+3. A browser journey exists when the feature is user-facing and a person would otherwise have to look at the screen to believe it. Field validation does not qualify.
 4. CI gates pass.
 5. Failures produce enough artifacts to debug without re-running blindly.
 
-MVP v1 product DoD in `MVP_SPEC.md` §34 additionally requires the calculation engine, API, validation, and automated tests to meet these quality requirements—not UI alone.
+For MVP, that bar is the whole definition of done. `MVP_SPEC.md` §34 requires the calculation engine, API, validation, and automated tests to meet it, not the UI alone.
+
+After MVP, a ticket also updates the coverage page, as [`QA_WORKFLOW.md`](./QA_WORKFLOW.md) describes. That page is how a reader sees the bar was met. It does not replace the bar.
 
 ## 13. Open items for architecture phase
 

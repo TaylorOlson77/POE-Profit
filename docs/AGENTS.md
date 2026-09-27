@@ -26,11 +26,13 @@ Next.js App Router + TS · Vercel · Neon Postgres · Prisma · Route Handlers (
 
 **E3 — Playwright E2E** per [`BACKLOG.md`](./BACKLOG.md) (E2 map-session UI done). Then deploy.
 
-Prep prompt **1 is done.** `poc/test-catalog/` has strategies and sessions (create, update, delete). The only manual case is still create a strategy. The five judgment calls from that chat stay off the pages.
+Prep prompt **1 is done.** `poc/test-catalog/` has strategies and sessions (create, update, delete). The five judgment calls from that chat stay off the pages.
+
+Prep prompt **2 is done.** The coverage pages have unchecked Playwright lines for create, update, and delete of a strategy and of a session, plus the conflict message when a strategy still has sessions. The spec files are not written. A missing id shows the API sentence in place of the form. There is no 404 page, and that path is not a browser line.
 
 Prep prompt **4 is done.** `.cursor/commands/plan-feature.md` plans a feature. The rules are [`PRODUCT.md`](./PRODUCT.md). It files issues only after Taylor accepts, and it is not used during the MVP backlog.
 
-Before writing Playwright specs, run prep prompts **2, then 6** below. Each one is a new chat. Prompt 2 writes the browser journeys into the catalog and waits for a cut. Prompt 6 finishes before any Playwright code. Prompts **3, 4, and 5** create the post-MVP commands. They do not block the specs.
+Before writing Playwright specs, run prep prompt **6** below in a new chat. Prompt 2 is done. Prompt 6 finishes before any Playwright code. Prompts **3 and 5** create the post-MVP commands. They do not block the specs. Prompt 4 is done.
 
 Do not execute a prep prompt just because this file was read. Run one only when Taylor pastes that prompt as the task.
 
@@ -182,9 +184,17 @@ After the cut, add the manual files and the coverage lines. Box unchecked. The l
 ### 3 — Ticket test-plan command
 
 ```text
-Read docs/QA_WORKFLOW.md and poc/test-catalog/. Create .cursor/commands/ticket-test-plan.md so a later chat can run that command.
+Read docs/QA_WORKFLOW.md, docs/TEST_STRATEGY.md §4.3, and the feature coverage pages. Create .cursor/commands/ticket-test-plan.md so a later chat can run that command.
 
-The command is for after the MVP baseline. It must: read the ticket, stop if acceptance criteria are not observable, create the feature branch, edit the existing feature coverage page on that branch (not a new folder per ticket), add a manual file only for a new case a person would run, and stop for Taylor to cut the list before writing case bodies. The coverage diff is the impact. It does not write product code or a separate impact table. It does not assign case numbers.
+The command is for after the MVP baseline. It must: read the ticket, stop if acceptance criteria are not observable, create the feature branch, and edit the existing feature coverage page on that branch (not a new folder per ticket).
+
+Propose the lines before writing any case file. Include create, update, and delete when the ticket's screens have them and the page does not already watch them. A browser line is a fact the screen shows: saved figures, a confirm step, a row leaving or staying, or a server error a person can hit on a normal journey (the conflict message when a strategy still has sessions). The API locking the status code is not a reason to skip that line. The API does not open the page.
+
+Leave off a line whose only new fact is a field-validation message, or a not-found sentence for an id a person cannot reach on purpose. There is no 404 page. A missing strategy or session shows the API sentence in place of the form. That stays an API line.
+
+Stop for Taylor to cut the list, including edge cases, before writing case bodies. A manual file is only for a case a person would still run. A Playwright line stays unchecked and links to the spec file the implementation chat will write. The coverage diff is the impact. A case that creates a row says the row stays until it is deleted. The database is not wiped between runs.
+
+It does not write product code, Playwright specs, or a separate impact table. It does not assign case numbers.
 
 Do not run the command against a real ticket while creating it. Show the command file and stop.
 ```
