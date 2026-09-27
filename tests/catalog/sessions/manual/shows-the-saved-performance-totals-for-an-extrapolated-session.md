@@ -1,26 +1,28 @@
 # shows the saved performance totals for an extrapolated session
 
-After save, the session page shows the performance totals from that save. The form opens on Extrapolated, and the waystone cost is the one copied from the strategy.
+After save, the session page shows the performance totals from that save.
 
 ## Steps
 
 Given I am on the home page
 
-When I choose Log session for [this strategy](#data), enter [this session](#data), and save
+When I choose Log session for [this strategy](#data)
+- The waystone cost is already `2`
+- The method is already Extrapolated
+
+And I enter [this session](#data) and save
 
 Then the address is that session, and the Performance block shows the saved totals below
 
 ## Data
 
-The strategy is the demo row. Log session selects it and fills the waystone cost.
+The strategy is the demo row. Log session selects it.
 
 | Field | Value |
 | --- | --- |
 | Strategy | `Expedition + Temple tablets (demo)` |
-| Waystone cost (chaos) | `2` |
 | Waystones completed | `40` |
 | Divine rate (chaos per divine) | `200` |
-| Method | Extrapolated |
 | Sample waystones | `10` |
 | Sample minutes | `20` |
 | Investment item | `Expedition Tablet` |
@@ -58,4 +60,4 @@ Saved totals:
 | Waystones / hour | `30` |
 | ROI | `430%` |
 
-Waystone spend is `40 × 2 = 80`, added to the investment lines (`280 + 40`) for `400c`. Revenue is `(7 × 200) + (30 × 14) + (60 × 5) = 2120c`. Profit is `2120 − 400 = 1720c`. The Divine Orb quantity is `7` so this row is not the demo session, whose profit is `1920c`.
+The Divine Orb quantity is `7`, so this row is not the demo session, whose profit is `1920c`.

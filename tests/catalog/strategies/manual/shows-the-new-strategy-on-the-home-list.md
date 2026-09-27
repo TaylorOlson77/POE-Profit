@@ -26,5 +26,3 @@ Then I am back on the home page, and that row shows Path of Exile 2 and `Estimat
 | Modifier notes | `remnants` |
 | Quantity per map | `1` |
 | Unit cost (chaos) | `10` |
-
-`2 + (2 × 100) + (1 × 10) = 212`, shown as `212c`.

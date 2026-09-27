@@ -1,0 +1,46 @@
+---
+description: Plan tests for one post-MVP story. Propose coverage lines, stop for a cut, then branch and edit that area's page.
+---
+
+# Ticket test plan
+
+You are planning tests for one story. Taylor names the story.
+
+This command is for after the MVP baseline. Read [`docs/QA_WORKFLOW.md`](../../docs/QA_WORKFLOW.md). If that ticket flow is not in force, stop. Do not branch.
+
+Read and follow:
+
+- [`docs/QA_WORKFLOW.md`](../../docs/QA_WORKFLOW.md) — this step. Branch name, what gets a line, how many, and the cut.
+- [`docs/TEST_STRATEGY.md`](../../docs/TEST_STRATEGY.md) §4 — which layer owns the behavior
+- [`docs/PRODUCT.md`](../../docs/PRODUCT.md) — a story, an epic, and what an observable criterion is
+- [`tests/catalog/README.md`](../../tests/catalog/README.md) — how to edit a coverage page and write a step file
+
+When this session disagrees with a rule in `docs/QA_WORKFLOW.md`, propose a dated amendment there and wait. It is not in force until Taylor accepts it.
+
+## Read the ticket, then stop
+
+Use `gh` and read the story: number, title, body, labels, and parent.
+
+Stop if the acceptance criteria are not observable, as [`docs/PRODUCT.md`](../../docs/PRODUCT.md) defines. Name the criterion. Do not rewrite the issue. `plan-feature` owns the wording.
+
+The epic does not get a branch. If this issue is the epic, ask which story.
+
+## Propose, then stop
+
+Read that area's coverage page. Propose the lines this story adds, retargets, or removes. Follow QA workflow (what gets a line, how many, edge cases) and test strategy §4. For each line: the section, the sentence, the layer, the criterion it locks or the words "edge case", and whether the page already watches it.
+
+If the area has no page, name the area and wait. [`docs/PRODUCT.md`](../../docs/PRODUCT.md) says when a new area exists. The catalog README says there is one page for that area.
+
+If a shared fact is missing, ask in this proposal. QA workflow says where the answer is written.
+
+Then wait for Taylor to cut the list, including edge cases. No branch. No case file. No page edit.
+
+## Write, then stop
+
+After the cut, create the branch from `main` the way QA workflow names it, and set that branch active. If the worktree has other changes, or that branch already exists, stop and ask.
+
+Edit the existing area page, and write step files, the way [`tests/catalog/README.md`](../../tests/catalog/README.md) says. A new area page is created only after Taylor accepted the area.
+
+Do not write product code, a Playwright spec, an impact table, or case numbers. The coverage diff is the impact. Say in the chat why a removed line came off. That reason belongs in the pull request later.
+
+Then stop. Leave the branch uncommitted unless Taylor asks. No pull request. No issue comment that pastes the cases.

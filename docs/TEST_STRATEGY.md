@@ -11,7 +11,7 @@
 
 This document defines how we prove behavior, what each test layer owns, what we deliberately do not automate, and how CI gates merges.
 
-The living inventory of those tests is the feature coverage page in [`QA_WORKFLOW.md`](./QA_WORKFLOW.md). This document is the rules. The coverage page is the list. A ticket updates the coverage page. It does not add a row to the tables in §6 or §7.
+The living inventory of those tests is [`tests/catalog/`](../tests/catalog/README.md). This document is the rules for which layer owns a behavior. [`QA_WORKFLOW.md`](./QA_WORKFLOW.md) decides when a line belongs on a page. A ticket updates the coverage page. It does not add a row to the tables in §6 or §7.
 
 The project is intentionally a portfolio demonstration of senior QA / SDET practice: clear requirements, acceptance criteria, risk-based coverage, and traceability—not only a working UI.
 
@@ -106,6 +106,10 @@ One example of each contract outcome is enough: a valid write, one invalid field
 - External market APIs
 - Visual regression of the entire app
 - Field-level validation. A missing name, a bad decimal, and the other input rules stay in unit and API tests. A browser case for a validation message exists only when that message cannot be asserted below the UI (a specific server error such as `409 CONFLICT` that the screen must show).
+
+The API locking a status code does not skip a browser line. The API does not open the page. The conflict message above is that case: the home list shows the message and the strategy stays.
+
+There is no 404 page. A missing strategy or session shows the API sentence in place of the form. That stays an API line. A not-found sentence for an id a person cannot reach on purpose is not a browser line.
 
 ### 4.4 How deep each layer goes
 
@@ -218,23 +222,25 @@ Explicitly **out of scope** for MVP automated testing:
 | Environment | Purpose |
 | --- | --- |
 | Local | Dev loop; unit + API + optional headed E2E |
-| CI | Every PR: lint, typecheck, unit, API/integration, E2E |
+| CI | Every pull request. The gates are §10. |
 | Deployed staging / demo | Manual or scheduled smoke against a live URL (portfolio demo) |
 
 Test data on public demos should be **synthetic**, not personal league economy data (ADR-007).
 
 ## 10. CI quality gates
 
-A pull request should not merge unless:
+A pull request should not merge unless CI is green. The gates, in order:
 
-1. **Lint** passes
-2. **Format** check passes (or format-on-commit is enforced)
-3. **Typecheck** passes
-4. **Unit tests** pass
-5. **API / integration tests** pass
-6. **Playwright E2E** critical journeys pass
+1. Lint
+2. Typecheck
+3. Unit tests
+4. API / integration tests (`npm run test:api`)
+5. Build
+6. Playwright E2E
 
-**As implemented (A5 / B3 / D1):** CI runs lint → typecheck → unit → API → build → E2E on every push to `main` and every pull request. That API step is `npm run test:api`. It does not run again as part of the Vercel deploy. Gate 2 (format) is **not** enforced yet — `format:check` exists as a script only. CI has **no database credentials**; it runs `prisma generate` but never applies migrations. D1 and D2 API tests call Route Handlers in-process with a Prisma fake (`tests/api/strategyDbMock.ts`, `tests/api/mapSessionDbMock.ts`). A Neon round-trip is still deferred.
+`format:check` exists as a script. It is not a gate.
+
+CI runs that list on every push to `main` and every pull request. The API step does not run again as part of the Vercel deploy. CI has **no database credentials**; it runs `prisma generate` but never applies migrations. D1 and D2 API tests call Route Handlers in-process with a Prisma fake (`tests/api/strategyDbMock.ts`, `tests/api/mapSessionDbMock.ts`). A Neon round-trip is still deferred.
 
 On E2E failure, CI should retain:
 
