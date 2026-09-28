@@ -26,7 +26,7 @@ Next.js App Router + TS · Vercel · Neon Postgres · Prisma · Route Handlers (
 
 **MVP baseline is deployed** at [poe-profit.vercel.app](https://poe-profit.vercel.app/). F1 is checked off in [`BACKLOG.md`](./BACKLOG.md). There is no F2. The public site uses the Neon `production` branch and shows only the demo strategy. Actions migrates and resets the Neon `ci` branch once per run, then Playwright runs there.
 
-Next: the remaining baseline tickets are in [`MVP_REMAINING.md`](./MVP_REMAINING.md). R1 is checked off. R2, R3, and R4 are still open. One ticket per chat. Do not start the next ticket in the same chat.
+Next: the remaining baseline tickets are in [`MVP_REMAINING.md`](./MVP_REMAINING.md). R1, R2, and R4 are checked off. R3 is still open. One ticket per chat. Do not start the next ticket in the same chat.
 
 Prep prompt **1 is done.** `tests/catalog/` has strategies and sessions (create, update, delete). The five judgment calls from that chat stay off the pages.
 

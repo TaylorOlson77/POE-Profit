@@ -4,6 +4,7 @@
 | --- | --- |
 | Status | Draft |
 | Date | 2026-09-13 |
+| Revised | 2026-09-28 |
 | Related | [`MVP_SPEC.md`](./MVP_SPEC.md), [`DECISIONS.md`](./DECISIONS.md), [`TEST_STRATEGY.md`](./TEST_STRATEGY.md), [`AI_DEVELOPMENT.md`](./AI_DEVELOPMENT.md) |
 
 This document records **how** we build the MVP. Product rules live in the spec and ADRs; this file is the system map.
@@ -28,7 +29,7 @@ This document records **how** we build the MVP. Product rules live in the spec a
 | Database | Neon Postgres | ADR-011 |
 | ORM | Prisma | ADR-012 |
 | HTTP API | Route Handlers (`app/api/...`) | ADR-013 |
-| Money math | `decimal.js` (or light variant) | ADR-015 |
+| Money math | Full `decimal.js` | ADR-015 clarification |
 | Unit / API tests | Jest | ADR-014 |
 | E2E | Playwright | TEST_STRATEGY |
 | Process board | GitHub Issues + Projects | ADR-009 |
@@ -75,13 +76,13 @@ app/
       .../route.ts          # Route Handlers
 
 src/
-  contracts/                # Request/response types & shared error shape
+  contracts/                # Zod request/response schemas and the shared error shape
   domain/
     calc/                   # Pure calculation engine (Jest unit tests)
   server/
     db/                     # Prisma client singleton
     services/               # Orchestration: DB + calc
-    validation/             # Input parsing (e.g. Zod) aligned to contracts
+  ui/                       # Display formatters and form → write-body transforms
 
 prisma/
   schema.prisma

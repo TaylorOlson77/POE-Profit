@@ -94,6 +94,7 @@ Players think in both Chaos and Divine. Market rates change. Historical runs mus
 | --- | --- |
 | Status | Accepted |
 | Date | 2026-09-11 |
+| Revised | 2026-09-28 |
 
 ### Context
 
@@ -102,8 +103,8 @@ Automatic market integrations (e.g. poe.ninja) add scope and flakiness. Spreadsh
 ### Decision
 
 - MVP pricing is **manual only**.
-- Every valued line item records **unit value**, **price recorded at**, and **price source** (initially Manual).
-- The data model distinguishes valuation types (at minimum: Market Value, Actual Paid Price, Actual Sale Price), even if the MVP UI primarily uses Market Value.
+- Every valued line item records **unit value**, **price recorded at**, and **price source** (Manual). The recorded time is save time: stamped now for a new line or when the unit value changes, otherwise the stored timestamp is kept. There is no capture-time picker. Historical price means the stored value. (Amended 2026-09-28.)
+- MVP persists valuation type **`ACTUAL_PAID` only**. Market Value and Actual Sale Price are not enum values. (Amended 2026-09-28.)
 
 ### Consequences
 
@@ -572,6 +573,7 @@ Use the full **`decimal.js`** package for MVP money/efficiency math, not `decima
 | --- | --- |
 | Status | Accepted |
 | Date | 2026-09-15 |
+| Revised | 2026-09-28 |
 
 ### Context
 
@@ -582,7 +584,7 @@ Early Strategy drafts used optional metadata defaults (tier, party size, quantit
 - A **Strategy** stores: name, game, description, optional `mapNotes`, required **map/waystone unit cost** (quantity implied = 1), and **enhancement lines** (scarabs for PoE1 / tablets for PoE2).
 - Map/waystone is **not** modeled as a row in the enhancement list — it is a required 1:1 slot on Strategy.
 - Drop MVP fields: default map tier, party size, quantity target, configuration blob, external reference URL (atlas/reference link can return later as its own field).
-- Enhancement line quantities and costs are **per map**; a run of N maps scales them by N when estimating/prefilling run investment.
+- Enhancement line quantities and costs are **per map** on the strategy. Session prefill copies only `mapUnitCostChaos`. Tablet and other enhancement prefill is later. (Amended 2026-09-28.)
 - `modifierNotes` is optional on enhancement lines; **UI shows it only for PoE2 tablets**.
 - UI labels (Map vs Waystone, Scarab vs Tablet) come from `game` — no `kind` enum on enhancement lines for MVP.
 - `estimatedCostPerMapChaos` = `mapUnitCostChaos` + sum of enhancement `lineTotalChaos` values, where each `lineTotalChaos` = `quantity × unitCostChaos` (e.g. 2×100c + 1×10c = **210c** of enhancements, then add map/waystone unit cost). Calculated (compute-on-write), not user-edited totals.
