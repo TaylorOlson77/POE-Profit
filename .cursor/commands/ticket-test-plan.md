@@ -17,6 +17,8 @@ Read and follow:
 
 When this session disagrees with a rule in `docs/QA_WORKFLOW.md`, propose a dated amendment there and wait. It is not in force until Taylor accepts it.
 
+If this run hit a pain point in the command, name it and the one-line change. Wait. After Taylor accepts, add that line here.
+
 ## Read the ticket, then stop
 
 Use `gh` and read the story: number, title, body, labels, and parent.

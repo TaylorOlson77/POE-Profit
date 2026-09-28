@@ -9,6 +9,7 @@ import {
   useState,
   type ChangeEvent,
   type FormEvent,
+  type ReactNode,
 } from "react";
 import type { ApiErrorDetail } from "@/src/contracts/errors";
 import {
@@ -660,7 +661,10 @@ export function SessionForm(
                       id={`${formId}-inv-${line.key}-name`}
                       label={`Investment item ${index + 1}`}
                       value={line.name}
-                      error={messageFor(details, `investmentLines.${index}.name`)}
+                      error={messageFor(
+                        details,
+                        `investmentLines.${index}.name`,
+                      )}
                       onChange={(value) =>
                         updateInvestment(line.key, { name: value })
                       }
@@ -786,7 +790,9 @@ export function SessionForm(
                       className={cellInputClass}
                       value={line.category}
                       onChange={(event) =>
-                        updateRevenue(line.key, { category: event.target.value })
+                        updateRevenue(line.key, {
+                          category: event.target.value,
+                        })
                       }
                     >
                       {categoryOptions(line.category).map((category) => (
@@ -892,34 +898,40 @@ export function SessionForm(
       ) : (
         <section className="flex flex-col gap-2 text-sm">
           <h2 className="text-base font-medium">Performance</h2>
-          <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1">
-            <dt>Duration method</dt>
-            <dd>{saved.durationMethodLabel}</dd>
-            <dt>Effective duration</dt>
-            <dd>
+          <dl className="flex flex-col gap-y-1">
+            <PerformanceTerm term="Duration method">
+              {saved.durationMethodLabel}
+            </PerformanceTerm>
+            <PerformanceTerm term="Effective duration">
               {formatDuration(saved.effectiveDurationMinutes)} (
               {formatDurationMinutes(saved.effectiveDurationMinutes)})
-            </dd>
-            <dt>Total revenue</dt>
-            <dd>{formatChaos(saved.totalRevenueChaos)}</dd>
-            <dt>Total investment</dt>
-            <dd>{formatChaos(saved.totalInvestmentChaos)}</dd>
-            <dt>Profit</dt>
-            <dd>{formatChaos(saved.profitChaos)}</dd>
-            <dt>Profit (divine)</dt>
-            <dd>
+            </PerformanceTerm>
+            <PerformanceTerm term="Total revenue">
+              {formatChaos(saved.totalRevenueChaos)}
+            </PerformanceTerm>
+            <PerformanceTerm term="Total investment">
+              {formatChaos(saved.totalInvestmentChaos)}
+            </PerformanceTerm>
+            <PerformanceTerm term="Profit">
+              {formatChaos(saved.profitChaos)}
+            </PerformanceTerm>
+            <PerformanceTerm term="Profit (divine)">
               {saved.profitDivineApprox === null
                 ? "N/A"
                 : `≈ ${formatPlainOrNA(saved.profitDivineApprox)} Divine`}
-            </dd>
-            <dt>Profit / hour</dt>
-            <dd>{formatChaosOrNA(saved.profitPerHourChaos)}</dd>
-            <dt>Profit / {labels.mapNoun.toLowerCase()}</dt>
-            <dd>{formatChaosOrNA(saved.profitPerMapChaos)}</dd>
-            <dt>{labels.mapsNoun} / hour</dt>
-            <dd>{formatPlainOrNA(saved.mapsPerHour)}</dd>
-            <dt>ROI</dt>
-            <dd>{formatPercentOrNA(saved.roiPercent)}</dd>
+            </PerformanceTerm>
+            <PerformanceTerm term="Profit / hour">
+              {formatChaosOrNA(saved.profitPerHourChaos)}
+            </PerformanceTerm>
+            <PerformanceTerm term={`Profit / ${labels.mapNoun.toLowerCase()}`}>
+              {formatChaosOrNA(saved.profitPerMapChaos)}
+            </PerformanceTerm>
+            <PerformanceTerm term={`${labels.mapsNoun} / hour`}>
+              {formatPlainOrNA(saved.mapsPerHour)}
+            </PerformanceTerm>
+            <PerformanceTerm term="ROI">
+              {formatPercentOrNA(saved.roiPercent)}
+            </PerformanceTerm>
           </dl>
         </section>
       )}
@@ -928,6 +940,25 @@ export function SessionForm(
         Save session
       </button>
     </form>
+  );
+}
+
+function PerformanceTerm({
+  term,
+  children,
+}: {
+  term: string;
+  children: ReactNode;
+}) {
+  return (
+    <div
+      role="group"
+      aria-label={term}
+      className="grid grid-cols-[auto_1fr] gap-x-4"
+    >
+      <dt>{term}</dt>
+      <dd>{children}</dd>
+    </div>
   );
 }
 

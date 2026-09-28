@@ -12,15 +12,15 @@ There is no `calculations/` page. A calculation earns a line on the capability i
 
 Copy the shape already on the pages. The page does not restate the test. If the name is unclear, rename the test.
 
-A browser line stays unchecked until a Playwright spec exists. The sentence links to the spec the implementation chat will write, and the line also links to the step file:
+The sentence is plain text. It is not a link. A browser line stays unchecked until a Playwright spec exists. The line links `UI [path]` to that spec, and `Steps` to the step file:
 
 ```text
-- [ ] [shows the new strategy on the home list with its cost per waystone](../../../e2e/strategies.spec.ts) — Playwright. Steps: [manual](./manual/shows-the-new-strategy-on-the-home-list.md)
+- [ ] shows the new strategy on the home list with its cost per waystone — UI [`e2e/strategies.spec.ts`](../../../e2e/strategies.spec.ts). [Steps](./manual/shows-the-new-strategy-on-the-home-list.md)
 ```
 
-When that chat adds the spec, it checks the box, keeps the link to the spec, and moves the step file from `manual/` to `automated/`. The file stays. It is not archived and it is not deleted. The steps link becomes `./automated/<same-file>.md`.
+When that chat adds the spec, it checks the box, keeps `UI [path]` pointed at the spec, and moves the step file from `manual/` to `automated/`. The file stays. It is not archived and it is not deleted. The Steps link becomes `./automated/<same-file>.md`.
 
-An API or unit line has no step file. Checked when the test is already in the repo:
+An API or unit line has no step file. The sentence is still plain text. Checked when the test is already in the repo:
 
 ```text
 - [x] rejects a missing name — [`POST /api/strategies`](../../../tests/api/strategies.test.ts)

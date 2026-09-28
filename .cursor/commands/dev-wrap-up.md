@@ -18,6 +18,8 @@ Read and follow:
 
 Do not edit [`docs/QA_WORKFLOW.md`](../../docs/QA_WORKFLOW.md), [`docs/TEST_STRATEGY.md`](../../docs/TEST_STRATEGY.md), [`docs/PRODUCT.md`](../../docs/PRODUCT.md), [`docs/DECISIONS.md`](../../docs/DECISIONS.md), or [`tests/catalog/README.md`](../../tests/catalog/README.md) to match the code.
 
+If this run hit a pain point in the command, name it and the one-line change. Wait. After Taylor accepts, add that line here.
+
 ## Notes
 
 Update behavior notes this change made stale. That is the handoff notes in [`docs/AGENTS.md`](../../docs/AGENTS.md), and the architecture notes in [`docs/ARCHITECTURE.md`](../../docs/ARCHITECTURE.md).
