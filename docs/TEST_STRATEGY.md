@@ -3,6 +3,7 @@
 | Field | Value |
 | --- | --- |
 | Status | Draft |
+| Revised | 2026-09-28 |
 | Scope | MVP v1 |
 | Related | [`MVP_SPEC.md`](./MVP_SPEC.md), [`DECISIONS.md`](./DECISIONS.md), [`QA_WORKFLOW.md`](./QA_WORKFLOW.md) (post-MVP catalog and ticket flow; not in force during MVP) |
 | Primary risk | Incorrect money, time, or efficiency calculations |
@@ -156,7 +157,7 @@ Given revenue `2787.09c`, investment `513.60c`, duration `99` minutes (`1.65h`),
 - Profit/hour ≈ `1377.87c` *(engine must define exact rounding; tests lock the chosen rule)*
 - Profit/Waystone ≈ `56.83725c` → display per rounding policy
 - Waystones/hour ≈ `24.2424…`
-- ROI ≈ `442.55%`
+- ROI display `442.66%` (amended 2026-09-28 to match the engine test)
 
 > Note: Spec mock UI shows `1,369.57c/h` for a `1h 39m` run; implementation tests must lock one consistent duration-hours definition and expected outputs. Discrepancies between narrative examples and engine math are resolved in favor of the engine’s documented formulas in `MVP_SPEC.md` §15–17, with expectations asserted in code.
 

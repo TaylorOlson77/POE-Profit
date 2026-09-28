@@ -126,5 +126,5 @@ Rules for this suite:
 
 **AC:**
 
-- [ ] Those five amendments are in the docs, dated, and do not reopen the ADRs beyond the sentence that now matches the code
-- [ ] No product code
+- [x] Those five amendments are in the docs, dated, and do not reopen the ADRs beyond the sentence that now matches the code
+- [x] No product code

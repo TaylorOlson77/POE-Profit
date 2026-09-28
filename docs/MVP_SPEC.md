@@ -7,6 +7,7 @@
 | Initial game | Path of Exile 2 |
 | Future support | Path of Exile 1 |
 | Version | 1.0 |
+| Revised | 2026-09-28 |
 | App shape | Deployable web application; no authentication in MVP |
 
 ## 1. Product Overview
@@ -46,8 +47,8 @@ The MVP should allow a player to:
 - Record an individual map session (MapSession)
 - Record investment / cost items
 - Record revenue items
-- Assign quantities and manually recorded market values
-- Record when those prices were captured
+- Assign quantities and manually recorded values (`ACTUAL_PAID`)
+- Store each value with a save-time stamp (amended 2026-09-28; no capture-time picker)
 - Automatically calculate line totals
 - Automatically calculate total investment
 - Automatically calculate total revenue
@@ -291,9 +292,9 @@ Example:
 - Quantity: 1
 - Unit value: 200 chaos
 - Total value: 200 chaos
-- Price recorded: September 11, 2026 14:30
+- Price recorded: save time
 - Source: Manual
-- Valuation: Market Value
+- Valuation: Actual Paid
 
 ## 12. Price Recording
 
@@ -301,7 +302,7 @@ MVP pricing is **manual**.
 
 Users must explicitly enter the value used for an item.
 
-The application must record when that value was captured.
+Historical price means that stored value. The recorded time is save time: a new line, or a line whose unit value changed, is stamped when the session is saved; an unchanged unit value keeps its previous stamp. There is no capture-time picker. (Amended 2026-09-28.)
 
 This is important because market prices change. A historical run should not change its profitability simply because the current market price changes.
 
@@ -309,23 +310,15 @@ Example:
 
 - Divine Orb
 - Value: 200 chaos
-- Recorded: 2026-09-11 14:30
+- Recorded: save time
 - Source: Manual
-- Valuation: Market snapshot
+- Valuation: Actual Paid
 
-That historical valuation remains associated with the run.
+That stored value remains associated with the run.
 
 ## 13. Price Types
 
-The data model should distinguish between different types of monetary values.
-
-At minimum, the MVP should support:
-
-- **Market Value** — estimated market value at the time of the run
-- **Actual Paid Price** — what the player actually paid to acquire an item
-- **Actual Sale Price** — what the player actually received when selling an item
-
-The MVP UI may initially use primarily Market Value, but the underlying model should not assume market value equals actual transaction price. This will allow future support for realized profit.
+MVP persists valuation type **`ACTUAL_PAID` only** (what the player actually paid). Market Value and Actual Sale Price are not stored, and those enum values are not added in MVP. (Amended 2026-09-28.)
 
 ## 14. Currency
 
@@ -495,10 +488,12 @@ Profit / Hour:                    1,705.12c
 Profit / Waystone:                   56.84c
 Waystones / Hour:                    30.00
 
-ROI:                               442.55%
+ROI:                               442.66%
 
 --------------------------------------------------
 ```
+
+ROI in this block is the display figure the engine test locks (`442.66%`). Amended 2026-09-28.
 
 ## 19. MapSession History
 
