@@ -8,12 +8,12 @@ Read this first in a new chat, then the docs listed under **Required reading**.
 | --- | --- |
 | Product name | **POE Profit** |
 | GitHub repo | https://github.com/TaylorOlson77/POE-Profit |
-| Project board | https://github.com/users/TaylorOlson77/projects/1 — the tracker for every epic and ticket from here on. Do not re-file the finished Phase 1 checklist as a Foundation epic. |
+| Project board | https://github.com/users/TaylorOlson77/projects/1 — tickets flow the columns. A multi-ticket epic stays in Backlog until its children are Done, then moves to Done. Do not re-file the finished Phase 1 checklist as a Foundation epic. |
 | Local workspace | `d:\POE Profit` (older copies may still be named `POE Strategy Tracker`) |
 
 ## Process (locked)
 
-- GitHub Issues + the [POE Profit board](https://github.com/users/TaylorOlson77/projects/1) for features and fixes ([ADR-009](./DECISIONS.md)). The pipeline is [`QA_WORKFLOW.md`](./QA_WORKFLOW.md). Epic and story rules are [`PRODUCT.md`](./PRODUCT.md). The next phases are [`PHASES.md`](./PHASES.md).
+- GitHub Issues + the [POE Profit board](https://github.com/users/TaylorOlson77/projects/1) for features and fixes ([ADR-009](./DECISIONS.md)). Tickets flow the columns. A multi-ticket epic stays in Backlog until Done. The pipeline is [`QA_WORKFLOW.md`](./QA_WORKFLOW.md). Epic and story rules are [`PRODUCT.md`](./PRODUCT.md). The next phases are [`PHASES.md`](./PHASES.md).
 - **Options before code** for material decisions; durable choices go in [`DECISIONS.md`](./DECISIONS.md).
 - Do **not** implement FF-* items in [`FUTURE_FEATURES.md`](./FUTURE_FEATURES.md) unless Taylor asks. A phase in [`PHASES.md`](./PHASES.md) is the ask. `plan-epic` confirms that phase's epics, then files one epic's tickets.
 - `main` is the production branch. Vercel deploys it. A change lands through a pull request with green CI ([`TEST_STRATEGY.md`](./TEST_STRATEGY.md) §10) and docs that match the code.

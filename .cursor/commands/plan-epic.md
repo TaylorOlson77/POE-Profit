@@ -35,7 +35,7 @@ Wait.
 
 File only after he accepts the tickets. If he changes the split, file his.
 
-Use `gh`. Create the epic first and label it `epic`. Create each ticket with `--parent` set to that epic, so GitHub records the sub-issue. Do not write `Part of #` in the body. One ticket and no siblings: file that one issue, and skip the epic label and the parent. Add the issues to the POE Profit board, Backlog column. If that column is missing, ask. Leave them in Backlog.
+Use `gh`. Two or more tickets: create the epic first and label it `epic`. Create each ticket with `--parent` set to that epic, so GitHub records the sub-issue. Do not write `Part of #` in the body. One ticket and no siblings: file that one issue, and skip the epic label and the parent. Add every ticket to the POE Profit board, Backlog column. When an epic issue exists, add it to Backlog too, and leave it there. Do not move the epic through Ready, In Progress, In Review, or Testing. Only tickets leave Backlog for those columns. If the Backlog column is missing, ask.
 
 If the epic list in `PHASES.md` changed and he accepted the change, update that phase in `PHASES.md` so the next run reads the same split.
 

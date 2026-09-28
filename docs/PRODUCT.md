@@ -70,6 +70,18 @@ Constraints:
 - One ticket and no siblings: file that ticket, and do not also file an epic that repeats it.
 - Do not add tickets to fill a template.
 
+`PHASES.md` is the epic planning document. Brainstorm names epic titles there. Do not invent a second GitHub document type for epics.
+
+### On the board
+
+Two or more tickets under one epic: file an epic issue labeled `epic`, and make each ticket a sub-issue. Put the epic and its tickets on the POE Profit board in Backlog.
+
+Only tickets move through Ready, In Progress, In Review, and Testing. The epic stays in Backlog while its children move. When every child is Done, `definition-of-done` moves the epic to Done. Do not park the epic in In Progress for the life of the batch.
+
+Optional board view: Group by Parent issue. That makes swimlanes. Stories still flow left to right inside a lane. The epic card still stays in Backlog until Done.
+
+One ticket and no siblings: that issue is the only card. No epic label. No parent.
+
 `plan-epic` reads one phase. It shows the epics and waits. Tickets come after Taylor accepts the epic, and only for that one epic. The next epic is a later run. Do not start a later phase while an earlier one is open, unless [`PHASES.md`](./PHASES.md) says that phase can overlap.
 
 ## Ticket
@@ -143,4 +155,4 @@ Name fields, forgot password, settings, and GGG login are later epics. They are 
 
 ## Filing
 
-[`.cursor/commands/plan-epic.md`](../.cursor/commands/plan-epic.md) files the issues after Taylor accepts the tickets. Tickets are sub-issues of the epic. It places them on the POE Profit board in Backlog ([ADR-009](./DECISIONS.md)). It then posts the ticket note as a comment. It starts on `main` and does not create a branch. It does not write coverage lines, tests, or product code.
+[`.cursor/commands/plan-epic.md`](../.cursor/commands/plan-epic.md) files the issues after Taylor accepts the tickets. Two or more tickets: the epic is filed first, and each ticket is a sub-issue. One ticket and no siblings: that issue alone, no epic. It places tickets on the POE Profit board in Backlog ([ADR-009](./DECISIONS.md)). When an epic issue exists, it is also added to Backlog and left there until Done. It then posts the ticket note as a comment. It starts on `main` and does not create a branch. It does not write coverage lines, tests, or product code.

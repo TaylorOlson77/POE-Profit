@@ -44,10 +44,12 @@ Then stop.
 
 Use `gh` and read the epic's child tickets. This path does not re-run CI, does not open a preview, and does not post the ticket comment.
 
+The epic does not move through Ready, In Progress, In Review, or Testing. It stays in Backlog until this path moves it to Done.
+
 If any child is not Done, name it and stop. Do not move the epic.
 
 If every child is Done, ask Taylor to confirm the epic outcome shipped. Do not move the board yet.
 
-After Taylor confirms, move that epic to Done on the same board. If that column is missing, ask.
+After Taylor confirms, move that epic from Backlog to Done on the same board. If that column is missing, ask.
 
 Then stop.
