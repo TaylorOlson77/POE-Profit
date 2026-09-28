@@ -76,25 +76,44 @@ Constraints:
 
 One completable action. When it merges, a player can finish that action. "Register and sign in" is a ticket. "Add the users table" is not. Schema, routes, and pages are the work inside the ticket. A ticket split by layer can merge while the player still cannot finish the action.
 
-Constraints:
+One GitHub issue. One pull request. Implementation is one ticket per chat. Do not plan a slice you will throw away. An email with no password is not an account. Anyone who knows the email is that visitor, and the next ticket replaces it. Do not write an out-of-scope section. If it is not on the issue or in the ticket note, it is not in the ticket.
 
-- One GitHub issue. One pull request. Implementation is one ticket per chat.
-- Plain language for the action.
-- A few present-tense acceptance criteria. No "should". An "and" is two criteria. Each sentence is something you could watch fail.
-- If you would be annoyed when it shipped wrong, it needs a sentence. If it is not in the criteria, it is not in the ticket. Do not write an out-of-scope section.
-- A failure the player can hit says why, in the same sentence. The exact wording is not required on the issue. The test locks the string the API returns (`error.message`). A later ticket is a copy change, after this behavior works.
-- "Signed in" has to be something the player can see. Name what is on screen.
-- Do not plan a slice you will throw away. An email with no password is not an account. Anyone who knows the email is that visitor, and the next ticket replaces it.
+The "As a / I want / so that" line is the description. It is not the title.
 
-Three places hold the work:
+### Title
+
+The action, in a few words, readable on the board. "Set how many uses a tablet lasts."
+
+### Description
+
+One or two sentences on the issue. Who it is for, and why it matters.
+
+### Acceptance criteria
+
+About three to five conditions. Each one is done or not done. Present tense. No "should". One condition per bullet. Two things the player sees from the same save can share a bullet.
+
+A failure the player can hit says why, in that bullet. The exact wording is not required on the issue. The test locks the string the API returns (`error.message`). A later ticket is a copy change, after this behavior works.
+
+"Signed in" has to be something the player can see. Name what is on screen.
+
+One key example when the rule would be ambiguous without a number. The other examples are not more bullets. Empty, zero, a second quantity, and a fraction are boundaries of a condition already on the issue.
+
+### Ticket note
+
+After the issue is filed, `plan-epic` posts a comment that starts with `## Boundary notes`.
+
+The comment holds the decisions and examples already discussed: the formula, the defaults, a second quantity, the empty row, the failure cases. It is a start for `ticket-test-plan`. It is not the test list. That command reads the latest comment with that heading, then still proposes cases the comment does not mention. Taylor still cuts the list.
+
+Four places hold the work:
 
 | Place | Holds |
 | --- | --- |
-| Ticket | The decision |
-| Tests | The boundaries of that decision (empty, too short, duplicate) |
+| Issue | The title, the description, and the conditions |
+| Ticket note | Decisions and examples that start the test command |
+| Tests | The boundaries of a condition (empty, too short, duplicate) |
 | Code | The implementation |
 
-`plan-epic` does not write the tests. The next command turns the sentences into coverage lines.
+`plan-epic` does not write the tests. The next command turns the conditions, and the note, into coverage lines.
 
 ## Example
 
@@ -111,6 +130,8 @@ Already true: a release can apply schema changes to the live database.
 Left for later: forgot password, display name, settings, GGG login.
 
 Ticket: Register and sign in
+Description: A visitor cannot come back to their own strategies.
+
 - A visitor who registers with an email and a password of at least 8 characters lands on the home list, and the list shows that email.
 - A shorter password stays on the form, the account is not created, and the form shows that the password is too short.
 - A visitor who signs in with that email and password lands on the home list.
@@ -118,8 +139,8 @@ Ticket: Register and sign in
 - An email that already exists stays on the form, does not create a second account, and the form shows that the email is taken.
 ```
 
-Name fields, forgot password, settings, and GGG login are later epics. They are absent here, so they are not part of this ticket.
+Name fields, forgot password, settings, and GGG login are later epics. They are absent here, so they are not part of this ticket. A blank email and a password of only spaces are boundaries of the criteria above. They belong in the ticket note.
 
 ## Filing
 
-[`.cursor/commands/plan-epic.md`](../.cursor/commands/plan-epic.md) files the issues after Taylor accepts the tickets. Tickets are sub-issues of the epic. It places them on the POE Profit board in Backlog ([ADR-009](./DECISIONS.md)). It does not write coverage lines, tests, or product code.
+[`.cursor/commands/plan-epic.md`](../.cursor/commands/plan-epic.md) files the issues after Taylor accepts the tickets. Tickets are sub-issues of the epic. It places them on the POE Profit board in Backlog ([ADR-009](./DECISIONS.md)). It then posts the ticket note as a comment. It starts on `main` and does not create a branch. It does not write coverage lines, tests, or product code.

@@ -486,6 +486,37 @@ Kept because the baseline named them, not because a player is blocked.
 
 ---
 
+## FF-023: Setup costs that are not tablets or scarabs
+
+| Field | Value |
+| --- | --- |
+| Status | Idea |
+| Horizon | After phase 1 |
+| Date | 2026-09-28 |
+
+### Summary
+
+A strategy's setup cost is a waystone plus tablets, or a map plus scarabs. Other consumables belong on that cost too. In PoE2, Head of the King affects about five maps. For some consumables that count is a range, such as 4–6. The player enters one use count. The estimate uses the same per-map split as a tablet: `(quantity × unit cost) / uses`. Across runs, a range evens out, so the row does not store a minimum and a maximum.
+
+Phase 1 keeps that split as the strategy cost formula, with no tablet-only branch, so this idea can call it.
+
+### Why
+
+A consumable that is not a tablet is missing from the setup cost, or it is typed into a tablet row under the wrong name.
+
+### Risks
+
+- One number is an estimate. A single run can last 4 maps or 6.
+- A second formula for ranges would split the strategy cost formula.
+- The form has one list, labeled Tablets or Scarabs. A new kind of row is a later change to that list.
+
+### Open questions
+
+1. One list of setup costs, with a name the player types, or a separate list beside tablets?
+2. Does quantity still mean how many are used per map?
+
+---
+
 ## Folded on 2026-09-28
 
 Do not bring these back as new ideas unless the reason below is wrong.
@@ -524,3 +555,4 @@ Do not bring these back as new ideas unless the reason below is wrong.
 | FF-020 | PoE1 gaps | Idea |
 | FF-021 | Account recovery and GGG login | Parked |
 | FF-022 | Scale and hygiene | Parked |
+| FF-023 | Setup costs that are not tablets or scarabs | Idea |

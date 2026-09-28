@@ -61,8 +61,8 @@ plan-epic  →  ticket-test-plan  →  implement  →  dev-wrap-up  →  definit
 
 | Step | Command | Writes | Does not write |
 | --- | --- | --- | --- |
-| 1 | `.cursor/commands/plan-epic.md` | One phase's epic split, then that epic's tickets, and board placement. The title, description, acceptance criteria, and ticket note follow [`PRODUCT.md`](./PRODUCT.md). | Coverage lines, code, automation. The note is not a test list. |
-| 2 | `.cursor/commands/ticket-test-plan.md` | Branch. Edits to the coverage page: lines added, retargeted, or removed. A file under `manual/` only when a person would still run the case. Reads the ticket note when it exists, then still proposes cases the note leaves out. | Product code. A separate impact table. The coverage diff is the impact. Copying the note onto the issue. |
+| 1 | `.cursor/commands/plan-epic.md` | One phase's epic split, then that epic's tickets, and board placement. The title, description, acceptance criteria, and the boundary comment follow [`PRODUCT.md`](./PRODUCT.md). | A branch. Coverage lines, code, automation. The comment is not a test list. |
+| 2 | `.cursor/commands/ticket-test-plan.md` | Branch. Edits to the coverage page: lines added, retargeted, or removed. A file under `manual/` only when a person would still run the case. Reads the boundary comment when it exists, then still proposes cases the comment leaves out. | Product code. A separate impact table. The coverage diff is the impact. Pasting the test list onto the issue. |
 | 3 | Implementation chat | Product code and the automated tests the new checked lines name, same pull request | A second copy of the cases on the GitHub issue |
 | 4 | `.cursor/commands/dev-wrap-up.md` | The commit, doc updates Taylor accepted, and the pull request | The definition-of-done comment. A pass/fail report (FF-006). |
 | 5 | `.cursor/commands/definition-of-done.md` | A traceability comment on the issue; move the board only after the checks pass | New product scope. It does not invent whether a line belongs on the page. |
@@ -76,6 +76,8 @@ Name the branch from the story, because that issue is the one the pull request c
 ```
 
 The number, a hyphen, then a few words from the story title. Lowercase. The epic does not get a branch. A story with no epic uses that single issue's number. The implementation chat stays on that branch. A docs change with no story uses `docs-short-name`. Commit subjects follow the Commits section in [`AGENTS.md`](./AGENTS.md).
+
+`plan-epic` starts on `main`. The issue and the boundary comment need no branch. When that command edits docs or commands, those files go on `docs-short-name` and through the same CI gates as any other pull request. They do not ride on the ticket branch. The test command stops when the working tree is dirty, so that docs branch is committed or set aside before the ticket branch is created.
 
 `main` is the production branch. Vercel deploys it. Do not commit or push feature work to `main`. The pull request needs green CI ([`TEST_STRATEGY.md`](./TEST_STRATEGY.md) §10) and docs that match the code.
 
