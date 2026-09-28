@@ -1,5 +1,6 @@
 import { prisma } from "@/src/server/db/prisma";
 import {
+  calculatedTotalOverflow,
   jsonError,
   readJsonBody,
   withApiErrors,
@@ -45,6 +46,9 @@ export async function POST(request: Request): Promise<Response> {
     const result = await createMapSession(prisma, parsed.data);
     if (result.status === "strategy_not_found") {
       return jsonError(404, "NOT_FOUND", "Strategy not found");
+    }
+    if (result.status === "total_overflow") {
+      return calculatedTotalOverflow("Invalid map session payload");
     }
     return Response.json(result.session, { status: 201 });
   });

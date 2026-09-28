@@ -1,5 +1,6 @@
 import { prisma } from "@/src/server/db/prisma";
 import {
+  calculatedTotalOverflow,
   jsonError,
   readJsonBody,
   withApiErrors,
@@ -39,7 +40,10 @@ export async function POST(request: Request): Promise<Response> {
       );
     }
 
-    const strategy = await createStrategy(prisma, parsed.data);
-    return Response.json(strategy, { status: 201 });
+    const result = await createStrategy(prisma, parsed.data);
+    if (result.status === "total_overflow") {
+      return calculatedTotalOverflow("Invalid strategy payload");
+    }
+    return Response.json(result.strategy, { status: 201 });
   });
 }

@@ -1,8 +1,11 @@
 import type { Prisma, PrismaClient } from "@prisma/client";
 import type { Strategy, UpdateStrategyBody } from "@/src/contracts/strategies";
-import { calculateStrategyCosts } from "@/src/domain/calc";
+import {
+  calculateStrategyCosts,
+  type StrategyCostsResult,
+} from "@/src/domain/calc";
 import { isForeignKeyRestrictError } from "@/src/server/apiError";
-import { decimalToWire } from "@/src/server/money";
+import { decimalToWire, fitsMoneyColumn } from "@/src/server/money";
 
 const strategyInclude = {
   enhancementLines: { orderBy: { sortOrder: "asc" as const } },
@@ -15,15 +18,32 @@ export type DeleteStrategyResult =
   | { status: "not_found" }
   | { status: "conflict" };
 
-function costFields(body: UpdateStrategyBody) {
-  const costs = calculateStrategyCosts({
+export type CreateStrategyResult =
+  | { status: "created"; strategy: Strategy }
+  | { status: "total_overflow" };
+
+export type UpdateStrategyResult =
+  | { status: "updated"; strategy: Strategy }
+  | { status: "not_found" }
+  | { status: "total_overflow" };
+
+function strategyCosts(body: UpdateStrategyBody): StrategyCostsResult {
+  return calculateStrategyCosts({
     mapUnitCostChaos: body.mapUnitCostChaos,
     enhancementLines: body.enhancementLines.map((line) => ({
       quantity: line.quantity,
       unitCostChaos: line.unitCostChaos,
     })),
   });
+}
 
+function strategyCostsFit(costs: StrategyCostsResult): boolean {
+  return [costs.estimatedCostPerMapChaos, ...costs.enhancementLineTotals].every(
+    (value) => fitsMoneyColumn(value),
+  );
+}
+
+function costFields(body: UpdateStrategyBody, costs: StrategyCostsResult) {
   return {
     estimatedCostPerMapChaos: costs.estimatedCostPerMapChaos.toString(),
     enhancementLines: {
@@ -93,7 +113,12 @@ export async function getStrategy(
 export async function createStrategy(
   db: PrismaClient,
   body: UpdateStrategyBody,
-): Promise<Strategy> {
+): Promise<CreateStrategyResult> {
+  const costs = strategyCosts(body);
+  if (!strategyCostsFit(costs)) {
+    return { status: "total_overflow" };
+  }
+
   const row = await db.strategy.create({
     data: {
       name: body.name,
@@ -101,11 +126,11 @@ export async function createStrategy(
       description: body.description,
       mapNotes: body.mapNotes ?? null,
       mapUnitCostChaos: body.mapUnitCostChaos,
-      ...costFields(body),
+      ...costFields(body, costs),
     },
     include: strategyInclude,
   });
-  return toStrategy(row);
+  return { status: "created", strategy: toStrategy(row) };
 }
 
 /** Full replace of writable fields and enhancement lines. */
@@ -113,7 +138,12 @@ export async function updateStrategy(
   db: PrismaClient,
   id: string,
   body: UpdateStrategyBody,
-): Promise<Strategy | null> {
+): Promise<UpdateStrategyResult> {
+  const costs = strategyCosts(body);
+  if (!strategyCostsFit(costs)) {
+    return { status: "total_overflow" };
+  }
+
   const row = await db.$transaction(async (tx) => {
     const existing = await tx.strategy.findUnique({ where: { id } });
     if (!existing) {
@@ -128,12 +158,14 @@ export async function updateStrategy(
         description: body.description,
         mapNotes: body.mapNotes ?? null,
         mapUnitCostChaos: body.mapUnitCostChaos,
-        ...costFields(body),
+        ...costFields(body, costs),
       },
       include: strategyInclude,
     });
   });
-  return row ? toStrategy(row) : null;
+  return row
+    ? { status: "updated", strategy: toStrategy(row) }
+    : { status: "not_found" };
 }
 
 export async function deleteStrategy(

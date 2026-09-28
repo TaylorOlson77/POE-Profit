@@ -252,6 +252,38 @@ describe("POST /api/map-sessions", () => {
     ).toBe(true);
   });
 
+  it("rejects a calculated total that does not fit the money column", async () => {
+    const response = await post({
+      strategyId: STRATEGY_ID,
+      mapsCompleted: 1,
+      mapUnitCostChaos: "0",
+      divineRateChaos: "1",
+      durationMethod: "MANUAL",
+      manualDurationMinutes: "1",
+      investmentLines: [
+        {
+          name: "Tablet",
+          quantity: "999999999999",
+          unitValueChaos: "2",
+          priceRecordedAt: PRICED_AT,
+        },
+      ],
+    });
+
+    expect(response.status).toBe(400);
+    const body = ApiErrorBodySchema.parse(await response.json());
+    expect(body.error.code).toBe("VALIDATION_ERROR");
+    expect(body.error.details).toEqual([
+      {
+        path: "",
+        message: "Calculated total does not fit the money column",
+      },
+    ]);
+
+    const listed = MapSessionListResponseSchema.parse(await (await list()).json());
+    expect(listed.mapSessions).toEqual([]);
+  });
+
   it("returns 400 when the body is not JSON", async () => {
     const response = await post(undefined, "{");
     expect(response.status).toBe(400);

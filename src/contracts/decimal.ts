@@ -12,13 +12,27 @@ import { z } from "zod";
  * clearer.
  */
 
+/**
+ * Postgres int4 upper bound. `mapsCompleted`, `sampleMapsCompleted`, and
+ * enhancement `sortOrder` are already non-negative, so this is the new cap.
+ */
+export const POSTGRES_INT_MAX = 2_147_483_647;
+
+/**
+ * NUMERIC(20, 8) (ADR-021): at most 12 digits before the point and 8 after.
+ * The unbounded shape is checked first so a minus or a letter keeps that
+ * message. The column shape rejects a value Postgres would round or overflow.
+ */
+const DECIMAL_BODY = "(?:0|[1-9]\\d*)(?:\\.\\d+)?";
+const MONEY_COLUMN_BODY = "(?:0|[1-9]\\d{0,11})(?:\\.\\d{1,8})?";
+const MONEY_COLUMN_MESSAGE =
+  "Must have at most 12 integer digits and 8 fractional digits";
+
 /** Non-negative: "0", "10", "0.20" */
 export const DecimalStringSchema = z
   .string()
-  .regex(
-    /^(?:0|[1-9]\d*)(?:\.\d+)?$/,
-    "Must be a non-negative decimal string",
-  );
+  .regex(new RegExp(`^${DECIMAL_BODY}$`), "Must be a non-negative decimal string")
+  .regex(new RegExp(`^${MONEY_COLUMN_BODY}$`), MONEY_COLUMN_MESSAGE);
 
 export type DecimalString = z.infer<typeof DecimalStringSchema>;
 
@@ -31,9 +45,10 @@ export type DecimalString = z.infer<typeof DecimalStringSchema>;
 export const SignedDecimalStringSchema = z
   .string()
   .regex(
-    /^-?(?:0|[1-9]\d*)(?:\.\d+)?$/,
+    new RegExp(`^-?${DECIMAL_BODY}$`),
     "Must be a decimal string (optional leading minus)",
-  );
+  )
+  .regex(new RegExp(`^-?${MONEY_COLUMN_BODY}$`), MONEY_COLUMN_MESSAGE);
 
 export type SignedDecimalString = z.infer<typeof SignedDecimalStringSchema>;
 

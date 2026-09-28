@@ -40,6 +40,40 @@ describe("MapSession contracts", () => {
     expect(parsed.success).toBe(true);
   });
 
+  it("rejects a map count or sample count above the database integer limit", () => {
+    const body = {
+      strategyId: "strat_1",
+      mapsCompleted: 40,
+      mapUnitCostChaos: "2",
+      divineRateChaos: "200",
+      durationMethod: "EXTRAPOLATED" as const,
+      sampleMapsCompleted: 10,
+      sampleDurationMinutes: "20",
+      investmentLines: [],
+      revenueLines: [],
+    };
+
+    expect(
+      CreateMapSessionBodySchema.safeParse({
+        ...body,
+        mapsCompleted: 2_147_483_648,
+      }).success,
+    ).toBe(false);
+    expect(
+      CreateMapSessionBodySchema.safeParse({
+        ...body,
+        sampleMapsCompleted: 2_147_483_648,
+      }).success,
+    ).toBe(false);
+    expect(
+      CreateMapSessionBodySchema.safeParse({
+        ...body,
+        mapsCompleted: 2_147_483_647,
+        sampleMapsCompleted: 2_147_483_647,
+      }).success,
+    ).toBe(true);
+  });
+
   it("rejects create body missing mapUnitCostChaos", () => {
     const parsed = CreateMapSessionBodySchema.safeParse({
       strategyId: "strat_1",
@@ -157,7 +191,8 @@ describe("MapSession contracts", () => {
       profitPerHourChaos: "1820.3175",
       profitPerMapChaos: "60.67725",
       mapsPerHour: "30",
-      roiPercent: "674.1916666666667",
+      // Stored rates use the column scale: at most 8 fractional digits.
+      roiPercent: "674.19166667",
       profitDivineApprox: "12.13545",
       createdAt,
       updatedAt,

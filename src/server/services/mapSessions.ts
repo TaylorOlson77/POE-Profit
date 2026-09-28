@@ -5,8 +5,12 @@ import type {
   MapSessionInvestmentLine,
   MapSessionRevenueLine,
 } from "@/src/contracts/mapSessions";
-import { calculateSession, type SessionDurationInput } from "@/src/domain/calc";
-import { decimalToWire, nullableDecimalToWire } from "@/src/server/money";
+import {
+  calculateSession,
+  type SessionCalcResult,
+  type SessionDurationInput,
+} from "@/src/domain/calc";
+import { decimalToWire, fitsMoneyColumn, nullableDecimalToWire } from "@/src/server/money";
 
 const mapSessionInclude = {
   investmentLines: { orderBy: { sortOrder: "asc" as const } },
@@ -19,12 +23,14 @@ type MapSessionRow = Prisma.MapSessionGetPayload<{
 
 export type CreateMapSessionResult =
   | { status: "created"; session: MapSession }
-  | { status: "strategy_not_found" };
+  | { status: "strategy_not_found" }
+  | { status: "total_overflow" };
 
 export type UpdateMapSessionResult =
   | { status: "updated"; session: MapSession }
   | { status: "not_found" }
-  | { status: "strategy_not_found" };
+  | { status: "strategy_not_found" }
+  | { status: "total_overflow" };
 
 export type DeleteMapSessionResult =
   | { status: "deleted" }
@@ -103,8 +109,8 @@ function durationColumns(body: CreateMapSessionBody) {
   }
 }
 
-function sessionData(body: CreateMapSessionBody): Prisma.MapSessionUncheckedCreateInput {
-  const calculated = calculateSession({
+function sessionCalculated(body: CreateMapSessionBody): SessionCalcResult {
+  return calculateSession({
     mapsCompleted: body.mapsCompleted,
     mapUnitCostChaos: body.mapUnitCostChaos,
     investmentLines: body.investmentLines.map((line) => ({
@@ -118,7 +124,30 @@ function sessionData(body: CreateMapSessionBody): Prisma.MapSessionUncheckedCrea
     duration: durationForEngine(body),
     divineRateChaos: body.divineRateChaos,
   });
+}
 
+/** Every decimal about to be written, including rates. Null rates are skipped. */
+function sessionTotalsFit(calculated: SessionCalcResult): boolean {
+  return [
+    calculated.mapInvestmentChaos,
+    calculated.totalInvestmentChaos,
+    calculated.totalRevenueChaos,
+    calculated.profitChaos,
+    calculated.effectiveDurationMinutes,
+    ...calculated.investmentLineTotals,
+    ...calculated.revenueLineTotals,
+    calculated.profitPerHourChaos,
+    calculated.profitPerMapChaos,
+    calculated.mapsPerHour,
+    calculated.roiPercent,
+    calculated.profitDivineApprox,
+  ].every((value) => value === null || fitsMoneyColumn(value));
+}
+
+function sessionData(
+  body: CreateMapSessionBody,
+  calculated: SessionCalcResult,
+): Prisma.MapSessionUncheckedCreateInput {
   return {
     strategyId: body.strategyId,
     mapsCompleted: body.mapsCompleted,
@@ -287,8 +316,13 @@ export async function createMapSession(
     return { status: "strategy_not_found" };
   }
 
+  const calculated = sessionCalculated(body);
+  if (!sessionTotalsFit(calculated)) {
+    return { status: "total_overflow" };
+  }
+
   const row = await db.mapSession.create({
-    data: sessionData(body),
+    data: sessionData(body, calculated),
     include: mapSessionInclude,
   });
   return { status: "created", session: toMapSession(row) };
@@ -303,6 +337,11 @@ export async function updateMapSession(
   id: string,
   body: CreateMapSessionBody,
 ): Promise<UpdateMapSessionResult> {
+  const calculated = sessionCalculated(body);
+  if (!sessionTotalsFit(calculated)) {
+    return { status: "total_overflow" };
+  }
+
   const row = await db.$transaction(async (tx) => {
     const existing = await tx.mapSession.findUnique({ where: { id } });
     if (!existing) {
@@ -318,7 +357,7 @@ export async function updateMapSession(
     await tx.mapSessionRevenueLine.deleteMany({ where: { mapSessionId: id } });
     const updated = await tx.mapSession.update({
       where: { id },
-      data: sessionData(body),
+      data: sessionData(body, calculated),
       include: mapSessionInclude,
     });
     return { kind: "updated" as const, session: updated };

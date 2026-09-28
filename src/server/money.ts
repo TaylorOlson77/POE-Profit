@@ -1,5 +1,25 @@
 import Decimal from "decimal.js";
 
+/** Largest absolute value NUMERIC(20, 8) can store. */
+const MONEY_COLUMN_MAX = new Decimal("999999999999.99999999");
+
+/**
+ * True when Postgres can store this in NUMERIC(20, 8).
+ * Scale past 8 places is rounded half away from zero, the same way the column
+ * rounds. A value that rounds up to 10^12 does not fit. This is not display
+ * rounding, and it does not change the engine result.
+ */
+export function fitsMoneyColumn(value: { toString(): string }): boolean {
+  const rounded = new Decimal(value.toString()).toDecimalPlaces(
+    8,
+    Decimal.ROUND_HALF_UP,
+  );
+  return rounded.abs().lte(MONEY_COLUMN_MAX);
+}
+
+export const CALCULATED_TOTAL_OVERFLOW_MESSAGE =
+  "Calculated total does not fit the money column";
+
 /**
  * Prisma Decimal and decimal.js Decimal both become the contract wire string.
  *

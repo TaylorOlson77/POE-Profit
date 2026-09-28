@@ -128,6 +128,33 @@ describe("Strategy contracts (per-map setup template)", () => {
     expect(parsed.success).toBe(false);
   });
 
+  it("rejects a sort order above the database integer limit", () => {
+    const line = {
+      name: "Expedition Tablet",
+      quantity: "1",
+      unitCostChaos: "1",
+    };
+    const body = {
+      name: "Sort cap",
+      game: "POE2",
+      description: "Integer column",
+      mapUnitCostChaos: "1",
+    };
+
+    expect(
+      CreateStrategyBodySchema.safeParse({
+        ...body,
+        enhancementLines: [{ ...line, sortOrder: 2_147_483_648 }],
+      }).success,
+    ).toBe(false);
+    expect(
+      CreateStrategyBodySchema.safeParse({
+        ...body,
+        enhancementLines: [{ ...line, sortOrder: 2_147_483_647 }],
+      }).success,
+    ).toBe(true);
+  });
+
   it("documents estimatedCostPerMapChaos as map + sum(qty × unitCost)", () => {
     // Map 2c + Expedition 2×100c + Temple 1×10c = 2 + 200 + 10 = 212
     const parsed = StrategySchema.safeParse({
