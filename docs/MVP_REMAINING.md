@@ -55,9 +55,9 @@ ADR-007 scoped MVP security to input validation and abuse basics. Line counts ar
 
 **AC:**
 
-- [ ] Those fields reject a string past the cap with 400
-- [ ] A contract test rejects one over-long name and one over-long note
-- [ ] One catalog line per area, Validation section, no step file
+- [x] Those fields reject a string past the cap with 400
+- [x] A contract test rejects one over-long name and one over-long note
+- [x] One catalog line per area, Validation section, no step file
 
 ## R3. Postgres API suite, local and CI
 
