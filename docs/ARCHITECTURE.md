@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Status | Draft |
+| Status | Current |
 | Date | 2026-09-13 |
 | Revised | 2026-09-28 |
 | Related | [`MVP_SPEC.md`](./MVP_SPEC.md), [`DECISIONS.md`](./DECISIONS.md), [`TEST_STRATEGY.md`](./TEST_STRATEGY.md), [`AI_DEVELOPMENT.md`](./AI_DEVELOPMENT.md) |
@@ -206,16 +206,9 @@ See `FUTURE_FEATURES.md` for later product ideas.
 
 ---
 
-## 11. Next engineering steps (after this doc)
+## 11. Where new work starts
 
-The MVP baseline is deployed at [poe-profit.vercel.app](https://poe-profit.vercel.app/). Steps below are done. New work uses the GitHub Project board (ADR-009).
-
-1. Scaffold Next.js + Prisma + Jest + Playwright tooling (Phase 1 A1–A5).
-2. Write first **contracts** for Strategy CRUD.
-3. Implement calc engine + unit tests.
-4. Implement Route Handlers + API tests.
-5. Thin UI for strategies/runs.
-6. Deploy (Vercel + Neon). After MVP baseline, use the GitHub Project board for new features.
+The MVP baseline is deployed at [poe-profit.vercel.app](https://poe-profit.vercel.app/). New work follows [`AGENTS.md`](./AGENTS.md): `plan-feature`, then `ticket-test-plan`, implementation, `dev-wrap-up`, and `definition-of-done`.
 
 Handoff for new agents: [`AGENTS.md`](./AGENTS.md).
 

@@ -5,7 +5,7 @@
 | Status | Draft |
 | Revised | 2026-09-28 |
 | Scope | MVP v1 |
-| Related | [`MVP_SPEC.md`](./MVP_SPEC.md), [`DECISIONS.md`](./DECISIONS.md), [`QA_WORKFLOW.md`](./QA_WORKFLOW.md) (post-MVP catalog and ticket flow; not in force during MVP) |
+| Related | [`MVP_SPEC.md`](./MVP_SPEC.md), [`DECISIONS.md`](./DECISIONS.md), [`QA_WORKFLOW.md`](./QA_WORKFLOW.md) |
 | Primary risk | Incorrect money, time, or efficiency calculations |
 
 ## 1. Purpose
@@ -274,9 +274,9 @@ A feature is not done when the UI looks right. The quality bar is:
 4. CI gates pass.
 5. Failures produce enough artifacts to debug without re-running blindly.
 
-For MVP, that bar is the whole definition of done. `MVP_SPEC.md` §34 requires the calculation engine, API, validation, and automated tests to meet it, not the UI alone.
+v1 met that bar. `MVP_SPEC.md` §34 required the calculation engine, API, validation, and automated tests to meet it, not the UI alone.
 
-After MVP, a ticket also updates the coverage page, as [`QA_WORKFLOW.md`](./QA_WORKFLOW.md) describes. That page is how a reader sees the bar was met. It does not replace the bar.
+A later ticket also updates the coverage page, as [`QA_WORKFLOW.md`](./QA_WORKFLOW.md) describes. That page is how a reader sees the bar was met. It does not replace the bar.
 
 ## 13. Open items for architecture phase
 

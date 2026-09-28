@@ -249,7 +249,11 @@ Incorrect profit math is the highest product risk. Duplicating formulas in the U
 | --- | --- |
 | Status | Accepted |
 | Date | 2026-09-11 |
-| Revised | 2026-09-14 |
+| Revised | 2026-09-28 |
+
+### Amendment (2026-09-28)
+
+The baseline shipped. GitHub Issues on the POE Profit board are the tracker. The Phase 1 checklist is [`archive/BACKLOG.md`](./archive/BACKLOG.md). Do not seed a Foundation epic.
 
 ### Context
 
@@ -257,16 +261,15 @@ The developer wants to demonstrate Scrum Master / Kanban / delivery skills along
 
 ### Decision
 
-- Use **GitHub Issues + GitHub Projects** (Kanban-style columns) as the process tracker for **post-baseline** work (features and fixes after a working MVP app exists).
-- Track **Phase 1 / MVP baseline** progress in [`BACKLOG.md`](./BACKLOG.md) checklists — do not seed the board with foundation tickets.
-- The POE Profit project board is already created; leave it mostly empty until baseline ships.
+- Use **GitHub Issues + GitHub Projects** (Kanban-style columns) as the process tracker for features and fixes.
+- The Phase 1 checklist is archived at [`archive/BACKLOG.md`](./archive/BACKLOG.md). Do not seed the board with foundation tickets.
 - Linear remains a possible later addition, not the default.
 
 ### Consequences
 
 - Faster path through scaffold → calc → API → UI without ticket theater.
 - After baseline, hiring managers can still see Issue → branch → PR → CI → Done on real feature work.
-- Optional: one retrospective “Foundation” epic issue summarizing Phase 1 for board history.
+- Do not file a Foundation epic. The archive is the Phase 1 record.
 
 ---
 

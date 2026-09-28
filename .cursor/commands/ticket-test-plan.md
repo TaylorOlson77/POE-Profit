@@ -1,12 +1,12 @@
 ---
-description: Plan tests for one post-MVP story. Propose coverage lines, stop for a cut, then branch and edit that area's page.
+description: Plan tests for one story. Propose coverage lines, stop for a cut, then branch and edit that area's page.
 ---
 
 # Ticket test plan
 
 You are planning tests for one story. Taylor names the story.
 
-This command is for after the MVP baseline. Read [`docs/QA_WORKFLOW.md`](../../docs/QA_WORKFLOW.md). If that ticket flow is not in force, stop. Do not branch.
+Read [`docs/QA_WORKFLOW.md`](../../docs/QA_WORKFLOW.md) and follow it.
 
 Read and follow:
 

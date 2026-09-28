@@ -1,12 +1,12 @@
 ---
-description: Check one post-MVP pull request against the definition of done, post the issue comment, and move the board only after Taylor confirms.
+description: Check one pull request against the definition of done, post the issue comment, and move the board only after Taylor confirms.
 ---
 
 # Definition of done
 
 You are checking one pull request. Taylor names the pull request.
 
-This command is for after the MVP baseline. Read [`docs/QA_WORKFLOW.md`](../../docs/QA_WORKFLOW.md). If that ticket flow is not in force, stop.
+Read [`docs/QA_WORKFLOW.md`](../../docs/QA_WORKFLOW.md) and follow it.
 
 Read and follow:
 
