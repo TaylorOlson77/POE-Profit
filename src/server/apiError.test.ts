@@ -2,11 +2,21 @@ import { z } from "zod";
 import { isForeignKeyRestrictError, zodErrorDetails } from "./apiError";
 
 describe("isForeignKeyRestrictError", () => {
-  it("matches Prisma restrict codes only", () => {
+  it("matches Prisma restrict codes", () => {
     expect(isForeignKeyRestrictError({ code: "P2003" })).toBe(true);
     expect(isForeignKeyRestrictError({ code: "P2014" })).toBe(true);
     expect(isForeignKeyRestrictError({ code: "P2025" })).toBe(false);
     expect(isForeignKeyRestrictError(new Error("nope"))).toBe(false);
+  });
+
+  it("matches the unmapped Postgres restrict error", () => {
+    expect(
+      isForeignKeyRestrictError(
+        new Error(
+          'PostgresError { code: "23001", message: "violates RESTRICT setting of foreign key constraint \\"MapSession_strategyId_fkey\\"" }',
+        ),
+      ),
+    ).toBe(true);
   });
 });
 
@@ -16,7 +26,9 @@ describe("zodErrorDetails", () => {
       .object({
         enhancementLines: z.array(
           z.object({
-            quantity: z.string().regex(/^\d+$/, "Must be a non-negative decimal string"),
+            quantity: z
+              .string()
+              .regex(/^\d+$/, "Must be a non-negative decimal string"),
           }),
         ),
       })

@@ -105,13 +105,13 @@ Rules for this suite:
 
 **AC:**
 
-- [ ] `npm run test:api:db` runs against `.env.local` with no extra flags
-- [ ] The same script runs in the e2e job against the `ci` branch, then `reset-to-seed` runs again before Playwright
-- [ ] Tests follow the remnant rules above
-- [ ] Mock test asserts the posted `priceRecordedAt`
-- [ ] Harness smoke test is gone
-- [ ] Catalog lines, checked, linking the new file. No step files. Sessions: stored 8-decimal-place line still multiplies; a money amount at the column limit round-trips; a map count at the integer limit round-trips; price time round-trips; replaced session keeps its id. Strategies: a strategy with a session is still there after delete. Wording can change; the rule being locked cannot
-- [ ] Shared-facts blurb on both coverage pages: this suite creates `api-db-` rows and deletes them; it does not use the demo seed; a local run uses the local branch
+- [x] `npm run test:api:db` runs against `.env.local` with no extra flags
+- [x] The same script runs in the e2e job against the `ci` branch, then `reset-to-seed` runs again before Playwright
+- [x] Tests follow the remnant rules above
+- [x] Mock test asserts the posted `priceRecordedAt`
+- [x] Harness smoke test is gone
+- [x] Catalog lines, checked, linking the new file. No step files. Sessions: stored 8-decimal-place line still multiplies; a money amount at the column limit round-trips; a map count at the integer limit round-trips; price time round-trips; replaced session keeps its id. Strategies: a strategy with a session is still there after delete. Wording can change; the rule being locked cannot
+- [x] Shared facts in [`tests/catalog/README.md`](../tests/catalog/README.md): this suite creates `api-db-` rows and deletes them; it does not use the demo seed; a local run uses the local branch. The coverage pages do not repeat it
 
 ## R4. Doc amendments
 

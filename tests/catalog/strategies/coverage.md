@@ -1,14 +1,8 @@
 # Strategies
 
-A checked box means an automated test exists. It is not a pass/fail from the last run.
+The demo seed may already be on the list as "Expedition + Temple tablets (demo)".
 
-App running locally, no login. The demo seed may already be on the list as "Expedition + Temple tablets (demo)".
-
-Rows you save stay in the database until you delete them. A test run or a deploy does not clear them. Re-seeding replaces only that demo strategy and its demo session.
-
-The create, update, and delete lines for `POC Expedition Tablet Farming` are one ordered pass on that row. The spec group is serial. A retry starts by removing a leftover row of that name. The same removal runs again when the pass finishes, including after a failure, so that row does not stay in the database. The conflict line is not part of that pass. It uses the demo strategy, and confirming delete leaves that row in place.
-
-This page does not list every unit test in the repo. A line is a behavior someone might otherwise recheck by hand.
+The create, update, and delete lines for `POC Expedition Tablet Farming` are one ordered pass. The spec group is serial. A retry removes a leftover row of that name, and the same removal runs when the pass finishes. The conflict line uses the demo strategy and leaves it in place.
 
 ## Create a strategy
 
@@ -50,3 +44,4 @@ This page does not list every unit test in the repo. A line is a behavior someon
 - [x] shows the conflict message when a strategy still has sessions — UI [`e2e/strategies.spec.ts`](../../../e2e/strategies.spec.ts). [Steps](./automated/shows-the-conflict-message-when-a-strategy-still-has-sessions.md)
 - [x] deletes a strategy that has no sessions — [`DELETE /api/strategies/:id`](../../../tests/api/strategies.test.ts)
 - [x] refuses to delete a strategy that still has sessions — [`DELETE /api/strategies/:id`](../../../tests/api/strategies.test.ts)
+- [x] keeps a strategy that still has a session — [`API persistence`](../../../tests/api/db/persistence.test.ts)

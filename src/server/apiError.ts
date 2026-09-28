@@ -10,11 +10,30 @@ import { CALCULATED_TOTAL_OVERFLOW_MESSAGE } from "@/src/server/money";
 /** Postgres foreign-key restrict / required-relation violations (Prisma). */
 const RESTRICT_CODES = new Set(["P2003", "P2014"]);
 
+/**
+ * True when Postgres refused a delete because a child row still points here.
+ *
+ * Prisma sometimes maps that to P2003 or P2014. On this driver, ON DELETE
+ * RESTRICT arrives as a connector error whose message carries SQLSTATE 23001
+ * and "violates RESTRICT setting", with no Prisma code.
+ */
 export function isForeignKeyRestrictError(error: unknown): boolean {
-  if (typeof error !== "object" || error === null || !("code" in error)) {
+  if (typeof error !== "object" || error === null) {
     return false;
   }
-  return RESTRICT_CODES.has(String((error as { code: unknown }).code));
+  if (
+    "code" in error &&
+    RESTRICT_CODES.has(String((error as { code: unknown }).code))
+  ) {
+    return true;
+  }
+  if (!(error instanceof Error)) {
+    return false;
+  }
+  return (
+    error.message.includes("violates RESTRICT setting") ||
+    error.message.includes('code: "23001"')
+  );
 }
 
 export function zodErrorDetails(error: ZodError): ApiErrorDetail[] {

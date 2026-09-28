@@ -15,6 +15,7 @@
     "format:check": "prettier --check .",
     "test": "jest",
     "test:api": "jest --config jest.api.config.mjs",
+    "test:api:db": "dotenv -e .env.local -- jest --config jest.api-db.config.mjs --runInBand",
     "test:e2e": "playwright test",
     "db:generate": "dotenv -e .env.local -- prisma generate",
     "db:migrate": "dotenv -e .env.local -- prisma migrate dev",

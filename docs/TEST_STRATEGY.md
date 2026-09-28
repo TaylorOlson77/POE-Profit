@@ -87,6 +87,10 @@ For MVP v1 we will:
 
 One example of each contract outcome is enough: a valid write, one invalid field, one bad decimal, unknown id, delete, and a blocked delete. Repeating every decimal format here does not add confidence in the route.
 
+Two suites share this layer. `npm run test:api` calls Route Handlers in-process with a Prisma fake. It locks status codes, error bodies, and that the service returns the engine's fields. The quality job runs it and is not given a database URL. Persistence round-trips are `npm run test:api:db` (`tests/api/db/`): the same handlers and the real Prisma client. Locally that is the Neon `local` branch. In CI it runs in the e2e job against the Neon `ci` branch. That suite checks stored strings. It does not repeat the validation rules.
+
+Postgres rolls back a transaction that throws. The fake's `$transaction` does not. A map-session update deletes lines and then writes the new ones, and there is no natural failure between those steps, so neither suite locks rollback. There is no fault-injection hook.
+
 ### 4.3 E2E — Playwright
 
 **Owns**
@@ -115,7 +119,7 @@ There is no 404 page. A missing strategy or session shows the API sentence in pl
 ### 4.4 How deep each layer goes
 
 - **Unit:** the boundaries of one function (empty, zero, negative, cap, fractions).
-- **API:** one example per outcome the contract promises (status code, error body, calculated fields stored and returned). The handler, Zod schema, and service run together. Postgres may be faked.
+- **API:** one example per outcome the contract promises (status code, error body, calculated fields stored and returned). The handler, Zod schema, and service run together. The contract suite may fake Postgres. Stored scale, the integer-column ceiling, `timestamptz`, and `onDelete: Restrict` belong to `npm run test:api:db`.
 - **UI:** one path per user journey. Do not re-list every validation message the unit tests already cover.
 
 ## 5. Priority risks
@@ -222,7 +226,7 @@ Explicitly **out of scope** for MVP automated testing:
 
 | Environment | Purpose |
 | --- | --- |
-| Local | Dev loop; unit + API + optional headed E2E |
+| Local | Dev loop; unit + contract API + `test:api:db` on the local branch + optional headed E2E |
 | CI | Every pull request. The gates are §10. |
 | Deployed demo | [poe-profit.vercel.app](https://poe-profit.vercel.app/). Smoke against this URL is manual. CI does not open it. |
 
@@ -237,13 +241,13 @@ A pull request should not merge unless CI is green. The gates, in order:
 3. Unit tests
 4. API / integration tests (`npm run test:api`)
 5. Build
-6. Playwright E2E
+6. Playwright E2E. That job also runs `npm run test:api:db` first.
 
 `format:check` exists as a script. It is not a gate.
 
-CI runs that list on every push to `main` and every pull request. The API step does not run again as part of the Vercel deploy. API tests still have **no database credentials**; CI runs `prisma generate` but does not apply migrations for them. D1 and D2 API tests call Route Handlers in-process with a Prisma fake (`tests/api/strategyDbMock.ts`, `tests/api/mapSessionDbMock.ts`). A Neon round-trip for those contract tests is still deferred.
+CI runs that list on every push to `main` and every pull request. The contract API step does not run again as part of the Vercel deploy. `npm run test:api` is not given a database URL. CI runs `prisma generate` for it and does not apply migrations there. D1 and D2 call Route Handlers in-process with a Prisma fake (`tests/api/strategyDbMock.ts`, `tests/api/mapSessionDbMock.ts`).
 
-Playwright runs the seven journeys on every CI run, against the Neon `ci` branch (`CI_DATABASE_URL` / `CI_DATABASE_URL_UNPOOLED`). Before Playwright, once per job, Actions applies migrations and `prisma/reset-to-seed.ts` clears application rows and seeds the demo strategy. That reset does not run after each test. It runs only when `DATABASE_RESET=ci` and `CI=true`, so CI cannot wipe the local or public database. The homepage smoke runs in the same job. E2E jobs queue so two runs do not share that wipe.
+The e2e job runs against the Neon `ci` branch (`CI_DATABASE_URL` / `CI_DATABASE_URL_UNPOOLED` injected as `DATABASE_URL` / `DATABASE_URL_UNPOOLED`). Once per job, Actions applies migrations and `prisma/reset-to-seed.ts`, then runs `npm run test:api:db`, then resets to the seed again, then Playwright. A failed persistence step skips Playwright. The second reset does not run when that step fails; the next job's first reset clears leftover `api-db-` rows. Resets run only when `DATABASE_RESET=ci` and `CI=true`, so CI cannot wipe the local or public database. The homepage smoke runs in the same job. E2E jobs queue so two runs do not share that wipe.
 
 On E2E failure, CI should retain:
 
@@ -279,7 +283,7 @@ After MVP, a ticket also updates the coverage page, as [`QA_WORKFLOW.md`](./QA_W
 Stack selection is done. Items below are closed unless still marked open:
 
 - Exact unit test runner and decimal/money library — Jest + `decimal.js` (ADR-014 / ADR-015)
-- API test harness — decided with D1 (2026-09-23): in-process Route Handlers plus a Prisma fake. No `DATABASE_URL` in CI. Real Neon round-trip deferred.
+- API test harness — decided with D1 (2026-09-23) and split on 2026-09-28: contract tests are in-process Route Handlers plus a Prisma fake, and the quality job is not given a database URL. Persistence round-trips are `npm run test:api:db` in the e2e job, against the Neon `ci` branch.
 - Playwright project layout and CI browser install
 - Deploy smoke URL and secrets handling
 - Precise rounding policy constants — decided 2026-09-23: internal full precision; display is 2 dp half-up via `roundForDisplay` (ADR-015 clarification)

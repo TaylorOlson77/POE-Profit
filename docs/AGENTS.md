@@ -66,13 +66,14 @@ Do not execute a prep prompt just because this file was read. Run one only when 
 
 ### D1 decisions (locked unless Taylor reopens them)
 
-- API tests call Route Handlers in-process with the Prisma fake in `tests/api/strategyDbMock.ts`. CI still has no `DATABASE_URL`. A Neon round-trip is deferred.
+- Contract API tests call Route Handlers in-process with the Prisma fake in `tests/api/strategyDbMock.ts`. They run in the quality job, which is not given a database URL.
+- Persistence round-trips are `npm run test:api:db` (`tests/api/db/persistence.test.ts`): the same handlers and the real Prisma client. Locally that is the Neon `local` branch. In CI the e2e job runs it against the Neon `ci` branch.
 - `DELETE` of a strategy that still has map sessions returns **409 `CONFLICT`**. 404 is an unknown id. 204 is a delete with no sessions. E1 should show `error.message`.
 - Money on the wire goes through `decimalToWire` (`src/server/money.ts`): plain decimal strings, no `Number()`, no `roundForDisplay`.
 
 ### D2 decisions (locked unless Taylor reopens them)
 
-- Same harness as D1: in-process Route Handlers and `tests/api/mapSessionDbMock.ts`. A Neon CI database is still deferred. These contract tests stay on the fake even if that database exists later.
+- Contract tests use the same style of harness as D1: in-process Route Handlers and `tests/api/mapSessionDbMock.ts`. They stay on the fake. Session persistence round-trips are `npm run test:api:db`, not this file.
 - Unknown map session id is **404**. Unknown `strategyId` on create or update is **404** (`Strategy not found`). PUT checks the session first, then the strategy, and does not replace lines when the strategy is missing.
 - PUT keeps the MapSession row and replaces investment and revenue lines in a transaction. It does not delete the session or the strategy. Inactive duration columns are cleared.
 - Delete session is **204** or **404**. No 409. Nullable money uses `nullableDecimalToWire`.
@@ -136,20 +137,21 @@ Do not execute a prep prompt just because this file was read. Run one only when 
 
 **Jest API tests**
 
-- `jest.mock("@/...")` needs `moduleNameMapper` in `jest.api.config.mjs` (`^@/(.*)$` → `<rootDir>/$1`). Load the fake with `jest.requireActual`. A raw `require()` fails `@typescript-eslint/no-require-imports`.
+- `jest.mock("@/...")` needs `moduleNameMapper` in `jest.api.config.mjs` (`^@/(.*)$` → `<rootDir>/$1`). Load the fake with `jest.requireActual`. A raw `require()` fails `@typescript-eslint/no-require-imports`. That config ignores `tests/api/db/`. `npm run test:api:db` uses `jest.api-db.config.mjs` and does not load the fakes.
 
 **CI**
 
 - Order is lint → typecheck → unit → API → build → E2E. Typecheck runs **before** `build`, so app code must not depend on Next-generated types like `LayoutProps` (`app/layout.tsx` uses plain React props for this reason).
-- API tests still have **no database access**; CI only runs `prisma generate` for them. Migrations for the app are applied locally against Neon. D1 and D2 API tests use an in-process Prisma fake. A Neon round-trip for those contract tests is still deferred.
-- Playwright runs on every CI job against the Neon `ci` branch. The job is a GitHub-hosted Ubuntu runner. It installs Chromium, builds the app, and Playwright starts `next start` on that same machine at `http://127.0.0.1:3000`. It does not open the Vercel URL. Before Playwright, once per job, the workflow runs `prisma migrate deploy` and `prisma/reset-to-seed.ts` with `DATABASE_RESET=ci`. That wipe is refused unless `CI=true`, so it cannot run against `.env.local`. It does not run after each test. E2E jobs queue on one concurrency group so two runs cannot wipe `ci` together. The homepage smoke runs in that same job. CI retries a failed test once (`playwright.config.ts`). Locally, each describe passes the strategies it owns into `installUiTestCleanup` (`e2e/fixtures.ts`, `e2e/dbCleanup.ts`). A strategy with only a name is deleted, sessions first. A strategy that lists `keepSessionIds` stays, and every other session on it is deleted. Hand-created strategies with other names stay. A killed run can leave rows until the next `beforeAll`, which finds them by those names.
+- `npm run test:api` is not given a database URL. CI only runs `prisma generate` for that step. D1 and D2 stay on the Prisma fakes.
+- The e2e job runs `npm run test:api:db` after the first migrate-and-reset, then `reset-to-seed` again, then the production build and Playwright. The workflow injects `CI_DATABASE_URL` / `CI_DATABASE_URL_UNPOOLED` as `DATABASE_URL` / `DATABASE_URL_UNPOOLED`. The script does not read `CI_DATABASE_URL`. Locally `npm run test:api:db` loads `.env.local` (the Neon `local` branch). Each test creates an `api-db-` strategy and deletes it in `finally`. It does not call `reset-to-seed` and it does not touch the demo seed.
+- Playwright runs on every CI job against the Neon `ci` branch. The job is a GitHub-hosted Ubuntu runner. It installs Chromium, builds the app, and Playwright starts `next start` on that same machine at `http://127.0.0.1:3000`. It does not open the Vercel URL. The workflow migrates and resets, runs `npm run test:api:db`, resets to the seed again, then builds and starts Playwright. Both resets use `DATABASE_RESET=ci` and are refused unless `CI=true`, so they cannot run against `.env.local`. They do not run after each test. A failed persistence step skips the second reset and Playwright; the next job's first reset clears leftover rows. E2E jobs queue on one concurrency group so two runs cannot wipe `ci` together. The homepage smoke runs in that same job. CI retries a failed test once (`playwright.config.ts`). Locally, each describe passes the strategies it owns into `installUiTestCleanup` (`e2e/fixtures.ts`, `e2e/dbCleanup.ts`). A strategy with only a name is deleted, sessions first. A strategy that lists `keepSessionIds` stays, and every other session on it is deleted. Hand-created strategies with other names stay. A killed run can leave rows until the next `beforeAll`, which finds them by those names.
 - `format:check` is **not** a CI gate, `docs/` is in `.prettierignore`, and a few pre-existing `src/contracts` files fail Prettier. Don't reformat them as drive-by noise.
 - `actions/checkout@v4` / `actions/setup-node@v4` emit a Node 20 deprecation annotation. Runs still pass; bump to `@v5` when convenient.
 
 **Schema/contract parity**
 
 - Prisma returns `Decimal` objects; services must serialize to decimal **strings** at the API boundary via `decimalToWire`. Never `Number()` a money value.
-- The contracts reject money and counts outside the columns. A calculated total that does not fit is 400 before insert. D1 and D2 API tests parse responses with the Zod schemas. The fake still does not prove Postgres `Restrict`, or that a stored 8-decimal-place line still multiplies. Those round-trips are R3.
+- The contracts reject money and counts outside the columns. A calculated total that does not fit is 400 before insert. D1 and D2 API tests parse responses with the Zod schemas. `tests/api/db/persistence.test.ts` locks a stored 8-decimal-place line, the money and map-count ceilings, `timestamptz`, line replacement, and `onDelete: Restrict`. The fake's `$transaction` still does not roll back. A session update deletes lines and then writes the new ones, and there is no natural failure between those steps, so rollback is not locked.
 
 ## Do not
 
@@ -335,7 +337,7 @@ Propose one cut list, then wait. Group it as:
 3. Current next step. F1 is done. After this cleanup, new work starts with plan-feature, then ticket-test-plan, implementation, dev-wrap-up, definition-of-done. Prompt 10 still runs before the first epic is filed.
 4. F1 record. F1 is already checked off. docs/F1-CHECKLIST.md still holds the branch split (local, ci, production) and the rule that anyone with the public URL can change production rows. Propose where those lasting facts live, and whether the checklist file stays as a runbook or is retired. Do not invent a follow-on deploy epic.
 5. Baseline note. A short dated note: what v1 includes, https://poe-profit.vercel.app/, and the gaps Taylor is keeping on purpose (API tests on the Prisma fake, format:check is not a gate, no auth, manual prices). Fold in any review findings Taylor accepted as documentation.
-6. Optional, separate, and only if Taylor says yes: one closed Foundation issue on the POE Profit board summarizing Phase 1. It is not a product epic. Do not file it in this proposal.
+6. Optional, separate, and only if Taylor says yes: one closed Foundation issue on the POE Profit board summarizing Phase 1. It is not a product epic. Do not file it in this proposal. - dont do this
 
 Leave product code alone unless a comment instructs the next chat to treat the ticket flow as not in force, or still describes the E2E skip gate as waiting on F1. List those comments. Do not fix them in the proposal. If Taylor accepted a code change from the review memos, that change is a separate chat.
 
@@ -347,7 +349,7 @@ After Taylor cuts the list, edit only the accepted items. Show the diff summary 
 Run this only after prompt 9 is done.
 
 ```text
-You are planning the next product phases of POE Profit. The MVP baseline has shipped, including the public deploy at https://poe-profit.vercel.app/. F2 does not exist. You produce a phase map. You do not file GitHub issues, write stories, or edit the repo.
+You are planning the next product phases of POE Profit. The MVP baseline has shipped, including the public deploy at https://poe-profit.vercel.app/. You produce a phase map. You do not file GitHub issues, write stories, or edit the repo.
 
 Read docs/PRODUCT.md, docs/MVP_SPEC.md (non-goals and §34), docs/FUTURE_FEATURES.md, docs/DECISIONS.md ADR-009, and the baseline note in the handoff if it is there. Read docs/QA_WORKFLOW.md only so you know plan-feature is the next command after this chat.
 
@@ -362,8 +364,10 @@ Write phases as a sequence Taylor could build. For each phase:
 - what must already be true before that epic starts
 - what you are leaving in a later phase on purpose
 
-Aim for a handful of phases and a handful of epics. A second outcome is a later epic. Do not add epics to fill a template. Do not write acceptance criteria. Do not design schema. Do not propose an F2.
+Aim for a handful of phases and a handful of epics. A second outcome is a later epic. Do not add epics to fill a template. Do not write acceptance criteria. Do not design schema.
 
 Stop after the map. Taylor cuts phases and epics. Each accepted epic is later split by the plan-feature command in its own chat.
+
+think of this as a brainstorming session, read the future features come up with other features I may have not thought of, including boring stuff like auth and test reporting, ect. we can create a backlog of epics based off this session and prioritize them on what impacts the user the most
 ```
 
