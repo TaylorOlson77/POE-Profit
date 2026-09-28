@@ -2,7 +2,7 @@
 
 This project uses Cursor as an **engineering accelerator**, not as a substitute for understanding.
 
-The portfolio story is: requirements → decisions → architecture → implementation → tests → explainable choices. (GitHub Issues/board come **after** MVP baseline — see `BACKLOG.md` / ADR-009.)
+The portfolio story is: requirements → decisions → architecture → implementation → tests → explainable choices. GitHub Issues and the board are the tracker (ADR-009). Phase 1 is archived in `docs/archive/BACKLOG.md`.
 
 ## Goals
 
@@ -38,16 +38,16 @@ Chats do **not** fully remember each other. Carry context via the repo:
 
 | Mechanism | Use for |
 | --- | --- |
-| [`AGENTS.md`](./AGENTS.md) | **Start here** — product name, process, stack, next step |
-| `docs/*.md` | Specs, ADRs, architecture, backlog checklist, test strategy |
+| [`AGENTS.md`](./AGENTS.md) | **Start here** — product name, process, stack, baseline, commits |
+| `docs/*.md` | Specs, ADRs, architecture, test strategy, ticket flow |
 | `.cursor/rules` | Always-on working rules (`ai-development-workflow.mdc`) |
 | `@`-mention files | Pull exact docs into a new chat |
 | Same chat | Stay when mid-decision or mid-implementation |
-| New chat | Clean phase (e.g. planning done → start scaffolding) |
+| New chat | Clean phase (for example, planning done → start the story) |
 
 **Suggested opener for a build chat:**
 
-> Read `docs/AGENTS.md`, then `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/MVP_SPEC.md`, `docs/TEST_STRATEGY.md`, and `docs/BACKLOG.md`. Confirm we’re on Phase 1 (markdown checklist, no foundation Issues). Next work is A1 scaffold unless the checklist shows otherwise. Propose a short plan, then implement.
+> Read `docs/AGENTS.md`, then `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/MVP_SPEC.md`, `docs/TEST_STRATEGY.md`, `docs/QA_WORKFLOW.md`, and `docs/PRODUCT.md`. v1 has shipped. New work starts with `plan-feature`. Propose a short plan, then implement.
 
 ## Anti-patterns (avoid)
 
@@ -62,7 +62,8 @@ Chats do **not** fully remember each other. Carry context via the repo:
 - [`MVP_SPEC.md`](./MVP_SPEC.md)
 - [`DECISIONS.md`](./DECISIONS.md)
 - [`ARCHITECTURE.md`](./ARCHITECTURE.md)
-- [`BACKLOG.md`](./BACKLOG.md)
-- [`FUTURE_FEATURES.md`](./FUTURE_FEATURES.md) — post-MVP ideas (not committed scope)
+- [`archive/BACKLOG.md`](./archive/BACKLOG.md) — finished Phase 1 checklist
+- [`FUTURE_FEATURES.md`](./FUTURE_FEATURES.md) — ideas (not committed scope)
 - [`TEST_STRATEGY.md`](./TEST_STRATEGY.md)
-- [`QA_WORKFLOW.md`](./QA_WORKFLOW.md) — post-MVP ticket flow and test catalog (not in force during MVP)
+- [`QA_WORKFLOW.md`](./QA_WORKFLOW.md) — ticket flow and test catalog
+- [`PRODUCT.md`](./PRODUCT.md) — epic and story rules

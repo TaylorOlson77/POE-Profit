@@ -1,12 +1,12 @@
-# QA workflow — POE Profit (post-MVP)
+# QA workflow — POE Profit
 
 | Field | Value |
 | --- | --- |
-| Status | Working agreement (2026-09-27). `plan-feature` and `ticket-test-plan` exist. `definition-of-done` does not. The ticket flow is not in force during the current backlog. |
-| Applies | After the MVP baseline ships. Not the current backlog. |
+| Status | In force (2026-09-28). `plan-feature`, `ticket-test-plan`, `dev-wrap-up`, and `definition-of-done` exist. |
+| Applies | Feature and fix work on GitHub Issues. |
 | Related | [`TEST_STRATEGY.md`](./TEST_STRATEGY.md), [`PRODUCT.md`](./PRODUCT.md), [`AI_DEVELOPMENT.md`](./AI_DEVELOPMENT.md), [ADR-009](./DECISIONS.md) |
 
-How a ticket moves once GitHub Issues are the tracker, and where the coverage pages live. The pages are [`tests/catalog/`](../tests/catalog/README.md). This ticket flow is not in force during the current backlog.
+How a ticket moves once GitHub Issues are the tracker, and where the coverage pages live. The pages are [`tests/catalog/`](../tests/catalog/README.md).
 
 ## How this fits the test strategy
 
@@ -52,19 +52,20 @@ Interview mapping:
 
 ## Pipeline
 
-Build the commands in this order. Each one stops for Taylor before it writes the next artifact. `plan-feature` and `ticket-test-plan` exist. `definition-of-done` does not.
+Each command stops for Taylor before it writes the next artifact.
 
 ```text
-PM command  →  ticket test-plan command  →  implement in Cursor  →  definition-of-done command
-(issues, AC)   (branch, coverage edits)    (code + automated tests)   (checks, then the board)
+plan-feature  →  ticket-test-plan  →  implement  →  dev-wrap-up  →  definition-of-done
+(issues, AC)     (branch, coverage)   (code + tests)  (commit, PR)    (comment, then the board)
 ```
 
-| Step | Command (planned path) | Writes | Does not write |
+| Step | Command | Writes | Does not write |
 | --- | --- | --- | --- |
 | 1 | `.cursor/commands/plan-feature.md` | Epic, child issues, observable acceptance criteria, board placement | Coverage lines, code, automation |
 | 2 | `.cursor/commands/ticket-test-plan.md` | Branch. Edits to the coverage page: lines added, retargeted, or removed. A file under `manual/` only when a person would still run the case. | Product code. A separate impact table. The coverage diff is the impact. |
 | 3 | Implementation chat | Product code and the automated tests the new checked lines name, same pull request | A second copy of the cases on the GitHub issue |
-| 4 | `.cursor/commands/definition-of-done.md` | A traceability comment on the issue; move the board only after the checks pass | New product scope. It does not invent whether a line belongs on the page. |
+| 4 | `.cursor/commands/dev-wrap-up.md` | The commit, doc updates Taylor accepted, and the pull request | The definition-of-done comment. A pass/fail report (FF-006). |
+| 5 | `.cursor/commands/definition-of-done.md` | A traceability comment on the issue; move the board only after the checks pass | New product scope. It does not invent whether a line belongs on the page. |
 
 The test-plan command reads this file, [`TEST_STRATEGY.md`](./TEST_STRATEGY.md) §4, and [`tests/catalog/README.md`](../tests/catalog/README.md). When a session disagrees with a rule here, the command proposes a dated amendment in this file. The amendment is not in force until Taylor accepts it.
 
@@ -74,13 +75,15 @@ Name the branch from the story, because that issue is the one the pull request c
 42-register-and-sign-in
 ```
 
-The number, a hyphen, then a few words from the story title. Lowercase. The epic does not get a branch. A story with no epic uses that single issue's number. The implementation chat stays on that branch.
+The number, a hyphen, then a few words from the story title. Lowercase. The epic does not get a branch. A story with no epic uses that single issue's number. The implementation chat stays on that branch. A docs change with no story uses `docs-short-name`. Commit subjects follow the Commits section in [`AGENTS.md`](./AGENTS.md).
+
+`main` is the production branch. Vercel deploys it. Do not commit or push feature work to `main`. The pull request needs green CI ([`TEST_STRATEGY.md`](./TEST_STRATEGY.md) §10) and docs that match the code.
 
 Shared facts live at the top of the area page ([`tests/catalog/README.md`](../tests/catalog/README.md)). If the command lacks one, it asks, and the answer is written there before the case is accepted.
 
 ## Catalog
 
-Stood up after MVP, from the automation that already exists, so the first feature ticket can show what it changed. Do not retrofit during MVP.
+Stood up from the automation that already existed, so a feature ticket can show what it changed.
 
 How a page, a line, and a step file are written is [`tests/catalog/README.md`](../tests/catalog/README.md).
 
@@ -105,7 +108,7 @@ Per ticket, agree the lines before writing a case file:
 
 Cut a line when you would not run it, when it cannot fail on its own, or when the steps describe widgets.
 
-The browser set for the current screens is the unchecked Playwright lines on the coverage pages. An unchecked line is a journey the spec does not contain yet.
+The seven browser lines for strategies and sessions are checked. An unchecked line is a journey the spec does not contain yet.
 
 A screen fact the happy path does not show is an edge case. Propose it, and add the line only after Taylor accepts it.
 
@@ -153,10 +156,3 @@ We are not failing CI on an empty pull-request section. The control is this comm
 [FF-006](./FUTURE_FEATURES.md). A generated deploy report. The summary is the feature and the action (create, update, delete), with a pass rate and counts by layer. Counts come from the run. The drill-down is the coverage page with pass or fail joined on the test name. Manual results name the case file, not a separate id. Do not commit a history of full run logs into the repo.
 
 Do not scrape case text onto the ticket. The definition-of-done comment links the coverage page and the run.
-
-## Not in force yet
-
-- Running `plan-feature` or `ticket-test-plan` during the MVP backlog. `definition-of-done` is not written yet.
-- Using this workflow, or [`PRODUCT.md`](./PRODUCT.md), to cut issues before the baseline ships
-- The deploy report
-- Any change to the current MVP backlog or to E3

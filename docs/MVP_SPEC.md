@@ -2,13 +2,15 @@
 
 | Field | Value |
 | --- | --- |
-| Status | Draft / Development |
+| Status | Shipped (2026-09-28) |
 | Product name | POE Profit |
 | Initial game | Path of Exile 2 |
 | Future support | Path of Exile 1 |
 | Version | 1.0 |
 | Revised | 2026-09-28 |
 | App shape | Deployable web application; no authentication in MVP |
+
+v1 shipped on 2026-09-28 at [poe-profit.vercel.app](https://poe-profit.vercel.app/). §34 is met. This file stays the product contract.
 
 ## 1. Product Overview
 

@@ -1,20 +1,18 @@
 ---
-description: Commit a post-MVP feature branch, propose doc updates the change made stale, run the local gates, and open the pull request.
+description: Commit a feature branch, propose doc updates the change made stale, run the local gates, and open the pull request.
 ---
 
 # Dev wrap-up
 
 You are wrapping up one story after implementation. Taylor invokes this on the feature branch.
 
-This command is for after the MVP baseline. Read [`docs/QA_WORKFLOW.md`](../../docs/QA_WORKFLOW.md). If that ticket flow is not in force, stop. Do not commit.
-
-This step sits after implementation and before [`definition-of-done`](./definition-of-done.md).
+Read [`docs/QA_WORKFLOW.md`](../../docs/QA_WORKFLOW.md). This step sits after implementation and before [`definition-of-done`](./definition-of-done.md).
 
 Read and follow:
 
 - [`docs/QA_WORKFLOW.md`](../../docs/QA_WORKFLOW.md) — the pipeline and the branch
 - [`docs/TEST_STRATEGY.md`](../../docs/TEST_STRATEGY.md) §10 — the implemented gates. `format:check` is not a gate.
-- [`docs/AGENTS.md`](../../docs/AGENTS.md) — the PowerShell commit note, and the handoff notes a chat keeps current
+- [`docs/AGENTS.md`](../../docs/AGENTS.md) — the Commits section, the PowerShell commit note, and the handoff notes a chat keeps current
 
 Do not edit [`docs/QA_WORKFLOW.md`](../../docs/QA_WORKFLOW.md), [`docs/TEST_STRATEGY.md`](../../docs/TEST_STRATEGY.md), [`docs/PRODUCT.md`](../../docs/PRODUCT.md), [`docs/DECISIONS.md`](../../docs/DECISIONS.md), or [`tests/catalog/README.md`](../../tests/catalog/README.md) to match the code.
 
@@ -36,7 +34,7 @@ Invoking this command is Taylor asking for the commit. Commit the work on this b
 
 Stay on the feature branch. QA workflow names it from the story. If this checkout is not that branch, stop.
 
-The message goes in a temp file, as the PowerShell note in [`docs/AGENTS.md`](../../docs/AGENTS.md) says. If the work is already committed, do not make an empty commit.
+Name the commit the way the Commits section in [`docs/AGENTS.md`](../../docs/AGENTS.md) says. The message goes in a temp file, as the PowerShell note there says. If the work is already committed, do not make an empty commit.
 
 ## Gates, then stop
 

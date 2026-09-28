@@ -13,34 +13,54 @@ Read this first in a new chat, then the docs listed under **Required reading**.
 
 ## Process (locked)
 
-- **Until MVP baseline ships:** track work by checking off items in [`BACKLOG.md`](./BACKLOG.md). No per-chore GitHub Issues for scaffold / Prisma / Jest / CI.
-- **After MVP baseline:** GitHub Issues + POE Profit board for features/fixes (ADR-009). Feature work follows [`QA_WORKFLOW.md`](./QA_WORKFLOW.md) (catalog, ticket flow, commands). Epic and story rules are in [`PRODUCT.md`](./PRODUCT.md). That workflow is not in force during the MVP backlog.
+- GitHub Issues + the [POE Profit board](https://github.com/users/TaylorOlson77/projects/1) for features and fixes ([ADR-009](./DECISIONS.md)). The pipeline is [`QA_WORKFLOW.md`](./QA_WORKFLOW.md). Epic and story rules are [`PRODUCT.md`](./PRODUCT.md).
 - **Options before code** for material decisions; durable choices go in [`DECISIONS.md`](./DECISIONS.md).
 - Do **not** implement FF-* items in [`FUTURE_FEATURES.md`](./FUTURE_FEATURES.md) unless Taylor asks.
+- `main` is the production branch. Vercel deploys it. A change lands through a pull request with green CI ([`TEST_STRATEGY.md`](./TEST_STRATEGY.md) §10) and docs that match the code.
+
+## Commits
+
+Subject: `type: imperative summary`
+
+| Type | Use |
+| --- | --- |
+| `feat` | Player-visible behavior |
+| `fix` | Incorrect behavior |
+| `test` | Tests only |
+| `docs` | Docs only |
+| `refactor` | Behavior unchanged |
+| `chore` | Tooling, dependencies, CI |
+
+Lowercase type. No trailing period. Under 72 characters. Name the behavior (`feat: reject a money total that does not fit the column`).
+
+A body is for the why, and only when the subject does not already say it. Leave a blank line before the body. On PowerShell the message goes in a temp file: `git commit -F <file>`.
+
+The branch name comes from the story: `42-register-and-sign-in`. The number, a hyphen, then a few words from the story title. Lowercase. A docs change with no story uses `docs-short-name`.
+
+The pull request title is the story title. The body includes `Closes #N`. Do not put `Closes` on intermediate commits.
 
 ## Stack (locked — see ADRs)
 
 Next.js App Router + TS · Vercel · Neon Postgres · Prisma · Route Handlers (REST, contract-first) · `decimal.js` · Jest (unit + API) · Playwright (E2E) · layout: `app/` + `src/contracts`, `src/domain/calc`, `src/server` (ADR-011–016).
 
-## Current next step
+## Baseline (2026-09-28)
 
-**MVP baseline is deployed** at [poe-profit.vercel.app](https://poe-profit.vercel.app/). F1 is checked off in [`BACKLOG.md`](./BACKLOG.md). There is no F2. The public site uses the Neon `production` branch and shows only the demo strategy. Actions migrates and resets the Neon `ci` branch once per run, then Playwright runs there.
+v1 is live at [poe-profit.vercel.app](https://poe-profit.vercel.app/). There is no F2. Phase 1 is the archived checklist in [`archive/BACKLOG.md`](./archive/BACKLOG.md).
 
-Next: the remaining baseline tickets are in [`MVP_REMAINING.md`](./MVP_REMAINING.md). R1, R2, and R4 are checked off. R3 is still open. One ticket per chat. Do not start the next ticket in the same chat.
+A player can create a PoE2 strategy, log a map session with investment and revenue, enter a manual price (`ACTUAL_PAID`), save, and see profit, ROI, and rates from the last API payload. They can reopen the session, edit it, and delete it. The public site uses the Neon `production` branch and shows the demo strategy. Actions migrates and resets the Neon `ci` branch; Playwright runs there, not against the Vercel URL. Branch setup is in the [README](../README.md).
 
-Prep prompt **1 is done.** `tests/catalog/` has strategies and sessions (create, update, delete). The five judgment calls from that chat stay off the pages.
+Anyone with the public URL can create, edit, and delete production rows. That does not reach `local` or `ci`. `npm run db:reset:production` restores the demo seed.
 
-Prep prompt **2 is done.** The coverage pages have Playwright lines for create, update, and delete of a strategy and of a session, plus the conflict message when a strategy still has sessions. E3 checked those boxes and moved the step files to `automated/`. The specs are `e2e/strategies.spec.ts` and `e2e/sessions.spec.ts`. A missing id shows the API sentence in place of the form. There is no 404 page, and that path is not a browser line.
+Gaps kept on purpose:
 
-Prep prompt **3 is done.** `.cursor/commands/ticket-test-plan.md` plans tests for one story. The rules are [`QA_WORKFLOW.md`](./QA_WORKFLOW.md), [`TEST_STRATEGY.md`](./TEST_STRATEGY.md) §4, and [`tests/catalog/README.md`](../tests/catalog/README.md). It is not used during the MVP backlog.
+- Contract API tests stay on the Prisma fake (`npm run test:api`). Persistence round-trips are `npm run test:api:db`.
+- `format:check` is not a CI gate.
+- No auth. Prices are manual. The recorded time is save time.
+- Last-write-wins on PUT.
+- No rate limits, pagination, snapshot restore, or automatic production migrations.
+- The Prisma fake's `$transaction` does not roll back.
 
-Prep prompt **4 is done.** `.cursor/commands/plan-feature.md` plans a feature. The rules are [`PRODUCT.md`](./PRODUCT.md). It files issues only after Taylor accepts, and it is not used during the MVP backlog.
-
-A finished prep prompt is the brief for that chat. The rules now live in the docs, not in the prompt.
-
-E3 and F1 are done. Prompt **5** creates the definition-of-done command. Prompt **7** creates the dev wrap-up command. Prompts 3 and 4 are done.
-
-Do not execute a prep prompt just because this file was read. Run one only when Taylor pastes that prompt as the task.
+New work starts with `plan-feature`, then `ticket-test-plan`, implementation, `dev-wrap-up`, and `definition-of-done`. One story per chat.
 
 ### E2 decisions (locked unless Taylor reopens them)
 
@@ -85,8 +105,9 @@ Do not execute a prep prompt just because this file was read. Run one only when 
 2. [`DECISIONS.md`](./DECISIONS.md) — ADRs (especially 006–016)  
 3. [`MVP_SPEC.md`](./MVP_SPEC.md) — product rules + non-goals  
 4. [`TEST_STRATEGY.md`](./TEST_STRATEGY.md) — what to test  
-5. [`BACKLOG.md`](./BACKLOG.md) — Phase 1 checklist  
-6. [`AI_DEVELOPMENT.md`](./AI_DEVELOPMENT.md) — working contract with Taylor  
+5. [`QA_WORKFLOW.md`](./QA_WORKFLOW.md) — how a ticket moves  
+6. [`PRODUCT.md`](./PRODUCT.md) — epic and story rules  
+7. [`AI_DEVELOPMENT.md`](./AI_DEVELOPMENT.md) — working contract with Taylor  
 
 ## Scaffold micro-decisions (resolved)
 
@@ -157,217 +178,6 @@ Do not execute a prep prompt just because this file was read. Run one only when 
 
 - Re-litigate locked ADRs unless Taylor reopens them
 - Duplicate profit math in the UI
-- Add auth, tRPC, Server Actions-as-API, or poe.ninja in MVP
-- Create a flood of GitHub Issues for Phase 1
-- Run a prep prompt below unless Taylor pasted that prompt as the task
-
-## Prep prompts
-
-Paste one prompt into a new chat. They assume this file and `docs/QA_WORKFLOW.md` are the rules.
-
-### 1 — Catalog the tests that already exist
-
-```text
-Read docs/AGENTS.md, docs/QA_WORKFLOW.md, docs/TEST_STRATEGY.md, and tests/catalog/. The create-strategy page is the density to copy. Do not copy its content into sessions.
-
-Extend tests/catalog/ so strategies and sessions match the tests that already exist. Read the test names. Do not invent behavior.
-
-Write or extend coverage.md for strategies and sessions. Sections are create, update, and delete, and only when those tests exist. A line is the it sentence plus a link to the file. A checked box means the automated test exists. manual/ is the only case-file folder. Automated tests stay where they are. No case numbers. No second regression file. Do not list every calculation example. A second example of the same rule does not get a line. A line exists only when someone might otherwise recheck that behavior by hand.
-
-Do not add a manual file unless a person still has to look at the screen and the lower layers do not already lock it. The existing create-strategy manual file can stay. Do not write Playwright specs. The catalog lives in tests/catalog/. Do not edit product code.
-
-When a line is a judgment call, list it and ask before adding it. Then show the pages and stop.
-```
-
-### 2 — Write the Playwright cases into the catalog
-
-```text
-Read docs/AGENTS.md (E1 and E2 decisions), docs/QA_WORKFLOW.md (the browser set and the manual-file rules), docs/TEST_STRATEGY.md §4.3 and §6.3, and tests/catalog/ after prompt 1.
-
-Propose the browser journeys for the MVP. Start from the four in the workflow, and change a journey when the real UI in the E1/E2 notes disagrees. Do not add a journey whose only new fact is a validation message the API or unit tests already lock.
-
-Stop after the list: for each journey, the sentence name, the feature section it belongs on, and whether a manual file already exists. Wait for Taylor to cut it.
-
-After the cut, add the manual files and the coverage lines. Box unchecked. The line links to the manual file. Write the step file the way [`tests/catalog/README.md`](../tests/catalog/README.md) says. No case numbers. Do not write Playwright specs. Do not change product code.
-```
-
-### 3 — Ticket test-plan command
-
-```text
-Read docs/QA_WORKFLOW.md, docs/TEST_STRATEGY.md §4.3, and the feature coverage pages. Create .cursor/commands/ticket-test-plan.md so a later chat can run that command.
-
-The command is for after the MVP baseline. It must: read the ticket, stop if acceptance criteria are not observable, create the feature branch, and edit the existing feature coverage page on that branch (not a new folder per ticket).
-
-Name the branch from the story, because that issue is the one the pull request closes: `42-register-and-sign-in`. The number, a hyphen, then a few words from the story title. Lowercase. The epic does not get a branch. A story with no epic uses that single issue's number.
-
-Propose the lines before writing any case file. Include create, update, and delete when the ticket's screens have them and the page does not already watch them. A browser line is a fact the screen shows: saved figures, a confirm step, a row leaving or staying, or a server error a person can hit on a normal journey (the conflict message when a strategy still has sessions). The API locking the status code is not a reason to skip that line. The API does not open the page.
-
-Leave off a line whose only new fact is a field-validation message, or a not-found sentence for an id a person cannot reach on purpose. There is no 404 page. A missing strategy or session shows the API sentence in place of the form. That stays an API line.
-
-Stop for Taylor to cut the list, including edge cases, before writing case bodies. Every accepted browser line gets a step file under `manual/` before the case is accepted. Write it the way [`tests/catalog/README.md`](../tests/catalog/README.md) says. API and unit lines do not get a step file. A Playwright line stays unchecked. The sentence is plain text. `UI [path]` links to the spec the implementation chat will write, and `Steps` links to the step file. When that chat adds the spec, it checks the box, keeps `UI [path]` pointed at the spec, and moves the step file from `manual/` to `automated/`. The file stays. It is not archived and it is not deleted. The coverage diff is the impact. A case that creates a row says the row stays until it is deleted. The database is not wiped between runs.
-
-It does not write product code, Playwright specs, or a separate impact table. It does not assign case numbers.
-
-Do not run the command against a real ticket while creating it. Show the command file and stop.
-```
-
-### 4 — Feature-to-tickets command
-
-```text
-Read docs/QA_WORKFLOW.md (the pipeline), docs/DECISIONS.md ADR-009, docs/MVP_SPEC.md non-goals, and docs/FUTURE_FEATURES.md.
-
-Create .cursor/commands/plan-feature.md for after the MVP baseline. When that command is later invoked with a feature idea, it must talk before it files anything: what problem the feature is, what is out of scope, how the work splits into an epic and tickets, and acceptance criteria that are observable. It writes GitHub issues only after Taylor accepts that split. It does not write coverage lines, test cases, or product code.
-
-Follow the same shape as the test-catalog work: options, a cut, then the artifact. Do not create GitHub issues while building this command. Show the command file and stop.
-```
-
-### 5 — Definition-of-done command
-
-```text
-Read docs/QA_WORKFLOW.md (“What the ticket records” and “Definition of done”), docs/TEST_STRATEGY.md §10 (the implemented gates, not the format gate) and §12, and tests/catalog/README.md. Read .cursor/commands/plan-feature.md and .cursor/commands/ticket-test-plan.md and match that shape: the command is the steps, and it points at those docs instead of copying them.
-
-Create .cursor/commands/definition-of-done.md for after the MVP baseline. If the ticket flow in QA_WORKFLOW is not in force, the command stops.
-
-When later invoked on a pull request, it checks that pull request against the definition of done in those docs. Traceability is the check: the story’s acceptance criteria, the coverage diff, and the tests in the pull request. It posts the one comment from “What the ticket records,” including the Actions link. It asks Taylor to confirm the diff is honest before it moves the board.
-
-It does not decide whether a line was wise. That cut happened in ticket-test-plan. It does not commit, push, or edit product code. It does not edit QA_WORKFLOW, TEST_STRATEGY, PRODUCT, DECISIONS, or the catalog rules. It does not fail CI over an empty pull-request section. CI green means the implemented gates in TEST_STRATEGY §10.
-
-Do not run it against a real pull request while creating it. Show the command file and stop.
-```
-
-### 6 — Question the bones before Playwright code
-
-```text
-Read docs/AGENTS.md, docs/ARCHITECTURE.md, docs/DECISIONS.md, docs/TEST_STRATEGY.md, docs/QA_WORKFLOW.md, and tests/catalog/ including the Playwright cases from prompt 2.
-
-This is a review, not a rewrite. Playwright is about to encode the current screens. Look for decisions that are brittle once those journeys exist: math duplicated or about to be asserted in the browser, journeys that repeat API rules, routes or labels the specs would freeze, and catalog lines that do not match the UI described in the E1/E2 notes.
-
-Do not reopen a locked ADR unless a specific journey would encode a behavior the ADR forbids, or hide a bug the ADR cares about. Name the ADR if you do. Do not change code. Do not write Playwright specs.
-
-Write the review as: what looks solid, what looks brittle and why, what you would change before the specs and what you would leave. Ask Taylor which of the “change” items to do. Stop there.
-```
-
-### 7 — Dev wrap-up command
-
-```text
-Read docs/QA_WORKFLOW.md (the pipeline), docs/TEST_STRATEGY.md §10 (the implemented gates), and docs/AGENTS.md (the PowerShell commit note, and which behavior notes a chat keeps current). Read .cursor/commands/plan-feature.md and .cursor/commands/ticket-test-plan.md and match that shape: the command is the steps, and it points at those docs instead of copying them.
-
-Create .cursor/commands/dev-wrap-up.md. This is the step after implementation and before definition-of-done. It is for after the MVP baseline. If the ticket flow in QA_WORKFLOW is not in force, the command stops.
-
-When later invoked on the feature branch, it commits that work. Invoking the command is Taylor asking for the commit. It updates behavior docs the change made stale, such as the handoff notes in docs/AGENTS.md and the architecture notes. It does not edit QA_WORKFLOW, TEST_STRATEGY, PRODUCT, DECISIONS, or the catalog rules to match the code. A disagreement with those is a dated amendment, and it waits for Taylor. It runs the implemented gates from TEST_STRATEGY §10 locally. If they fail, it stops. It pushes and opens the pull request with gh, then stops.
-
-The pull request description is the pull request. The issue comment that lists tests added or updated is definition-of-done. This command does not post that comment, does not move the board, and does not write a pass/fail report. That report is FF-006.
-
-Do not run it against the current branch while creating it. Show the command file and stop.
-```
-
-### 8 — Outside review memo
-
-Paste this into two new chats, one Claude and one GPT. Bring both memos back before prompt 9.
-
-```text
-You are an outside reviewer of POE Profit. You did not build it. Taylor will defend the decisions. You write a memo. You do not edit files, open a branch, or file issues.
-
-Taylor has finished MVP coding. F1 is done: the app is deployed at https://poe-profit.vercel.app/ against the Neon production branch, and GitHub Actions migrates and resets the Neon ci branch once per run. The E2E_DATABASE skip gate is removed. There is no F2. Do not look for a second deploy epic, and do not treat its absence as missing scope. The only code changes still on the table are ones Taylor accepts from this memo.
-
-F1 is checked off in docs/BACKLOG.md and docs/F1-CHECKLIST.md. Sentences that still say the ticket flow is not in force during the MVP backlog belong to a later cleanup. Do not spend the memo on them.
-
-Load https://poe-profit.vercel.app/ and compare what a visitor can do with MVP_SPEC §34.
-
-Read, in this order:
-- docs/AGENTS.md (product, stack, locked E1/E2/D1/D2 notes)
-- docs/MVP_SPEC.md §1–§4 and §34 (what v1 is, what it refuses, when it is done)
-- docs/DECISIONS.md (every accepted ADR: the decision and the why)
-- docs/ARCHITECTURE.md
-- docs/TEST_STRATEGY.md §3–§4, §6–§7, §10, §12
-- docs/F1-CHECKLIST.md only for the branch split: local, ci, and production. The boxes are already done.
-- docs/PRODUCT.md and docs/QA_WORKFLOW.md only to see the post-baseline process. Do not review that process as product code.
-
-Then read the code those docs name: src/domain/calc, src/contracts, src/server, app/api, the strategy and session UI, prisma/schema.prisma, tests/api, e2e/, tests/catalog/, and the CI workflow.
-
-Lenses, in this order:
-1. Money. Chaos is canonical. A player can save a session and see a profit the engine did not compute, or a Divine figure that is not derived from the stored rate.
-2. Domain. Strategy and MapSession stay separate. The UI recomputes profit instead of showing the API payload.
-3. Honesty of the tests. A coverage line, an ADR, or a README claim is stronger than the test or the code behind it. Name the file.
-4. Public no-auth deploy (ADR-007). The production URL is live. Anyone with it can create, edit, and delete rows on the production branch. That branch is separate from local and from ci. Judge input validation and abuse basics. Do not design an auth system.
-5. Interview defense. Choices a hiring manager will ask Taylor to explain.
-
-Rules:
-- An accepted ADR stands unless the code contradicts it, or the decision produces a concrete failure you can point at (wrong money, lost or overwritten rows, a test that cannot fail, a public endpoint that trusts the client).
-- A documented non-goal is a risk to name, not a feature to specify. Auth, poe.ninja, live preview, and creator sharing stay off the recommendation list.
-- The E2E skip gate was removed in F1. If you still find it, that is a contradiction.
-- Style, naming taste, and framework swaps are out of scope.
-- Do not propose the next product phase. Do not propose restoring F2.
-
-Write one markdown memo with these sections only:
-
-## What holds
-Decisions and boundaries that match the code. One line each. Cite the ADR or file.
-
-## Contradictions
-Doc, test, or comment versus code. File and behavior. Skip the known "ticket flow is not in force yet" handoff lines.
-
-## Holes that can ship wrong
-Wrong money, lost data, or a false claim that the suite locks a behavior. For each: what fails, where, and the smallest check that would expose it. No patch.
-
-## Accepted risks
-Documented non-goals or deferred gaps that are real. What breaks later if they stay. No design.
-
-## Questions Taylor should answer without the repo open
-At most ten. Each question is one decision.
-
-Stop. Taylor compares your memo with the other model's memo.
-```
-
-### 9 — Clean the MVP-phase instructions
-
-Run this only after both prompt 8 memos are back and Taylor has answered them.
-
-```text
-You are cleaning the MVP-phase instructions. The baseline has shipped. F1 is done, including the Vercel deploy and the Neon ci branch in Actions. F2 was removed on purpose. Do not recreate it.
-
-This is a docs and handoff pass. Read docs/AGENTS.md, docs/QA_WORKFLOW.md, docs/PRODUCT.md, docs/AI_DEVELOPMENT.md, docs/BACKLOG.md, docs/F1-CHECKLIST.md, docs/TEST_STRATEGY.md, docs/ARCHITECTURE.md, and .cursor/commands/.
-
-Keep docs/MVP_SPEC.md as the v1 spec. Keep the ADRs. Keep docs/FUTURE_FEATURES.md as the idea list. Do not rename domain concepts. Do not delete tests. Do not implement a feature.
-
-Propose one cut list, then wait. Group it as:
-
-1. Operational tense. Places that still tell a chat to stop because the MVP backlog is current, including command gates and the QA workflow status line. definition-of-done and dev-wrap-up already exist; the workflow status line is behind the repo. The pipeline should include wrap-up where the command already sits.
-2. Handoff weight. Prep prompts 1–7 in docs/AGENTS.md. The rules now live in the docs. Propose removing the pasted prompts from the live handoff. Git history keeps them. Prompts 8–10 stay until Taylor says each one is finished.
-3. Current next step. F1 is done. After this cleanup, new work starts with plan-feature, then ticket-test-plan, implementation, dev-wrap-up, definition-of-done. Prompt 10 still runs before the first epic is filed.
-4. F1 record. F1 is already checked off. docs/F1-CHECKLIST.md still holds the branch split (local, ci, production) and the rule that anyone with the public URL can change production rows. Propose where those lasting facts live, and whether the checklist file stays as a runbook or is retired. Do not invent a follow-on deploy epic.
-5. Baseline note. A short dated note: what v1 includes, https://poe-profit.vercel.app/, and the gaps Taylor is keeping on purpose (API tests on the Prisma fake, format:check is not a gate, no auth, manual prices). Fold in any review findings Taylor accepted as documentation.
-6. Optional, separate, and only if Taylor says yes: one closed Foundation issue on the POE Profit board summarizing Phase 1. It is not a product epic. Do not file it in this proposal. - dont do this
-
-Leave product code alone unless a comment instructs the next chat to treat the ticket flow as not in force, or still describes the E2E skip gate as waiting on F1. List those comments. Do not fix them in the proposal. If Taylor accepted a code change from the review memos, that change is a separate chat.
-
-After Taylor cuts the list, edit only the accepted items. Show the diff summary and stop. Do not start a roadmap.
-```
-
-### 10 — Phase map
-
-Run this only after prompt 9 is done.
-
-```text
-You are planning the next product phases of POE Profit. The MVP baseline has shipped, including the public deploy at https://poe-profit.vercel.app/. You produce a phase map. You do not file GitHub issues, write stories, or edit the repo.
-
-Read docs/PRODUCT.md, docs/MVP_SPEC.md (non-goals and §34), docs/FUTURE_FEATURES.md, docs/DECISIONS.md ADR-009, and the baseline note in the handoff if it is there. Read docs/QA_WORKFLOW.md only so you know plan-feature is the next command after this chat.
-
-An epic is an outcome that closes. A theme is not an epic. "Authentication" does not close. "Sign in with an email account" does. Product areas today are strategies and sessions. A new area exists only when a visitor could recheck it without those pages.
-
-FUTURE_FEATURES.md is input, not a commitment. An FF item can be dropped, split, or moved. A documented non-goal stays out unless you ask Taylor to reopen it, in one line, with the reason.
-
-Write phases as a sequence Taylor could build. For each phase:
-- the player outcome of the phase
-- the epic titles that close inside it
-- one sentence on the problem for each epic
-- what must already be true before that epic starts
-- what you are leaving in a later phase on purpose
-
-Aim for a handful of phases and a handful of epics. A second outcome is a later epic. Do not add epics to fill a template. Do not write acceptance criteria. Do not design schema.
-
-Stop after the map. Taylor cuts phases and epics. Each accepted epic is later split by the plan-feature command in its own chat.
-
-think of this as a brainstorming session, read the future features come up with other features I may have not thought of, including boring stuff like auth and test reporting, ect. we can create a backlog of epics based off this session and prioritize them on what impacts the user the most
-```
-
+- Add auth, tRPC, Server Actions-as-API, or poe.ninja unless Taylor reopens that non-goal
+- Seed a Foundation epic, or cut GitHub Issues for the finished Phase 1 checklist
+- Commit or push feature work to `main`

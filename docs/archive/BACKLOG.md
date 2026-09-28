@@ -1,9 +1,11 @@
 # MVP backlog
 
+> Historical. Phase 1 is done (2026-09-28). Do not check new work off here, and do not file a Foundation epic from this file.
+
 | Field | Value |
 | --- | --- |
-| Status | MVP baseline deployed — [poe-profit.vercel.app](https://poe-profit.vercel.app/). New work uses GitHub Issues. |
-| Based on | [`ARCHITECTURE.md`](./ARCHITECTURE.md), [`MVP_SPEC.md`](./MVP_SPEC.md), [`TEST_STRATEGY.md`](./TEST_STRATEGY.md) |
+| Status | Historical record. Phase 1 is done (2026-09-28). Do not check new work off here. |
+| Based on | [`ARCHITECTURE.md`](../ARCHITECTURE.md), [`MVP_SPEC.md`](../MVP_SPEC.md), [`TEST_STRATEGY.md`](../TEST_STRATEGY.md) |
 | Board | [POE Profit](https://github.com/users/TaylorOlson77/projects/1) (ADR-009) — use after baseline app |
 
 ## How we track work
@@ -12,7 +14,7 @@
 
 **After MVP baseline:** use GitHub Issues + the POE Profit board for features and fixes (one ticket per change): Issue → branch → PR → Done. That’s the portfolio-visible process story.
 
-Optional later: one closed “Foundation” epic on the board summarizing Phase 1 — not required to start building.
+Do not file a Foundation epic from this file. The checklist is the Phase 1 record.
 
 Suggested labels when Issues start: `epic`, `setup`, `domain`, `api`, `ui`, `test`, `ci`, `docs`
 

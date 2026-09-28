@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | Status | Working agreement (2026-09-27) |
-| Applies | After the MVP baseline, when a feature is planned. Not the current backlog. |
+| Applies | When a feature is planned. |
 | Related | [`QA_WORKFLOW.md`](./QA_WORKFLOW.md), [`MVP_SPEC.md`](./MVP_SPEC.md) §4, [`FUTURE_FEATURES.md`](./FUTURE_FEATURES.md), [ADR-009](./DECISIONS.md) |
 | Command | [`.cursor/commands/plan-feature.md`](../.cursor/commands/plan-feature.md) |
 

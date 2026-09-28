@@ -31,6 +31,7 @@ Open [http://localhost:3000](http://localhost:3000).
 | `npm run format:check`                 | Prettier check                                  |
 | `npm run test`                         | Jest unit tests (`src/**/*.test.ts`)            |
 | `npm run test:api`                     | Jest API tests (`tests/api/`)                   |
+| `npm run test:api:db`                  | Jest persistence round-trips on the Neon `local` branch |
 | `npm run test:e2e`                     | Playwright E2E (`e2e/`)                         |
 | `npm run db:generate`                  | Generate Prisma Client                          |
 | `npm run db:migrate`                   | Create + apply a migration (dev)                |
@@ -63,7 +64,7 @@ Schema lives in [`prisma/schema.prisma`](./prisma/schema.prisma); committed SQL 
 calculated fields are persisted compute-on-write results (ADR-018). The seed's
 calculated columns come from the calc engine ([`prisma/seed.ts`](./prisma/seed.ts)).
 
-Never commit `.env.local`, `.env.neon-production`, or `.env.neon-ci`. The public site has no login. Keep real league sessions on `local`. `npm run db:reset:production` restores the demo seed if the public branch is edited.
+Never commit `.env.local`, `.env.neon-production`, or `.env.neon-ci`. Anyone with the public URL can create, edit, and delete rows on the production branch. That does not reach `local` or `ci`. Keep real league sessions on `local`. `npm run db:reset:production` restores the demo seed.
 
 ## Deploy (Vercel)
 
@@ -77,6 +78,7 @@ The live app is [poe-profit.vercel.app](https://poe-profit.vercel.app/). CI does
 | ----- | ---------- | ---------------------------- | ------------------ |
 | Unit  | Jest       | colocated `src/**/*.test.ts` | `npm test`         |
 | API   | Jest       | `tests/api/`                 | `npm run test:api` |
+| API persistence | Jest | `tests/api/db/`            | `npm run test:api:db` |
 | E2E   | Playwright | `e2e/`                       | `npm run test:e2e` |
 
 Jest does **not** run Playwright specs, and Playwright does **not** run unit/API math cases.
@@ -85,7 +87,7 @@ Jest does **not** run Playwright specs, and Playwright does **not** run unit/API
 
 ## CI
 
-GitHub Actions (`.github/workflows/ci.yml`) on PRs and `main`:
+GitHub Actions (`.github/workflows/ci.yml`) on pull requests and on `main`:
 
 1. Lint
 2. Typecheck
@@ -93,6 +95,8 @@ GitHub Actions (`.github/workflows/ci.yml`) on PRs and `main`:
 4. API tests
 5. Production build
 6. Playwright E2E (Chromium), after migrating and resetting the Neon `ci` branch
+
+`main` is the production branch. Vercel deploys it. Feature work merges through a pull request. CI on that pull request has to be green, and the docs in the pull request have to match the code.
 
 E2E waits if another run is already using that branch. On E2E failure, the workflow uploads `playwright-report/` and `test-results/` artifacts.
 
@@ -103,7 +107,11 @@ Start with [`docs/AGENTS.md`](docs/AGENTS.md), then:
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
 - [`docs/DECISIONS.md`](docs/DECISIONS.md)
 - [`docs/MVP_SPEC.md`](docs/MVP_SPEC.md)
-- [`docs/BACKLOG.md`](docs/BACKLOG.md)
+- [`docs/TEST_STRATEGY.md`](docs/TEST_STRATEGY.md)
+- [`docs/QA_WORKFLOW.md`](docs/QA_WORKFLOW.md)
+- [`docs/PRODUCT.md`](docs/PRODUCT.md)
+
+Phase 1 is archived at [`docs/archive/BACKLOG.md`](docs/archive/BACKLOG.md).
 
 ## Layout (MVP)
 
@@ -112,7 +120,7 @@ app/                 # UI + Route Handlers
 src/contracts/       # API contracts (Zod)
 src/domain/calc/     # Pure calculation engine
 src/server/db/       # Prisma client singleton
-docs/                # Specs, ADRs, backlog
+docs/                # Specs, ADRs, handoff
 prisma/              # schema + migrations
 e2e/                 # Playwright
 tests/api/           # Jest API tests

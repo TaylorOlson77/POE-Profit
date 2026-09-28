@@ -1,5 +1,5 @@
 ---
-description: Plan a post-MVP feature into an epic and stories. Talk first; file GitHub issues only after Taylor accepts.
+description: Plan a feature into an epic and stories. Talk first; file GitHub issues only after Taylor accepts.
 ---
 
 # Plan a feature
@@ -11,7 +11,7 @@ Read [`docs/PRODUCT.md`](../../docs/PRODUCT.md) and follow it. That file is the 
 Also read:
 
 - [`docs/QA_WORKFLOW.md`](../../docs/QA_WORKFLOW.md) — this step writes issues and acceptance criteria only
-- [`docs/DECISIONS.md`](../../docs/DECISIONS.md) ADR-009 — GitHub Issues on the [POE Profit](https://github.com/users/TaylorOlson77/projects/1) board, after the MVP baseline
+- [`docs/DECISIONS.md`](../../docs/DECISIONS.md) ADR-009 — GitHub Issues on the [POE Profit](https://github.com/users/TaylorOlson77/projects/1) board
 - [`docs/MVP_SPEC.md`](../../docs/MVP_SPEC.md) §4 and [`docs/FUTURE_FEATURES.md`](../../docs/FUTURE_FEATURES.md) — context
 
 If this run hit a pain point in the command, name it and the one-line change. Wait. After Taylor accepts, add that line here.
