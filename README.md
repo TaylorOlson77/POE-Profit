@@ -51,7 +51,7 @@ calculated fields are persisted compute-on-write results (ADR-018).
 The seed's calculated values are **hand-computed** until the calc engine exists
 (Epic C); see the header comment in [`prisma/seed.ts`](./prisma/seed.ts).
 
-`.env.example` documents required vars. Never commit `.env.local`. CI smoke tests do **not** need Neon secrets yet.
+`.env.example` documents required vars. Never commit `.env.local`. The homepage Playwright smoke does **not** need Neon secrets. The seven journey specs skip in CI until F1 sets `E2E_DATABASE=1` and a dedicated CI database.
 
 ## Testing layers (ADR-014 / ADR-019)
 
@@ -63,7 +63,7 @@ The seed's calculated values are **hand-computed** until the calc engine exists
 
 Jest does **not** run Playwright specs, and Playwright does **not** run unit/API math cases.
 
-**E2E server:** locally Playwright starts `next dev` (or reuses one already running). In CI the workflow runs `npm run build`, then Playwright starts `next start` (prod-like).
+**E2E server:** locally Playwright starts `next dev` (or reuses one already running) against the Neon database in `.env.local`. The demo seed has to be applied (`npm run db:seed`). Restarting the dev server does not reset that database. When the journey groups start, and again when they finish (including after a failure), each group deletes the strategies it owns. The create/update/delete strategy is removed. The seed strategy stays, and any session on it other than the seeded demo session is removed. Strategies created by hand, under other names, stay. In CI the workflow runs `npm run build`, then Playwright starts `next start`. Those journeys stay skipped until F1 provides the CI database.
 
 ## CI
 

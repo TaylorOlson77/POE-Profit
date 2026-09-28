@@ -334,14 +334,14 @@ export function StrategyForm(
           >
             <TextField
               id={`${formId}-line-${line.key}-name`}
-              label={`${labels.enhancementSingular} name`}
+              label={`${labels.enhancementSingular} name ${index + 1}`}
               value={line.name}
               error={messageFor(details, `enhancementLines.${index}.name`)}
               onChange={(value) => updateLine(line.key, { name: value })}
             />
             <TextField
               id={`${formId}-line-${line.key}-qty`}
-              label="Quantity per map"
+              label={`Quantity per map ${index + 1}`}
               value={line.quantity}
               inputMode="decimal"
               error={messageFor(details, `enhancementLines.${index}.quantity`)}
@@ -349,7 +349,7 @@ export function StrategyForm(
             />
             <TextField
               id={`${formId}-line-${line.key}-cost`}
-              label="Unit cost (chaos)"
+              label={`Unit cost (chaos) ${index + 1}`}
               value={line.unitCostChaos}
               inputMode="decimal"
               error={messageFor(
@@ -363,7 +363,7 @@ export function StrategyForm(
             {labels.showModifierNotes ? (
               <TextField
                 id={`${formId}-line-${line.key}-notes`}
-                label="Modifier notes"
+                label={`Modifier notes ${index + 1}`}
                 value={line.modifierNotes}
                 error={messageFor(
                   details,

@@ -182,7 +182,7 @@ Given revenue `2787.09c`, investment `513.60c`, duration `99` minutes (`1.65h`),
 | Edit run | Change quantity; totals update after save |
 | Delete run | Confirmation required; cancelled delete keeps run; confirmed delete removes run |
 
-The unchecked Playwright lines on the coverage pages are the journey list for the current screens, including the conflict message when a strategy still has sessions.
+The seven browser lines on the coverage pages are checked. The specs are `e2e/strategies.spec.ts` and `e2e/sessions.spec.ts`, and the step files live under `automated/`. Those journeys skip in CI until F1 (§10).
 
 ## 7. Acceptance criteria → tests (MVP snapshot)
 
@@ -240,7 +240,9 @@ A pull request should not merge unless CI is green. The gates, in order:
 
 `format:check` exists as a script. It is not a gate.
 
-CI runs that list on every push to `main` and every pull request. The API step does not run again as part of the Vercel deploy. CI has **no database credentials**; it runs `prisma generate` but never applies migrations. D1 and D2 API tests call Route Handlers in-process with a Prisma fake (`tests/api/strategyDbMock.ts`, `tests/api/mapSessionDbMock.ts`). A Neon round-trip is still deferred.
+CI runs that list on every push to `main` and every pull request. The API step does not run again as part of the Vercel deploy. API tests still have **no database credentials**; CI runs `prisma generate` but does not apply migrations for them. D1 and D2 API tests call Route Handlers in-process with a Prisma fake (`tests/api/strategyDbMock.ts`, `tests/api/mapSessionDbMock.ts`). A Neon round-trip for those contract tests is still deferred.
+
+The seven Playwright journeys skip in CI until F1 sets `E2E_DATABASE=1` and points `CI_DATABASE_URL` / `CI_DATABASE_URL_UNPOOLED` at a dedicated Neon database. The homepage smoke still runs. The migrate-and-seed step in the workflow stays skipped until that flag is set.
 
 On E2E failure, CI should retain:
 

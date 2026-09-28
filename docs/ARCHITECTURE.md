@@ -175,9 +175,9 @@ Implemented in `prisma/schema.prisma` (B3): cuid string IDs, `Decimal(20, 8)` fo
 | --- | --- | --- |
 | Unit | Jest | Colocated `*.test.ts` (e.g. under `src/domain/calc`) |
 | API | Jest, in-process Route Handlers (D1: Prisma fake, no `DATABASE_URL` in CI) | `tests/api/` |
-| E2E | Playwright | `e2e/` |
+| E2E | Playwright | `e2e/` (specs, `pages/` helpers, `fixtures.ts`, `dbCleanup.ts`) |
 
-CI (when set up): lint → typecheck → unit → API → E2E (see `TEST_STRATEGY.md`).
+CI: lint → typecheck → unit → API → build → E2E (see `TEST_STRATEGY.md`). The seven journeys skip until F1 sets `E2E_DATABASE=1`. The homepage smoke still runs.
 
 ---
 

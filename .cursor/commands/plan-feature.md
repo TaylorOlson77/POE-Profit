@@ -14,6 +14,8 @@ Also read:
 - [`docs/DECISIONS.md`](../../docs/DECISIONS.md) ADR-009 — GitHub Issues on the [POE Profit](https://github.com/users/TaylorOlson77/projects/1) board, after the MVP baseline
 - [`docs/MVP_SPEC.md`](../../docs/MVP_SPEC.md) §4 and [`docs/FUTURE_FEATURES.md`](../../docs/FUTURE_FEATURES.md) — context
 
+If this run hit a pain point in the command, name it and the one-line change. Wait. After Taylor accepts, add that line here.
+
 ## Talk, then stop
 
 Show the epic (title, area, one line on the problem) and each story (title, acceptance criteria). If two splits are real, name both and which you recommend. Then wait.

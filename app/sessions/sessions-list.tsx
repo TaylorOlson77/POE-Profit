@@ -138,7 +138,10 @@ export function SessionsList() {
     <div className="flex flex-col gap-4">
       {deleteError !== null ? <p role="alert">{deleteError}</p> : null}
       <div className="overflow-x-auto">
-        <table className="w-full border-collapse text-sm" aria-label="Map session history">
+        <table
+          className="w-full border-collapse text-sm"
+          aria-label="Map session history"
+        >
           <thead>
             <tr className="border-b border-current/20 text-left">
               <th className="px-2 py-2 font-medium" scope="col">
@@ -175,12 +178,13 @@ export function SessionsList() {
               const confirming = pendingDeleteId === session.id;
               const deleting = deletingId === session.id;
               const date = formatSessionDate(session.createdAt);
+              const strategyName =
+                strategyNames.get(session.strategyId) ?? "Unknown strategy";
+              const sessionAction = `session for ${strategyName}, profit ${formatChaos(session.profitChaos)}`;
               return (
                 <tr key={session.id} className="border-b border-current/10">
                   <td className="px-2 py-2 whitespace-nowrap">{date}</td>
-                  <td className="px-2 py-2">
-                    {strategyNames.get(session.strategyId) ?? "Unknown strategy"}
-                  </td>
+                  <td className="px-2 py-2">{strategyName}</td>
                   <td className="px-2 py-2">{session.mapsCompleted}</td>
                   <td className="px-2 py-2 whitespace-nowrap">
                     {formatDuration(session.effectiveDurationMinutes)} ·{" "}
@@ -225,14 +229,14 @@ export function SessionsList() {
                           <Link
                             href={`/sessions/${session.id}`}
                             className={buttonClass}
-                            aria-label={`Edit session from ${date}`}
+                            aria-label={`Edit ${sessionAction}`}
                           >
                             Edit
                           </Link>
                           <button
                             type="button"
                             className={buttonClass}
-                            aria-label={`Delete session from ${date}`}
+                            aria-label={`Delete ${sessionAction}`}
                             onClick={() => {
                               setDeleteError(null);
                               setPendingDeleteId(session.id);

@@ -18,6 +18,8 @@ Do not commit, push, or edit product code. Do not edit `docs/QA_WORKFLOW.md`, `d
 
 Do not decide whether a line was wise. That cut happened in [`ticket-test-plan`](./ticket-test-plan.md).
 
+If this run hit a pain point in the command, name it and the one-line change. Wait. After Taylor accepts, add that line here.
+
 ## Check
 
 Use `gh`. Read the pull request and the story it closes: the acceptance criteria, the coverage diff, and the tests in the pull request.

@@ -49,10 +49,26 @@ jobs:
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
 
+      # F1: create repository variable E2E_DATABASE=1 and secrets
+      # CI_DATABASE_URL / CI_DATABASE_URL_UNPOOLED for a dedicated Neon
+      # database (not the public demo). This step then migrates and seeds
+      # it, and the journey specs stop skipping.
+      - name: Migrate and seed E2E database
+        if: vars.E2E_DATABASE == '1'
+        run: |
+          npx prisma migrate deploy
+          npx tsx prisma/seed.ts
+        env:
+          DATABASE_URL: ${{ secrets.CI_DATABASE_URL }}
+          DATABASE_URL_UNPOOLED: ${{ secrets.CI_DATABASE_URL_UNPOOLED }}
+
       - name: E2E tests (Playwright)
         run: npm run test:e2e
         env:
           CI: true
+          E2E_DATABASE: ${{ vars.E2E_DATABASE }}
+          DATABASE_URL: ${{ secrets.CI_DATABASE_URL }}
+          DATABASE_URL_UNPOOLED: ${{ secrets.CI_DATABASE_URL_UNPOOLED }}
 
       - name: Upload Playwright artifacts on failure
         if: failure()

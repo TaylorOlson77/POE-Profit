@@ -6,13 +6,13 @@ App running locally, no login. The demo seed may already include a session for "
 
 Rows you save stay in the database until you delete them. A test run or a deploy does not clear them. Re-seeding replaces only that demo strategy and its demo session.
 
-The create, update, and delete lines are one ordered pass on one session. The spec group is serial. A retry starts by removing a leftover session on the demo strategy that is not the demo session. The demo session stays.
+The create, update, and delete lines are one ordered pass on one session. The spec group is serial. A retry starts by removing a leftover session on the demo strategy that is not the demo session. The same removal runs again when the pass finishes, including after a failure. The demo session stays. Sessions on any other strategy stay.
 
 This page does not list every unit test in the repo. A line is a behavior someone might otherwise recheck by hand.
 
 ## Create a session
 
-- [ ] [shows the saved performance totals for an extrapolated session](../../../e2e/sessions.spec.ts) — Playwright. Steps: [manual](./manual/shows-the-saved-performance-totals-for-an-extrapolated-session.md)
+- [x] shows the saved performance totals for an extrapolated session — UI [`e2e/sessions.spec.ts`](../../../e2e/sessions.spec.ts). [Steps](./automated/shows-the-saved-performance-totals-for-an-extrapolated-session.md)
 
 ### Validation
 
@@ -48,12 +48,12 @@ This page does not list every unit test in the repo. A line is a behavior someon
 
 ## Update a session
 
-- [ ] [shows the new totals after a saved quantity change](../../../e2e/sessions.spec.ts) — Playwright. Steps: [manual](./manual/shows-the-new-totals-after-a-saved-quantity-change.md)
+- [x] shows the new totals after a saved quantity change — UI [`e2e/sessions.spec.ts`](../../../e2e/sessions.spec.ts). [Steps](./automated/shows-the-new-totals-after-a-saved-quantity-change.md)
 - [x] recalculates the totals when the session is replaced — [`PUT /api/map-sessions/:id`](../../../tests/api/mapSessions.test.ts)
 - [x] keeps only the active duration method — [`PUT /api/map-sessions/:id`](../../../tests/api/mapSessions.test.ts)
 - [x] keeps a stored category that is not in the seed list — [`categoryOptions`](../../../src/ui/revenueCategories.test.ts)
 
 ## Delete a session
 
-- [ ] [removes the session from history only after delete is confirmed](../../../e2e/sessions.spec.ts) — Playwright. Steps: [manual](./manual/removes-the-session-from-history-only-after-delete-is-confirmed.md)
+- [x] removes the session from history only after delete is confirmed — UI [`e2e/sessions.spec.ts`](../../../e2e/sessions.spec.ts). [Steps](./automated/removes-the-session-from-history-only-after-delete-is-confirmed.md)
 - [x] deletes a session and it is gone — [`DELETE /api/map-sessions/:id`](../../../tests/api/mapSessions.test.ts)

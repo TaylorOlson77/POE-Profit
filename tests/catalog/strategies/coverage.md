@@ -6,13 +6,13 @@ App running locally, no login. The demo seed may already be on the list as "Expe
 
 Rows you save stay in the database until you delete them. A test run or a deploy does not clear them. Re-seeding replaces only that demo strategy and its demo session.
 
-The create, update, and delete lines for `POC Expedition Tablet Farming` are one ordered pass on that row. The spec group is serial. A retry starts by removing a leftover row of that name. The conflict line is not part of that pass. It uses the demo strategy, and confirming delete leaves that row in place.
+The create, update, and delete lines for `POC Expedition Tablet Farming` are one ordered pass on that row. The spec group is serial. A retry starts by removing a leftover row of that name. The same removal runs again when the pass finishes, including after a failure, so that row does not stay in the database. The conflict line is not part of that pass. It uses the demo strategy, and confirming delete leaves that row in place.
 
 This page does not list every unit test in the repo. A line is a behavior someone might otherwise recheck by hand.
 
 ## Create a strategy
 
-- [ ] [shows the new strategy on the home list with its cost per waystone](../../../e2e/strategies.spec.ts) — Playwright. Steps: [manual](./manual/shows-the-new-strategy-on-the-home-list.md)
+- [x] shows the new strategy on the home list with its cost per waystone — UI [`e2e/strategies.spec.ts`](../../../e2e/strategies.spec.ts). [Steps](./automated/shows-the-new-strategy-on-the-home-list.md)
 
 ### Validation
 
@@ -37,12 +37,12 @@ This page does not list every unit test in the repo. A line is a behavior someon
 
 ## Update a strategy
 
-- [ ] [shows the updated cost per waystone on the home list](../../../e2e/strategies.spec.ts) — Playwright. Steps: [manual](./manual/shows-the-updated-cost-per-waystone-on-the-home-list.md)
+- [x] shows the updated cost per waystone on the home list — UI [`e2e/strategies.spec.ts`](../../../e2e/strategies.spec.ts). [Steps](./automated/shows-the-updated-cost-per-waystone-on-the-home-list.md)
 - [x] replaces the lines and recalculates both totals — [`PUT /api/strategies/:id`](../../../tests/api/strategies.test.ts)
 
 ## Delete a strategy
 
-- [ ] [removes the strategy from the home list only after delete is confirmed](../../../e2e/strategies.spec.ts) — Playwright. Steps: [manual](./manual/removes-the-strategy-from-the-home-list-only-after-delete-is-confirmed.md)
-- [ ] [shows the conflict message when a strategy still has sessions](../../../e2e/strategies.spec.ts) — Playwright. Steps: [manual](./manual/shows-the-conflict-message-when-a-strategy-still-has-sessions.md)
+- [x] removes the strategy from the home list only after delete is confirmed — UI [`e2e/strategies.spec.ts`](../../../e2e/strategies.spec.ts). [Steps](./automated/removes-the-strategy-from-the-home-list-only-after-delete-is-confirmed.md)
+- [x] shows the conflict message when a strategy still has sessions — UI [`e2e/strategies.spec.ts`](../../../e2e/strategies.spec.ts). [Steps](./automated/shows-the-conflict-message-when-a-strategy-still-has-sessions.md)
 - [x] deletes a strategy that has no sessions — [`DELETE /api/strategies/:id`](../../../tests/api/strategies.test.ts)
 - [x] refuses to delete a strategy that still has sessions — [`DELETE /api/strategies/:id`](../../../tests/api/strategies.test.ts)

@@ -8,13 +8,16 @@ const isCi = !!process.env.CI;
  *
  * Local: `next dev` (fast iteration; reuseExistingServer if already running).
  * CI: `next start` after `npm run build` in the workflow (prod-like).
+ *
+ * One worker so the strategy conflict check and the session pass do not
+ * touch the demo strategy at the same time.
  */
 export default defineConfig({
   testDir: "./e2e",
   fullyParallel: true,
   forbidOnly: isCi,
   retries: isCi ? 1 : 0,
-  workers: isCi ? 1 : undefined,
+  workers: 1,
   reporter: [["list"], ["html", { open: "never" }]],
   use: {
     baseURL: "http://127.0.0.1:3000",
