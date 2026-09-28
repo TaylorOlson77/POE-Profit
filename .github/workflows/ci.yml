@@ -55,6 +55,9 @@ jobs:
     concurrency:
       group: e2e-ci-database
       cancel-in-progress: false
+    env:
+      DATABASE_URL: ${{ secrets.CI_DATABASE_URL }}
+      DATABASE_URL_UNPOOLED: ${{ secrets.CI_DATABASE_URL_UNPOOLED }}
 
     steps:
       - name: Checkout
@@ -82,18 +85,21 @@ jobs:
         env:
           CI: true
           DATABASE_RESET: ci
-          DATABASE_URL: ${{ secrets.CI_DATABASE_URL }}
-          DATABASE_URL_UNPOOLED: ${{ secrets.CI_DATABASE_URL_UNPOOLED }}
+
+      - name: API persistence
+        run: npm run test:api:db
+
+      - name: Reset CI database before Playwright
+        run: npx tsx prisma/reset-to-seed.ts
+        env:
+          CI: true
+          DATABASE_RESET: ci
 
       - name: Production build
         run: npm run build
 
       - name: E2E tests (Playwright)
         run: npm run test:e2e
-        env:
-          CI: true
-          DATABASE_URL: ${{ secrets.CI_DATABASE_URL }}
-          DATABASE_URL_UNPOOLED: ${{ secrets.CI_DATABASE_URL_UNPOOLED }}
 
       - name: Upload Playwright artifacts on failure
         if: failure()

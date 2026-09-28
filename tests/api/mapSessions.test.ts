@@ -111,7 +111,9 @@ describe("POST /api/map-sessions", () => {
       "300",
     ]);
     expect(session.investmentLines[0]?.priceSource).toBe("MANUAL");
+    expect(session.investmentLines[0]?.priceRecordedAt).toBe(PRICED_AT);
     expect(session.revenueLines[0]?.valuationType).toBe("ACTUAL_PAID");
+    expect(session.revenueLines[0]?.priceRecordedAt).toBe(PRICED_AT);
     expect(session.mapInvestmentChaos).toBe("80");
     expect(session.totalInvestmentChaos).toBe("400");
     expect(session.totalRevenueChaos).toBe("2320");

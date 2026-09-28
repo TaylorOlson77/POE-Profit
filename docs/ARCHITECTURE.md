@@ -89,7 +89,8 @@ prisma/
   migrations/
 
 tests/
-  api/                      # Jest API / integration tests (ADR-019)
+  api/                      # Jest contract tests on the Prisma fake (ADR-019)
+    db/                     # Jest persistence round-trips on real Prisma
 e2e/                        # Playwright
 # Unit tests: colocated *.test.ts next to source (e.g. src/domain/calc)
 
@@ -175,10 +176,11 @@ Implemented in `prisma/schema.prisma` (B3): cuid string IDs, `Decimal(20, 8)` fo
 | Layer | Tool | Location (ADR-019) |
 | --- | --- | --- |
 | Unit | Jest | Colocated `*.test.ts` (e.g. under `src/domain/calc`) |
-| API | Jest, in-process Route Handlers (D1: Prisma fake, no `DATABASE_URL` in CI) | `tests/api/` |
+| API contract | Jest, in-process Route Handlers, Prisma fake. The quality job is not given a database URL. | `tests/api/` except `db/` |
+| API persistence | Jest, in-process Route Handlers, real Prisma. Local: Neon `local`. CI: the e2e job, Neon `ci`. | `tests/api/db/` |
 | E2E | Playwright | `e2e/` (specs, `pages/` helpers, `fixtures.ts`, `dbCleanup.ts`) |
 
-CI: lint → typecheck → unit → API → build → E2E (see `TEST_STRATEGY.md`). Before E2E, once per job, Actions migrates and resets the Neon `ci` branch to the seed. The homepage smoke runs in that same job.
+CI: lint → typecheck → unit → API contract → build, then the e2e job. That job migrates and resets the Neon `ci` branch, runs the persistence suite, resets to the seed again, builds, and runs Playwright. The homepage smoke runs in that same job.
 
 ---
 
