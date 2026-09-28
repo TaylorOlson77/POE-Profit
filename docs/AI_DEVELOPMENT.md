@@ -47,7 +47,7 @@ Chats do **not** fully remember each other. Carry context via the repo:
 
 **Suggested opener for a build chat:**
 
-> Read `docs/AGENTS.md`, then `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/MVP_SPEC.md`, `docs/TEST_STRATEGY.md`, `docs/QA_WORKFLOW.md`, and `docs/PRODUCT.md`. v1 has shipped. New work starts with `plan-feature`. Propose a short plan, then implement.
+> Read `docs/AGENTS.md`, then `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/MVP_SPEC.md`, `docs/TEST_STRATEGY.md`, `docs/QA_WORKFLOW.md`, `docs/PRODUCT.md`, and `docs/PHASES.md`. v1 has shipped. New work starts with `plan-epic` on the current phase in `PHASES.md`. The planning rules are `docs/PRODUCT.md`. Propose a short plan, then implement.
 
 ## Anti-patterns (avoid)
 
@@ -63,7 +63,8 @@ Chats do **not** fully remember each other. Carry context via the repo:
 - [`DECISIONS.md`](./DECISIONS.md)
 - [`ARCHITECTURE.md`](./ARCHITECTURE.md)
 - [`archive/BACKLOG.md`](./archive/BACKLOG.md) — finished Phase 1 checklist
-- [`FUTURE_FEATURES.md`](./FUTURE_FEATURES.md) — ideas (not committed scope)
+- [`PHASES.md`](./PHASES.md) — agreed next phases
+- [`FUTURE_FEATURES.md`](./FUTURE_FEATURES.md) — ideas that are not a phase
 - [`TEST_STRATEGY.md`](./TEST_STRATEGY.md)
 - [`QA_WORKFLOW.md`](./QA_WORKFLOW.md) — ticket flow and test catalog
 - [`PRODUCT.md`](./PRODUCT.md) — epic and story rules

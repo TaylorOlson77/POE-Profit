@@ -8,14 +8,14 @@ Read this first in a new chat, then the docs listed under **Required reading**.
 | --- | --- |
 | Product name | **POE Profit** |
 | GitHub repo | https://github.com/TaylorOlson77/POE-Profit |
-| Project board | https://github.com/users/TaylorOlson77/projects/1 — **do not seed foundation tickets** |
+| Project board | https://github.com/users/TaylorOlson77/projects/1 — the tracker for every epic and ticket from here on. Do not re-file the finished Phase 1 checklist as a Foundation epic. |
 | Local workspace | `d:\POE Profit` (older copies may still be named `POE Strategy Tracker`) |
 
 ## Process (locked)
 
-- GitHub Issues + the [POE Profit board](https://github.com/users/TaylorOlson77/projects/1) for features and fixes ([ADR-009](./DECISIONS.md)). The pipeline is [`QA_WORKFLOW.md`](./QA_WORKFLOW.md). Epic and story rules are [`PRODUCT.md`](./PRODUCT.md).
+- GitHub Issues + the [POE Profit board](https://github.com/users/TaylorOlson77/projects/1) for features and fixes ([ADR-009](./DECISIONS.md)). The pipeline is [`QA_WORKFLOW.md`](./QA_WORKFLOW.md). Epic and story rules are [`PRODUCT.md`](./PRODUCT.md). The next phases are [`PHASES.md`](./PHASES.md).
 - **Options before code** for material decisions; durable choices go in [`DECISIONS.md`](./DECISIONS.md).
-- Do **not** implement FF-* items in [`FUTURE_FEATURES.md`](./FUTURE_FEATURES.md) unless Taylor asks.
+- Do **not** implement FF-* items in [`FUTURE_FEATURES.md`](./FUTURE_FEATURES.md) unless Taylor asks. A phase in [`PHASES.md`](./PHASES.md) is the ask. `plan-epic` confirms that phase's epics, then files one epic's tickets.
 - `main` is the production branch. Vercel deploys it. A change lands through a pull request with green CI ([`TEST_STRATEGY.md`](./TEST_STRATEGY.md) §10) and docs that match the code.
 
 ## Commits
@@ -60,7 +60,7 @@ Gaps kept on purpose:
 - No rate limits, pagination, snapshot restore, or automatic production migrations.
 - The Prisma fake's `$transaction` does not roll back.
 
-New work starts with `plan-feature`, then `ticket-test-plan`, implementation, `dev-wrap-up`, and `definition-of-done`. One story per chat.
+New work starts with `plan-epic` on the current phase in [`PHASES.md`](./PHASES.md), then `ticket-test-plan`, implementation, `dev-wrap-up`, and `definition-of-done`. One ticket per chat. `brainstorm` is off that pipeline. The words are in [`PRODUCT.md`](./PRODUCT.md).
 
 ### E2 decisions (locked unless Taylor reopens them)
 
@@ -107,7 +107,8 @@ New work starts with `plan-feature`, then `ticket-test-plan`, implementation, `d
 4. [`TEST_STRATEGY.md`](./TEST_STRATEGY.md) — what to test  
 5. [`QA_WORKFLOW.md`](./QA_WORKFLOW.md) — how a ticket moves  
 6. [`PRODUCT.md`](./PRODUCT.md) — epic and story rules  
-7. [`AI_DEVELOPMENT.md`](./AI_DEVELOPMENT.md) — working contract with Taylor  
+7. [`PHASES.md`](./PHASES.md) — the next phases, and the next epic  
+8. [`AI_DEVELOPMENT.md`](./AI_DEVELOPMENT.md) — working contract with Taylor  
 
 ## Scaffold micro-decisions (resolved)
 
@@ -178,6 +179,7 @@ New work starts with `plan-feature`, then `ticket-test-plan`, implementation, `d
 
 - Re-litigate locked ADRs unless Taylor reopens them
 - Duplicate profit math in the UI
-- Add auth, tRPC, Server Actions-as-API, or poe.ninja unless Taylor reopens that non-goal
+- Add auth before the public-board phase in [`PHASES.md`](./PHASES.md). Taylor reopened it for that phase. App-layer auth in the same Postgres, not Neon Auth (ADR-011).
+- Add tRPC, Server Actions-as-API, or poe.ninja unless Taylor reopens that non-goal
 - Seed a Foundation epic, or cut GitHub Issues for the finished Phase 1 checklist
 - Commit or push feature work to `main`

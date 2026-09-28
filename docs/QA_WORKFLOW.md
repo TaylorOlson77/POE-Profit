@@ -2,9 +2,9 @@
 
 | Field | Value |
 | --- | --- |
-| Status | In force (2026-09-28). `plan-feature`, `ticket-test-plan`, `dev-wrap-up`, and `definition-of-done` exist. |
-| Applies | Feature and fix work on GitHub Issues. |
-| Related | [`TEST_STRATEGY.md`](./TEST_STRATEGY.md), [`PRODUCT.md`](./PRODUCT.md), [`AI_DEVELOPMENT.md`](./AI_DEVELOPMENT.md), [ADR-009](./DECISIONS.md) |
+| Status | In force (2026-09-28). `brainstorm` is off the pipeline. `plan-epic`, `ticket-test-plan`, `dev-wrap-up`, and `definition-of-done` are the pipeline. |
+| Applies | Feature and fix work on GitHub Issues. `brainstorm` is off this pipeline. |
+| Related | [`TEST_STRATEGY.md`](./TEST_STRATEGY.md), [`PRODUCT.md`](./PRODUCT.md), [`PHASES.md`](./PHASES.md), [`AI_DEVELOPMENT.md`](./AI_DEVELOPMENT.md), [ADR-009](./DECISIONS.md) |
 
 How a ticket moves once GitHub Issues are the tracker, and where the coverage pages live. The pages are [`tests/catalog/`](../tests/catalog/README.md).
 
@@ -18,7 +18,7 @@ How a ticket moves once GitHub Issues are the tracker, and where the coverage pa
 | What does the MVP already promise to automate? | Test strategy §6–§7. Those tables are a snapshot. A later ticket does not add a row there. |
 | What would someone recheck by hand, and which test already locks it? | The feature coverage page |
 | When is the ticket done? | Test strategy §12 is the quality bar. The checklist in this file is how the ticket shows the bar was met. |
-| What is the epic, and what are the acceptance criteria? | [`PRODUCT.md`](./PRODUCT.md) |
+| What is the epic, and what are the acceptance criteria? | [`PRODUCT.md`](./PRODUCT.md). Which epic is next is [`PHASES.md`](./PHASES.md). |
 | How is a line and a step file written? | [`tests/catalog/README.md`](../tests/catalog/README.md) |
 
 A coverage page is not a second copy of the unit suite. Calculation tests stay in the test file. The page is the rules of a capability, each tied to the test that locks it. A line appears only when a person might otherwise retest that behavior, or when a person still runs it by hand. That sentence is the filter. A second example of a rule already on the page stays in the test file.
@@ -55,13 +55,13 @@ Interview mapping:
 Each command stops for Taylor before it writes the next artifact.
 
 ```text
-plan-feature  →  ticket-test-plan  →  implement  →  dev-wrap-up  →  definition-of-done
+plan-epic  →  ticket-test-plan  →  implement  →  dev-wrap-up  →  definition-of-done
 (issues, AC)     (branch, coverage)   (code + tests)  (commit, PR)    (comment, then the board)
 ```
 
 | Step | Command | Writes | Does not write |
 | --- | --- | --- | --- |
-| 1 | `.cursor/commands/plan-feature.md` | Epic, child issues, observable acceptance criteria, board placement | Coverage lines, code, automation |
+| 1 | `.cursor/commands/plan-epic.md` | One phase's epic split, then that epic's tickets, acceptance criteria, and board placement. The rules are [`PRODUCT.md`](./PRODUCT.md). | Coverage lines, code, automation |
 | 2 | `.cursor/commands/ticket-test-plan.md` | Branch. Edits to the coverage page: lines added, retargeted, or removed. A file under `manual/` only when a person would still run the case. | Product code. A separate impact table. The coverage diff is the impact. |
 | 3 | Implementation chat | Product code and the automated tests the new checked lines name, same pull request | A second copy of the cases on the GitHub issue |
 | 4 | `.cursor/commands/dev-wrap-up.md` | The commit, doc updates Taylor accepted, and the pull request | The definition-of-done comment. A pass/fail report (FF-006). |
@@ -78,6 +78,10 @@ Name the branch from the story, because that issue is the one the pull request c
 The number, a hyphen, then a few words from the story title. Lowercase. The epic does not get a branch. A story with no epic uses that single issue's number. The implementation chat stays on that branch. A docs change with no story uses `docs-short-name`. Commit subjects follow the Commits section in [`AGENTS.md`](./AGENTS.md).
 
 `main` is the production branch. Vercel deploys it. Do not commit or push feature work to `main`. The pull request needs green CI ([`TEST_STRATEGY.md`](./TEST_STRATEGY.md) §10) and docs that match the code.
+
+## Off the pipeline
+
+[`.cursor/commands/brainstorm.md`](../.cursor/commands/brainstorm.md) chooses the next phases. The rules are [`PRODUCT.md`](./PRODUCT.md). It writes a phase into [`PHASES.md`](./PHASES.md) when Taylor accepts it, and an idea into [`FUTURE_FEATURES.md`](./FUTURE_FEATURES.md) when he keeps it off the phase list. It does not file issues or tickets. It is not a step between the commands above.
 
 Shared facts live at the top of the area page ([`tests/catalog/README.md`](../tests/catalog/README.md)). If the command lacks one, it asks, and the answer is written there before the case is accepted.
 
