@@ -1,5 +1,5 @@
 ---
-description: Commit a post-MVP feature branch, refresh stale behavior notes, run the local gates, and open the pull request.
+description: Commit a post-MVP feature branch, propose doc updates the change made stale, run the local gates, and open the pull request.
 ---
 
 # Dev wrap-up
@@ -22,13 +22,17 @@ If this run hit a pain point in the command, name it and the one-line change. Wa
 
 ## Notes
 
-Update behavior notes this change made stale. That is the handoff notes in [`docs/AGENTS.md`](../../docs/AGENTS.md), and the architecture notes in [`docs/ARCHITECTURE.md`](../../docs/ARCHITECTURE.md).
+Read the current docs and compare them to this branch. That is everything in [`docs/`](../../docs/), including the gitignored study notes, and the catalog rules in [`tests/catalog/README.md`](../../tests/catalog/README.md).
 
-A disagreement with `docs/QA_WORKFLOW.md`, `docs/TEST_STRATEGY.md`, `docs/PRODUCT.md`, `docs/DECISIONS.md`, or `tests/catalog/README.md` is a dated amendment. Propose it and wait. It is not in force until Taylor accepts it.
+Propose a change only when this work makes a current doc wrong or incomplete. Show the edits and wait. After Taylor accepts, edit those files. If the branch does not change what they say, say so and continue.
+
+The study notes stay local. Do not commit them.
+
+A disagreement with `docs/QA_WORKFLOW.md`, `docs/TEST_STRATEGY.md`, `docs/PRODUCT.md`, `docs/DECISIONS.md`, or `tests/catalog/README.md` is a dated amendment. It is not in force until Taylor accepts it.
 
 ## Commit
 
-Invoking this command is Taylor asking for the commit. Commit the work on this branch, including those note updates.
+Invoking this command is Taylor asking for the commit. Commit the work on this branch, including the doc updates Taylor accepted. The study notes stay local.
 
 Stay on the feature branch. QA workflow names it from the story. If this checkout is not that branch, stop.
 
