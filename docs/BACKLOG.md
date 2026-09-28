@@ -196,7 +196,7 @@ Epics B–F below are the rest of the path to MVP. Keep checking them off here. 
 - [ ] Env vars set; migrations applied
 - [ ] Demo/sample data only on public URL (ADR-007)
 - [ ] README deploy notes
-- [ ] CI E2E: set `E2E_DATABASE=1` and secrets `CI_DATABASE_URL` / `CI_DATABASE_URL_UNPOOLED` for a dedicated Neon database (not the public demo and not the local dev database). Once per Actions run, before Playwright, reset that database to the seed (migrate, clear application data, seed). Do not reset after each test, and do not reset the local dev database from CI. Then the seven Playwright journeys pass in that run.
+- [ ] CI E2E: secrets `CI_DATABASE_URL` / `CI_DATABASE_URL_UNPOOLED` point at the Neon `ci` branch (not `production` and not `local`). Once per Actions run, before Playwright, reset that database to the seed (migrate, clear application data, seed). Do not reset after each test, and do not reset the local database from CI. The `E2E_DATABASE` skip gate is removed. The seven Playwright journeys pass in that run.
 
 ### F2. Seed GitHub Project workflow documentation
 **Labels:** `docs`  

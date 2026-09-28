@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { installUiTestCleanup, skipJourneysUntilCiDatabase } from "./dbCleanup";
+import { installUiTestCleanup } from "./dbCleanup";
 import { extrapolatedSession, strategyWithSessions } from "./fixtures";
 import {
   durationMethod,
@@ -16,7 +16,6 @@ let sessionPath = "";
 
 test.describe("Create, update, and delete a session", () => {
   test.describe.configure({ mode: "serial" });
-  skipJourneysUntilCiDatabase();
   installUiTestCleanup([strategyWithSessions]);
 
   test("shows the saved performance totals for an extrapolated session", async ({

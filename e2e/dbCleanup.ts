@@ -15,21 +15,6 @@ export type StrategyRows = {
 };
 
 /**
- * Journeys need a database. CI has none until F1 sets E2E_DATABASE=1.
- * The homepage smoke does not use this.
- */
-export function ciJourneysSkipped(): boolean {
-  return process.env.CI === "true" && process.env.E2E_DATABASE !== "1";
-}
-
-export function skipJourneysUntilCiDatabase(): void {
-  test.skip(
-    () => ciJourneysSkipped(),
-    "F1 wires the CI database, then sets E2E_DATABASE=1",
-  );
-}
-
-/**
  * Deletes the rows `rows` names. Called before a group so a killed run cannot
  * block the next one, and again when the group finishes. Strategies that are
  * not in `rows` stay.
@@ -101,9 +86,6 @@ export function installUiTestCleanup(rows: readonly StrategyRows[]): void {
   let api: APIRequestContext | undefined;
 
   test.beforeAll(async ({ playwright, baseURL }) => {
-    if (ciJourneysSkipped()) {
-      return;
-    }
     api = await playwright.request.newContext({ baseURL });
     await removeStrategies(api, rows);
   });

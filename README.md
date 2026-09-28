@@ -4,7 +4,7 @@ Farming strategy profitability tracker for Path of Exile (PoE2-first MVP).
 
 ## Requirements
 
-- Node.js 20+ (CI uses **Node 22** LTS)
+- Node.js 22 (CI and Vercel use **22**)
 - npm
 
 ## Local development
@@ -18,40 +18,54 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Scripts
 
-| Script                      | Purpose                              |
-| --------------------------- | ------------------------------------ |
-| `npm run dev`               | Next.js dev server                   |
-| `npm run build`             | Production build                     |
-| `npm run start`             | Serve production build               |
-| `npm run lint`              | ESLint                               |
-| `npm run typecheck`         | TypeScript (`tsc --noEmit`)          |
-| `npm run format`            | Prettier write                       |
-| `npm run format:check`      | Prettier check                       |
-| `npm run test`              | Jest unit tests (`src/**/*.test.ts`) |
-| `npm run test:api`          | Jest API tests (`tests/api/`)        |
-| `npm run test:e2e`          | Playwright E2E (`e2e/`)              |
-| `npm run db:generate`       | Generate Prisma Client               |
-| `npm run db:migrate`        | Create + apply a migration (dev)     |
-| `npm run db:migrate:deploy` | Apply existing migrations (CI/prod)  |
-| `npm run db:migrate:status` | Check migration status against Neon  |
-| `npm run db:seed`           | Insert demo strategy + map session   |
-| `npm run db:studio`         | Open Prisma Studio                   |
+| Script                                 | Purpose                                         |
+| -------------------------------------- | ----------------------------------------------- |
+| `npm run dev`                          | Next.js dev server                              |
+| `npm run build`                        | Production build                                |
+| `npm run start`                        | Serve production build                          |
+| `npm run lint`                         | ESLint                                          |
+| `npm run typecheck`                    | TypeScript (`tsc --noEmit`)                     |
+| `npm run format`                       | Prettier write                                  |
+| `npm run format:check`                 | Prettier check                                  |
+| `npm run test`                         | Jest unit tests (`src/**/*.test.ts`)            |
+| `npm run test:api`                     | Jest API tests (`tests/api/`)                   |
+| `npm run test:e2e`                     | Playwright E2E (`e2e/`)                         |
+| `npm run db:generate`                  | Generate Prisma Client                          |
+| `npm run db:migrate`                   | Create + apply a migration (dev)                |
+| `npm run db:migrate:deploy`            | Apply existing migrations (local)               |
+| `npm run db:migrate:deploy:production` | Apply migrations to the public Neon branch      |
+| `npm run db:migrate:status`            | Check migration status against Neon             |
+| `npm run db:seed`                      | Replace the demo strategy + session on local    |
+| `npm run db:reset:production`          | Wipe the public branch and insert the demo seed |
+| `npm run db:studio`                    | Open Prisma Studio                              |
 
 ## Database (Neon + Prisma)
 
-1. Link Neon (already done if you have `.env.local` with `DATABASE_URL`).
+Three Neon branches. Each has its own pooled `DATABASE_URL` (hostname contains `-pooler`) and direct `DATABASE_URL_UNPOOLED` (same string with `-pooler` removed from the host).
+
+| Branch       | Who uses it                                                         | Where the URLs live                                                              |
+| ------------ | ------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `local`      | `npm run dev` and the `db:*` scripts without a `:production` suffix | `.env.local`                                                                     |
+| `production` | The public Vercel app                                               | Vercel Production, and `.env.neon-production` for the one-time migrate and reset |
+| `ci`         | GitHub Actions                                                      | Secrets `CI_DATABASE_URL` and `CI_DATABASE_URL_UNPOOLED`                         |
+
+1. Copy the two URL lines from [`.env.example`](./.env.example) into `.env.local` and fill in the `local` branch. Leave `DATABASE_RESET` out of that file.
 2. `npm run db:generate`
 3. `npm run db:migrate:status` — should report all migrations applied.
-4. `npm run db:seed` — optional demo data (re-runnable; replaces its own rows).
+4. `npm run db:seed` — demo strategy and session. Re-running replaces only those rows.
+
+`.env.neon-production` holds the public branch URLs and `DATABASE_RESET=production`. `npm run db:migrate:deploy:production` applies migrations there. `npm run db:reset:production` deletes every strategy and session on that branch, then inserts the demo seed. Those scripts do not read `.env.local`.
 
 Schema lives in [`prisma/schema.prisma`](./prisma/schema.prisma); committed SQL in
 `prisma/migrations/`. Money and quantities are `Decimal(20, 8)` (ADR-015) and
-calculated fields are persisted compute-on-write results (ADR-018).
+calculated fields are persisted compute-on-write results (ADR-018). The seed's
+calculated columns come from the calc engine ([`prisma/seed.ts`](./prisma/seed.ts)).
 
-The seed's calculated values are **hand-computed** until the calc engine exists
-(Epic C); see the header comment in [`prisma/seed.ts`](./prisma/seed.ts).
+Never commit `.env.local`, `.env.neon-production`, or `.env.neon-ci`. The public site has no login. Keep real league sessions on `local`. `npm run db:reset:production` restores the demo seed if the public branch is edited.
 
-`.env.example` documents required vars. Never commit `.env.local`. The homepage Playwright smoke does **not** need Neon secrets. The seven journey specs skip in CI until F1 sets `E2E_DATABASE=1` and a dedicated CI database.
+## Deploy (Vercel)
+
+Production environment only: `DATABASE_URL` and `DATABASE_URL_UNPOOLED` from the Neon `production` branch. Node.js 22. Do not set `DATABASE_RESET` on Vercel, and do not give Preview those URLs. The build runs `prisma generate` before `next build`. Apply migrations with `npm run db:migrate:deploy:production` rather than during the Vercel build.
 
 ## Testing layers (ADR-014 / ADR-019)
 
@@ -63,7 +77,7 @@ The seed's calculated values are **hand-computed** until the calc engine exists
 
 Jest does **not** run Playwright specs, and Playwright does **not** run unit/API math cases.
 
-**E2E server:** locally Playwright starts `next dev` (or reuses one already running) against the Neon database in `.env.local`. The demo seed has to be applied (`npm run db:seed`). Restarting the dev server does not reset that database. When the journey groups start, and again when they finish (including after a failure), each group deletes the strategies it owns. The create/update/delete strategy is removed. The seed strategy stays, and any session on it other than the seeded demo session is removed. Strategies created by hand, under other names, stay. In CI the workflow runs `npm run build`, then Playwright starts `next start`. Those journeys stay skipped until F1 provides the CI database.
+**E2E server:** locally Playwright starts `next dev` (or reuses one already running) against the Neon database in `.env.local`. The demo seed has to be applied (`npm run db:seed`). Restarting the dev server does not reset that database. When the journey groups start, and again when they finish (including after a failure), each group deletes the strategies it owns. The create/update/delete strategy is removed. The seed strategy stays, and any session on it other than the seeded demo session is removed. Strategies created by hand, under other names, stay. In CI the workflow builds, then Playwright starts `next start` against the Neon `ci` branch. Once per job, before Playwright, that branch is migrated and reset to the seed. It is not reset after each test.
 
 ## CI
 
@@ -74,9 +88,9 @@ GitHub Actions (`.github/workflows/ci.yml`) on PRs and `main`:
 3. Unit tests
 4. API tests
 5. Production build
-6. Playwright E2E (Chromium)
+6. Playwright E2E (Chromium), after migrating and resetting the Neon `ci` branch
 
-On E2E failure, the workflow uploads `playwright-report/` and `test-results/` artifacts.
+E2E waits if another run is already using that branch. On E2E failure, the workflow uploads `playwright-report/` and `test-results/` artifacts.
 
 ## Project docs
 

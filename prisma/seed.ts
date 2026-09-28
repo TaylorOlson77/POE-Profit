@@ -1,8 +1,7 @@
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { PrismaClient } from "@prisma/client";
-import {
-  calculateSession,
-  calculateStrategyCosts,
-} from "../src/domain/calc";
+import { calculateSession, calculateStrategyCosts } from "../src/domain/calc";
 
 /**
  * Demo data for local dev and the public deploy.
@@ -27,8 +26,6 @@ import {
  *   ROI %               1920 ÷ 400 × 100         =   480
  *   profit in divine    1920 ÷ 200               =     9.6
  */
-
-const prisma = new PrismaClient();
 
 const STRATEGY_ID = "seed_strategy_poe2_expedition";
 const MAP_SESSION_ID = "seed_map_session_poe2_expedition";
@@ -97,7 +94,16 @@ function decimalString(value: { toString(): string } | null): string | null {
   return value === null ? null : value.toString();
 }
 
-async function main() {
+export async function seedDemoData(): Promise<void> {
+  const prisma = new PrismaClient();
+  try {
+    await writeDemoData(prisma);
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+async function writeDemoData(prisma: PrismaClient): Promise<void> {
   const strategyCosts = calculateStrategyCosts({
     mapUnitCostChaos: MAP_UNIT_COST_CHAOS,
     enhancementLines: STRATEGY_ENHANCEMENTS.map((line) => ({
@@ -138,14 +144,16 @@ async function main() {
         "Demo strategy: run expedition and temple tablets on tier 15 waystones.",
       mapNotes: "T15 waystone, prefer +% quantity and +% rarity mods.",
       mapUnitCostChaos: MAP_UNIT_COST_CHAOS,
-      estimatedCostPerMapChaos: strategyCosts.estimatedCostPerMapChaos.toString(),
+      estimatedCostPerMapChaos:
+        strategyCosts.estimatedCostPerMapChaos.toString(),
       enhancementLines: {
         create: STRATEGY_ENHANCEMENTS.map((line, index) => ({
           name: line.name,
           modifierNotes: line.modifierNotes,
           quantity: line.quantity,
           unitCostChaos: line.unitCostChaos,
-          lineTotalChaos: strategyCosts.enhancementLineTotals[index]!.toString(),
+          lineTotalChaos:
+            strategyCosts.enhancementLineTotals[index]!.toString(),
           sortOrder: line.sortOrder,
         })),
       },
@@ -200,11 +208,17 @@ async function main() {
   console.log("Seeded 1 strategy and 1 map session.");
 }
 
-main()
-  .catch((error) => {
+function isDirectRun(): boolean {
+  const entry = process.argv[1];
+  if (!entry) {
+    return false;
+  }
+  return path.resolve(entry) === path.resolve(fileURLToPath(import.meta.url));
+}
+
+if (isDirectRun()) {
+  seedDemoData().catch((error: unknown) => {
     console.error(error);
     process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
   });
+}

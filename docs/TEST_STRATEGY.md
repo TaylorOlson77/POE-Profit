@@ -182,7 +182,7 @@ Given revenue `2787.09c`, investment `513.60c`, duration `99` minutes (`1.65h`),
 | Edit run | Change quantity; totals update after save |
 | Delete run | Confirmation required; cancelled delete keeps run; confirmed delete removes run |
 
-The seven browser lines on the coverage pages are checked. The specs are `e2e/strategies.spec.ts` and `e2e/sessions.spec.ts`, and the step files live under `automated/`. Those journeys skip in CI until F1 (§10).
+The seven browser lines on the coverage pages are checked. The specs are `e2e/strategies.spec.ts` and `e2e/sessions.spec.ts`, and the step files live under `automated/`. Those journeys run in CI against the Neon `ci` branch, which the workflow resets to the seed once per run (§10).
 
 ## 7. Acceptance criteria → tests (MVP snapshot)
 
@@ -242,7 +242,7 @@ A pull request should not merge unless CI is green. The gates, in order:
 
 CI runs that list on every push to `main` and every pull request. The API step does not run again as part of the Vercel deploy. API tests still have **no database credentials**; CI runs `prisma generate` but does not apply migrations for them. D1 and D2 API tests call Route Handlers in-process with a Prisma fake (`tests/api/strategyDbMock.ts`, `tests/api/mapSessionDbMock.ts`). A Neon round-trip for those contract tests is still deferred.
 
-The seven Playwright journeys skip in CI until F1 sets `E2E_DATABASE=1` and points `CI_DATABASE_URL` / `CI_DATABASE_URL_UNPOOLED` at a dedicated Neon database. The homepage smoke still runs. The migrate-and-seed step in the workflow stays skipped until that flag is set.
+Playwright runs the seven journeys on every CI run, against the Neon `ci` branch (`CI_DATABASE_URL` / `CI_DATABASE_URL_UNPOOLED`). Before Playwright, once per job, Actions applies migrations and `prisma/reset-to-seed.ts` clears application rows and seeds the demo strategy. That reset does not run after each test. It runs only when `DATABASE_RESET=ci` and `CI=true`, so CI cannot wipe the local or public database. The homepage smoke runs in the same job. E2E jobs queue so two runs do not share that wipe.
 
 On E2E failure, CI should retain:
 
