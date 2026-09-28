@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { installUiTestCleanup, skipJourneysUntilCiDatabase } from "./dbCleanup";
+import { installUiTestCleanup } from "./dbCleanup";
 import { crudStrategy, strategyWithSessions } from "./fixtures";
 import { costPerWaystone, openHome, strategyCard } from "./pages/home";
 import {
@@ -13,7 +13,6 @@ const CONFLICT_MESSAGE = "Cannot delete a strategy that still has map sessions";
 
 test.describe("Create, update, and delete a strategy", () => {
   test.describe.configure({ mode: "serial" });
-  skipJourneysUntilCiDatabase();
   installUiTestCleanup([{ name: crudStrategy.name }]);
 
   test("shows the new strategy on the home list with its cost per waystone", async ({
@@ -81,7 +80,6 @@ test.describe("Create, update, and delete a strategy", () => {
 });
 
 test.describe("Delete a strategy that still has sessions", () => {
-  skipJourneysUntilCiDatabase();
   installUiTestCleanup([strategyWithSessions]);
 
   test("shows the conflict message when a strategy still has sessions", async ({

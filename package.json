@@ -2,9 +2,12 @@
   "name": "poe-profit",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "22.x"
+  },
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
@@ -16,6 +19,8 @@
     "db:generate": "dotenv -e .env.local -- prisma generate",
     "db:migrate": "dotenv -e .env.local -- prisma migrate dev",
     "db:migrate:deploy": "dotenv -e .env.local -- prisma migrate deploy",
+    "db:migrate:deploy:production": "dotenv -e .env.neon-production -- prisma migrate deploy",
+    "db:reset:production": "dotenv -e .env.neon-production -- tsx prisma/reset-to-seed.ts",
     "db:migrate:status": "dotenv -e .env.local -- prisma migrate status",
     "db:seed": "dotenv -e .env.local -- prisma db seed",
     "db:studio": "dotenv -e .env.local -- prisma studio"

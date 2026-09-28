@@ -24,7 +24,7 @@ Next.js App Router + TS · Vercel · Neon Postgres · Prisma · Route Handlers (
 
 ## Current next step
 
-**F1 — Vercel deploy + Neon** per [`BACKLOG.md`](./BACKLOG.md). E3 Playwright journeys pass locally. In CI they skip until F1 sets `E2E_DATABASE=1` on a dedicated Neon database (not the public demo) and the seven journeys pass in Actions.
+**F1 — Vercel deploy + Neon** per [`BACKLOG.md`](./BACKLOG.md). The E2E skip gate is removed. Actions migrates and resets the Neon `ci` branch once per run (`CI_DATABASE_URL` / `CI_DATABASE_URL_UNPOOLED`). Taylor's remaining steps are in [`F1-CHECKLIST.md`](./F1-CHECKLIST.md): GitHub secrets, one production reset, and the Vercel deploy.
 
 Prep prompt **1 is done.** `tests/catalog/` has strategies and sessions (create, update, delete). The five judgment calls from that chat stay off the pages.
 
@@ -139,7 +139,7 @@ Do not execute a prep prompt just because this file was read. Run one only when 
 
 - Order is lint → typecheck → unit → API → build → E2E. Typecheck runs **before** `build`, so app code must not depend on Next-generated types like `LayoutProps` (`app/layout.tsx` uses plain React props for this reason).
 - API tests still have **no database access**; CI only runs `prisma generate` for them. Migrations for the app are applied locally against Neon. D1 and D2 API tests use an in-process Prisma fake. A Neon round-trip for those contract tests is still deferred.
-- Playwright journeys skip when `CI` is set and `E2E_DATABASE` is not `1`. The workflow's migrate-and-seed step is skipped the same way. F1 turns both on against a dedicated Neon database. The homepage smoke still runs. Locally, each describe passes the strategies it owns into `installUiTestCleanup` (`e2e/fixtures.ts`, `e2e/dbCleanup.ts`). A strategy with only a name is deleted, sessions first. A strategy that lists `keepSessionIds` stays, and every other session on it is deleted. Hand-created strategies with other names stay. A killed run can leave rows until the next `beforeAll`, which finds them by those names.
+- Playwright runs on every CI job against the Neon `ci` branch. Before Playwright, once per job, the workflow runs `prisma migrate deploy` and `prisma/reset-to-seed.ts` with `DATABASE_RESET=ci`. That wipe is refused unless `CI=true`, so it cannot run against `.env.local`. It does not run after each test. E2E jobs queue on one concurrency group so two runs cannot wipe `ci` together. The homepage smoke runs in that same job. Locally, each describe passes the strategies it owns into `installUiTestCleanup` (`e2e/fixtures.ts`, `e2e/dbCleanup.ts`). A strategy with only a name is deleted, sessions first. A strategy that lists `keepSessionIds` stays, and every other session on it is deleted. Hand-created strategies with other names stay. A killed run can leave rows until the next `beforeAll`, which finds them by those names.
 - `format:check` is **not** a CI gate, `docs/` is in `.prettierignore`, and a few pre-existing `src/contracts` files fail Prettier. Don't reformat them as drive-by noise.
 - `actions/checkout@v4` / `actions/setup-node@v4` emit a Node 20 deprecation annotation. Runs still pass; bump to `@v5` when convenient.
 

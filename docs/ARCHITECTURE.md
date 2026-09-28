@@ -177,7 +177,7 @@ Implemented in `prisma/schema.prisma` (B3): cuid string IDs, `Decimal(20, 8)` fo
 | API | Jest, in-process Route Handlers (D1: Prisma fake, no `DATABASE_URL` in CI) | `tests/api/` |
 | E2E | Playwright | `e2e/` (specs, `pages/` helpers, `fixtures.ts`, `dbCleanup.ts`) |
 
-CI: lint → typecheck → unit → API → build → E2E (see `TEST_STRATEGY.md`). The seven journeys skip until F1 sets `E2E_DATABASE=1`. The homepage smoke still runs.
+CI: lint → typecheck → unit → API → build → E2E (see `TEST_STRATEGY.md`). Before E2E, once per job, Actions migrates and resets the Neon `ci` branch to the seed. The homepage smoke runs in that same job.
 
 ---
 
@@ -185,7 +185,7 @@ CI: lint → typecheck → unit → API → build → E2E (see `TEST_STRATEGY.md
 
 | Concern | Approach |
 | --- | --- |
-| DB URL | `DATABASE_URL` from Neon → env (local `.env`, Vercel env) |
+| DB URL | Pooled `DATABASE_URL` and direct `DATABASE_URL_UNPOOLED`. Local: `.env.local` (Neon `local`). Public: Vercel and `.env.neon-production` (Neon `production`). CI: secrets `CI_DATABASE_URL` / `CI_DATABASE_URL_UNPOOLED` (Neon `ci`). |
 | Never commit | `.env` / credentials |
 | Public demo | Sample data only (ADR-007) |
 
