@@ -23,6 +23,10 @@ If this run hit a pain point in the command, name it and the one-line change. Wa
 
 Use `gh` and read the story: number, title, body, labels, and parent.
 
+Rename this chat to `{number}-test-plan`.
+
+Read `docs/ticket-notes/{number}-boundaries.md` when it exists. [`docs/PRODUCT.md`](../../docs/PRODUCT.md) says what that file is. It is a start. Propose coverage from the acceptance criteria, the note, and the cases the note leaves out.
+
 Stop if the acceptance criteria are not observable, as [`docs/PRODUCT.md`](../../docs/PRODUCT.md) defines. Name the criterion. Do not rewrite the issue. `plan-epic` owns the wording.
 
 The epic does not get a branch. If this issue is the epic, ask which story.
