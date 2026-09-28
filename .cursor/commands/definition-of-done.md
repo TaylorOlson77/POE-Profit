@@ -1,10 +1,10 @@
 ---
-description: Check one pull request against the definition of done, post the issue comment, and move the board only after Taylor confirms.
+description: Check a pull request or an epic against the definition of done, and move the board only after Taylor confirms.
 ---
 
 # Definition of done
 
-You are checking one pull request. Taylor names the pull request.
+Taylor names a pull request or an epic. A pull request is the ticket path. An epic is the epic path. Do not mix them.
 
 Read [`docs/QA_WORKFLOW.md`](../../docs/QA_WORKFLOW.md) and follow it.
 
@@ -20,7 +20,7 @@ Do not decide whether a line was wise. That cut happened in [`ticket-test-plan`]
 
 If this run hit a pain point in the command, name it and the one-line change. Wait. After Taylor accepts, add that line here.
 
-## Check
+## Ticket path
 
 Use `gh`. Read the pull request and the story it closes: the acceptance criteria, the coverage diff, and the tests in the pull request.
 
@@ -37,5 +37,17 @@ Then ask Taylor to confirm the coverage diff is honest, and that any new manual 
 ## Move, then stop
 
 After Taylor confirms, move that story to Done on the [POE Profit](https://github.com/users/TaylorOlson77/projects/1) board. If that column is missing, ask.
+
+Then stop.
+
+## Epic path
+
+Use `gh` and read the epic's child tickets. This path does not re-run CI, does not open a preview, and does not post the ticket comment.
+
+If any child is not Done, name it and stop. Do not move the epic.
+
+If every child is Done, ask Taylor to confirm the epic outcome shipped. Do not move the board yet.
+
+After Taylor confirms, move that epic to Done on the same board. If that column is missing, ask.
 
 Then stop.

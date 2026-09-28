@@ -56,13 +56,13 @@ Each command stops for Taylor before it writes the next artifact.
 
 ```text
 plan-epic  →  ticket-test-plan  →  implement  →  dev-wrap-up  →  definition-of-done
-(issues, AC)     (branch, coverage)   (code + tests)  (commit, PR)    (comment, then the board)
+(issue, note)    (branch, coverage)   (code + tests)  (commit, PR)    (comment, then the board)
 ```
 
 | Step | Command | Writes | Does not write |
 | --- | --- | --- | --- |
-| 1 | `.cursor/commands/plan-epic.md` | One phase's epic split, then that epic's tickets, acceptance criteria, and board placement. The rules are [`PRODUCT.md`](./PRODUCT.md). | Coverage lines, code, automation |
-| 2 | `.cursor/commands/ticket-test-plan.md` | Branch. Edits to the coverage page: lines added, retargeted, or removed. A file under `manual/` only when a person would still run the case. | Product code. A separate impact table. The coverage diff is the impact. |
+| 1 | `.cursor/commands/plan-epic.md` | One phase's epic split, then that epic's tickets, and board placement. The title, description, acceptance criteria, and ticket note follow [`PRODUCT.md`](./PRODUCT.md). | Coverage lines, code, automation. The note is not a test list. |
+| 2 | `.cursor/commands/ticket-test-plan.md` | Branch. Edits to the coverage page: lines added, retargeted, or removed. A file under `manual/` only when a person would still run the case. Reads the ticket note when it exists, then still proposes cases the note leaves out. | Product code. A separate impact table. The coverage diff is the impact. Copying the note onto the issue. |
 | 3 | Implementation chat | Product code and the automated tests the new checked lines name, same pull request | A second copy of the cases on the GitHub issue |
 | 4 | `.cursor/commands/dev-wrap-up.md` | The commit, doc updates Taylor accepted, and the pull request | The definition-of-done comment. A pass/fail report (FF-006). |
 | 5 | `.cursor/commands/definition-of-done.md` | A traceability comment on the issue; move the board only after the checks pass | New product scope. It does not invent whether a line belongs on the page. |
@@ -154,6 +154,8 @@ A post-MVP ticket is done when the quality bar in [`TEST_STRATEGY.md`](./TEST_ST
 The command checks that links resolve. It does not decide that a line is wise. That cut happens in the test-plan step, with Taylor. Before it moves the board item, Taylor confirms the coverage diff is honest and the new manual cases are ones they would run.
 
 We are not failing CI on an empty pull-request section. The control is this command, plus the rule that "done" means it passed. Revisit a mechanical gate only if we skip it.
+
+An epic is done when every child ticket is Done. The same command checks that list when Taylor names an epic instead of a pull request. It does not re-run CI and it does not open a preview. Taylor confirms the outcome shipped, then the epic moves to Done.
 
 ## Reporting (later)
 
