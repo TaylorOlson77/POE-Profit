@@ -1,5 +1,6 @@
 import { prisma } from "@/src/server/db/prisma";
 import {
+  calculatedTotalOverflow,
   jsonError,
   readJsonBody,
   withApiErrors,
@@ -78,11 +79,14 @@ export async function PUT(
       );
     }
 
-    const strategy = await updateStrategy(prisma, id.id, parsed.data);
-    if (!strategy) {
+    const result = await updateStrategy(prisma, id.id, parsed.data);
+    if (result.status === "total_overflow") {
+      return calculatedTotalOverflow("Invalid strategy payload");
+    }
+    if (result.status === "not_found") {
       return jsonError(404, "NOT_FOUND", "Strategy not found");
     }
-    return Response.json(strategy);
+    return Response.json(result.strategy);
   });
 }
 

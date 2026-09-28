@@ -3,6 +3,7 @@ import {
   DecimalStringSchema,
   NullableDecimalStringSchema,
   NullableSignedDecimalStringSchema,
+  POSTGRES_INT_MAX,
   PositiveDecimalStringSchema,
   SignedDecimalStringSchema,
 } from "./decimal";
@@ -110,7 +111,7 @@ export type MapSessionRevenueLine = z.infer<typeof MapSessionRevenueLineSchema>;
 /** Duration inputs — discriminated by method (ADR-006). Default: EXTRAPOLATED. */
 export const MapSessionDurationExtrapolatedInputSchema = z.object({
   durationMethod: z.literal("EXTRAPOLATED"),
-  sampleMapsCompleted: z.number().int().positive(),
+  sampleMapsCompleted: z.number().int().positive().max(POSTGRES_INT_MAX),
   sampleDurationMinutes: PositiveDecimalStringSchema,
 });
 
@@ -145,7 +146,7 @@ export type MapSessionDurationInput = z.infer<
 
 const MapSessionWritableFieldsSchema = z.object({
   strategyId: z.string().min(1),
-  mapsCompleted: z.number().int().nonnegative(),
+  mapsCompleted: z.number().int().nonnegative().max(POSTGRES_INT_MAX),
   /**
    * Cost of one map/waystone in Chaos (required).
    * Session map investment = mapsCompleted × mapUnitCostChaos.
@@ -210,7 +211,7 @@ export const MapSessionSchema = z
   .object({
     id: z.string().min(1),
     strategyId: z.string().min(1),
-    mapsCompleted: z.number().int().nonnegative(),
+    mapsCompleted: z.number().int().nonnegative().max(POSTGRES_INT_MAX),
     mapUnitCostChaos: DecimalStringSchema,
     divineRateChaos: DecimalStringSchema,
     notes: z.string().optional(),

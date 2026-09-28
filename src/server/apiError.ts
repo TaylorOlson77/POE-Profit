@@ -5,6 +5,7 @@ import {
   type ApiErrorCode,
   type ApiErrorDetail,
 } from "@/src/contracts/errors";
+import { CALCULATED_TOTAL_OVERFLOW_MESSAGE } from "@/src/server/money";
 
 /** Postgres foreign-key restrict / required-relation violations (Prisma). */
 const RESTRICT_CODES = new Set(["P2003", "P2014"]);
@@ -21,6 +22,13 @@ export function zodErrorDetails(error: ZodError): ApiErrorDetail[] {
     path: issue.path.map(String).join("."),
     message: issue.message,
   }));
+}
+
+/** 400 for a calculated total that would not fit NUMERIC(20, 8). */
+export function calculatedTotalOverflow(payloadMessage: string): Response {
+  return jsonError(400, "VALIDATION_ERROR", payloadMessage, [
+    { path: "", message: CALCULATED_TOTAL_OVERFLOW_MESSAGE },
+  ]);
 }
 
 export function jsonError(

@@ -129,6 +129,31 @@ describe("POST /api/strategies", () => {
     );
   });
 
+  it("rejects a calculated cost that does not fit the money column", async () => {
+    const response = await post({
+      name: "Overflow",
+      game: "POE2",
+      description: "Product does not fit",
+      mapUnitCostChaos: "0",
+      enhancementLines: [
+        { name: "Tablet", quantity: "999999999999", unitCostChaos: "2" },
+      ],
+    });
+
+    expect(response.status).toBe(400);
+    const body = ApiErrorBodySchema.parse(await response.json());
+    expect(body.error.code).toBe("VALIDATION_ERROR");
+    expect(body.error.details).toEqual([
+      {
+        path: "",
+        message: "Calculated total does not fit the money column",
+      },
+    ]);
+
+    const listed = StrategyListResponseSchema.parse(await (await list()).json());
+    expect(listed.strategies).toEqual([]);
+  });
+
   it("returns 400 when the body is not JSON", async () => {
     const response = await post(undefined, "{");
     expect(response.status).toBe(400);

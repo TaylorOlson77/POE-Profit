@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { DecimalStringSchema } from "./decimal";
+import { DecimalStringSchema, POSTGRES_INT_MAX } from "./decimal";
 
 /**
  * Strategy API contracts (contract-first — ADR-013 / ADR-020 / backlog B1).
@@ -44,7 +44,7 @@ export const StrategyEnhancementLineInputSchema = z.object({
   /** Per-map quantity. */
   quantity: DecimalStringSchema,
   unitCostChaos: DecimalStringSchema,
-  sortOrder: z.number().int().nonnegative().optional(),
+  sortOrder: z.number().int().nonnegative().max(POSTGRES_INT_MAX).optional(),
 });
 
 export type StrategyEnhancementLineInput = z.infer<

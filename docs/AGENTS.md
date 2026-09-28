@@ -26,7 +26,7 @@ Next.js App Router + TS · Vercel · Neon Postgres · Prisma · Route Handlers (
 
 **MVP baseline is deployed** at [poe-profit.vercel.app](https://poe-profit.vercel.app/). F1 is checked off in [`BACKLOG.md`](./BACKLOG.md). There is no F2. The public site uses the Neon `production` branch and shows only the demo strategy. Actions migrates and resets the Neon `ci` branch once per run, then Playwright runs there.
 
-Next: paste prep prompt **8** into two new chats, one Claude and one GPT. They write review memos and do not edit the repo. Prompt **9** waits until both memos are back. Prompt **10** waits until that cleanup is done.
+Next: the remaining baseline tickets are in [`MVP_REMAINING.md`](./MVP_REMAINING.md). R1 is checked off. R2, R3, and R4 are still open. One ticket per chat. Do not start the next ticket in the same chat.
 
 Prep prompt **1 is done.** `tests/catalog/` has strategies and sessions (create, update, delete). The five judgment calls from that chat stay off the pages.
 
@@ -132,6 +132,7 @@ Do not execute a prep prompt just because this file was read. Run one only when 
 **decimal.js**
 
 - `Decimal.toString()` uses scientific notation for small values (`"0.00000001"` becomes `"1e-8"`). `DecimalStringSchema` rejects that. Serialize with `decimalToWire` in `src/server/money.ts` (`toFixed`, then strip storage-scale zeros). Never `Number()` a money value.
+- Money strings allow at most 12 integer digits and 8 fractional digits, matching `NUMERIC(20, 8)`. `mapsCompleted`, `sampleMapsCompleted`, and enhancement `sortOrder` stop at `2147483647`. `fitsMoneyColumn` rejects a calculated total that would not fit the column. The write routes return 400 before insert.
 
 **Jest API tests**
 
@@ -148,7 +149,7 @@ Do not execute a prep prompt just because this file was read. Run one only when 
 **Schema/contract parity**
 
 - Prisma returns `Decimal` objects; services must serialize to decimal **strings** at the API boundary via `decimalToWire`. Never `Number()` a money value.
-- D1 and D2 API tests parse responses with the Zod schemas. The fake still does not prove Postgres `Restrict` or `Decimal(20, 8)` scale.
+- The contracts reject money and counts outside the columns. A calculated total that does not fit is 400 before insert. D1 and D2 API tests parse responses with the Zod schemas. The fake still does not prove Postgres `Restrict`, or that a stored 8-decimal-place line still multiplies. Those round-trips are R3.
 
 ## Do not
 

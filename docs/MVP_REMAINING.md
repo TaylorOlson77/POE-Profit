@@ -40,11 +40,11 @@ A column-shaped cap is not enough. `999999999999` × `2` each fit the column and
 
 **AC:**
 
-- [ ] Non-negative and signed decimal strings allow at most 12 integer digits and 8 fractional digits
-- [ ] `mapsCompleted`, `sampleMapsCompleted`, and `sortOrder` reject values outside the Postgres int range
-- [ ] A calculated total that would not fit `NUMERIC(20, 8)` is a validation error, not `INTERNAL_ERROR`
-- [ ] Contract tests reject `2147483648`, `"1.123456789"`, and `"9999999999999"` with no database
-- [ ] Catalog lines on [`tests/catalog/sessions/coverage.md`](../tests/catalog/sessions/coverage.md) and [`tests/catalog/strategies/coverage.md`](../tests/catalog/strategies/coverage.md), Validation section, API/contract shape (no step file). One line per rule, not one line per example
+- [x] Non-negative and signed decimal strings allow at most 12 integer digits and 8 fractional digits
+- [x] `mapsCompleted`, `sampleMapsCompleted`, and `sortOrder` reject values outside the Postgres int range
+- [x] A calculated total that would not fit `NUMERIC(20, 8)` is a validation error, not `INTERNAL_ERROR`
+- [x] Contract tests reject `2147483648`, `"1.123456789"`, and `"9999999999999"` with no database
+- [x] Catalog lines on [`tests/catalog/sessions/coverage.md`](../tests/catalog/sessions/coverage.md) and [`tests/catalog/strategies/coverage.md`](../tests/catalog/strategies/coverage.md), Validation section, API/contract shape (no step file). One line per rule, not one line per example
 
 ## R2. Cap free text
 
@@ -71,6 +71,8 @@ Keep the fakes. Add a second suite: in-process Route Handlers and the real Prism
 **What the suite locks:**
 
 - Create a session whose quantity and unit value use 8 decimal places, GET it back, and assert quantity × unit = `lineTotalChaos` on the stored strings
+- Create a session with quantity `1` and unit value `999999999999.99999999`, GET it back, and assert quantity, unit value, and `lineTotalChaos` are that same string
+- Create a session with `mapsCompleted: 2147483647`, GET it back, and assert that count
 - Create, PUT replacement lines, GET, delete. Session id stays; old lines are gone
 - Delete a strategy that still has a session: 409, and the row is still there
 - POST a distinctive `priceRecordedAt` and GET that same instant back
@@ -108,7 +110,7 @@ Rules for this suite:
 - [ ] Tests follow the remnant rules above
 - [ ] Mock test asserts the posted `priceRecordedAt`
 - [ ] Harness smoke test is gone
-- [ ] Catalog lines, checked, linking the new file. No step files. Sessions: stored 8-decimal-place line still multiplies; price time round-trips; replaced session keeps its id. Strategies: a strategy with a session is still there after delete. Wording can change; the rule being locked cannot
+- [ ] Catalog lines, checked, linking the new file. No step files. Sessions: stored 8-decimal-place line still multiplies; a money amount at the column limit round-trips; a map count at the integer limit round-trips; price time round-trips; replaced session keeps its id. Strategies: a strategy with a session is still there after delete. Wording can change; the rule being locked cannot
 - [ ] Shared-facts blurb on both coverage pages: this suite creates `api-db-` rows and deletes them; it does not use the demo seed; a local run uses the local branch
 
 ## R4. Doc amendments

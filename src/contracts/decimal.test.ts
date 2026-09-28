@@ -15,6 +15,15 @@ describe("DecimalStringSchema", () => {
     expect(DecimalStringSchema.safeParse("-50").success).toBe(false);
     expect(DecimalStringSchema.safeParse(50).success).toBe(false);
   });
+
+  it("rejects a money amount with more than 12 integer digits or 8 fractional digits", () => {
+    expect(DecimalStringSchema.safeParse("1.123456789").success).toBe(false);
+    expect(DecimalStringSchema.safeParse("9999999999999").success).toBe(false);
+    expect(DecimalStringSchema.safeParse("999999999999.99999999").success).toBe(
+      true,
+    );
+    expect(DecimalStringSchema.safeParse("0.00000001").success).toBe(true);
+  });
 });
 
 describe("SignedDecimalStringSchema", () => {
@@ -26,6 +35,18 @@ describe("SignedDecimalStringSchema", () => {
 
   it("rejects JSON numbers", () => {
     expect(SignedDecimalStringSchema.safeParse(-50).success).toBe(false);
+  });
+
+  it("rejects a signed money amount outside the same column", () => {
+    expect(SignedDecimalStringSchema.safeParse("-1.123456789").success).toBe(
+      false,
+    );
+    expect(SignedDecimalStringSchema.safeParse("-9999999999999").success).toBe(
+      false,
+    );
+    expect(
+      SignedDecimalStringSchema.safeParse("-999999999999.99999999").success,
+    ).toBe(true);
   });
 });
 
