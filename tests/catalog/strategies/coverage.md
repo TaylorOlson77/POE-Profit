@@ -24,6 +24,7 @@ This page does not list every unit test in the repo. A line is a behavior someon
 - [x] rejects a money amount with more than 12 integer digits or 8 fractional digits — [`decimal contracts`](../../../src/contracts/decimal.test.ts)
 - [x] rejects a sort order above the database integer limit — [`strategy contracts`](../../../src/contracts/strategies.test.ts)
 - [x] rejects a calculated cost that does not fit the money column — [`POST /api/strategies`](../../../tests/api/strategies.test.ts)
+- [x] rejects a name or note past its length cap — [`text contracts`](../../../src/contracts/text.test.ts)
 
 ### Cost
 

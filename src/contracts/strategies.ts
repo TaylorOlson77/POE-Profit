@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { DecimalStringSchema, POSTGRES_INT_MAX } from "./decimal";
+import { DescriptionSchema, NameSchema, OptionalNotesSchema } from "./text";
 
 /**
  * Strategy API contracts (contract-first — ADR-013 / ADR-020 / backlog B1).
@@ -38,9 +39,9 @@ export type Game = z.infer<typeof GameSchema>;
  * UI labels and modifierNotes visibility come from Strategy.game.
  */
 export const StrategyEnhancementLineInputSchema = z.object({
-  name: z.string().min(1),
+  name: NameSchema,
   /** Free-text mods for now; UI shows only for PoE2 tablets. */
-  modifierNotes: z.string().optional(),
+  modifierNotes: OptionalNotesSchema,
   /** Per-map quantity. */
   quantity: DecimalStringSchema,
   unitCostChaos: DecimalStringSchema,
@@ -66,11 +67,11 @@ export type StrategyEnhancementLine = z.infer<
 /** Persisted Strategy resource (response shape). */
 export const StrategySchema = z.object({
   id: z.string().min(1),
-  name: z.string().min(1),
+  name: NameSchema,
   game: GameSchema,
-  description: z.string().min(1),
+  description: DescriptionSchema,
   /** Map/waystone notes; later may become structured/regex. */
-  mapNotes: z.string().optional(),
+  mapNotes: OptionalNotesSchema,
   /**
    * Cost of one map/waystone in Chaos (quantity implied = 1).
    * UI label: Map (PoE1) / Waystone (PoE2).
@@ -93,10 +94,10 @@ export type Strategy = z.infer<typeof StrategySchema>;
 
 /** POST /api/strategies body */
 export const CreateStrategyBodySchema = z.object({
-  name: z.string().min(1),
+  name: NameSchema,
   game: GameSchema,
-  description: z.string().min(1),
-  mapNotes: z.string().optional(),
+  description: DescriptionSchema,
+  mapNotes: OptionalNotesSchema,
   mapUnitCostChaos: DecimalStringSchema,
   enhancementLines: z
     .array(StrategyEnhancementLineInputSchema)

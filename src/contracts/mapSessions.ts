@@ -7,6 +7,7 @@ import {
   PositiveDecimalStringSchema,
   SignedDecimalStringSchema,
 } from "./decimal";
+import { NameSchema, OptionalNotesSchema } from "./text";
 
 /**
  * MapSession API contracts (contract-first — ADR-005 / ADR-006 / backlog B2).
@@ -61,7 +62,7 @@ export const ValuationTypeSchema = z.literal("ACTUAL_PAID");
 export type ValuationType = z.infer<typeof ValuationTypeSchema>;
 
 const MapSessionLineBaseInputSchema = z.object({
-  name: z.string().min(1),
+  name: NameSchema,
   quantity: DecimalStringSchema,
   unitValueChaos: DecimalStringSchema,
   priceRecordedAt: z.string().datetime(),
@@ -82,7 +83,7 @@ export type MapSessionInvestmentLineInput = z.infer<
  */
 export const MapSessionRevenueLineInputSchema =
   MapSessionLineBaseInputSchema.extend({
-    category: z.string().min(1),
+    category: NameSchema,
   });
 
 export type MapSessionRevenueLineInput = z.infer<
@@ -154,7 +155,7 @@ const MapSessionWritableFieldsSchema = z.object({
   mapUnitCostChaos: DecimalStringSchema,
   /** Divine ↔ Chaos snapshot for this map session (ADR-003). */
   divineRateChaos: DecimalStringSchema,
-  notes: z.string().optional(),
+  notes: OptionalNotesSchema,
   investmentLines: z
     .array(MapSessionInvestmentLineInputSchema)
     .max(MAX_MAP_SESSION_INVESTMENT_LINES)
@@ -214,7 +215,7 @@ export const MapSessionSchema = z
     mapsCompleted: z.number().int().nonnegative().max(POSTGRES_INT_MAX),
     mapUnitCostChaos: DecimalStringSchema,
     divineRateChaos: DecimalStringSchema,
-    notes: z.string().optional(),
+    notes: OptionalNotesSchema,
     investmentLines: z
       .array(MapSessionInvestmentLineSchema)
       .max(MAX_MAP_SESSION_INVESTMENT_LINES),
