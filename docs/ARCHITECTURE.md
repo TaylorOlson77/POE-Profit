@@ -202,13 +202,13 @@ CI: lint → typecheck → unit → API contract → build, then the e2e job. Th
 - Monorepo packages
 - Stash API / GGG integration
 
-See `FUTURE_FEATURES.md` for later product ideas.
+See [`PHASES.md`](./PHASES.md) for the next phases. [`FUTURE_FEATURES.md`](./FUTURE_FEATURES.md) is ideas that are not a phase.
 
 ---
 
 ## 11. Where new work starts
 
-The MVP baseline is deployed at [poe-profit.vercel.app](https://poe-profit.vercel.app/). New work follows [`AGENTS.md`](./AGENTS.md): `plan-feature`, then `ticket-test-plan`, implementation, `dev-wrap-up`, and `definition-of-done`.
+The MVP baseline is deployed at [poe-profit.vercel.app](https://poe-profit.vercel.app/). New work follows [`AGENTS.md`](./AGENTS.md): the current phase in [`PHASES.md`](./PHASES.md), then `plan-epic`, `ticket-test-plan`, implementation, `dev-wrap-up`, and `definition-of-done`.
 
 Handoff for new agents: [`AGENTS.md`](./AGENTS.md).
 

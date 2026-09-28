@@ -23,7 +23,7 @@ If this run hit a pain point in the command, name it and the one-line change. Wa
 
 Use `gh` and read the story: number, title, body, labels, and parent.
 
-Stop if the acceptance criteria are not observable, as [`docs/PRODUCT.md`](../../docs/PRODUCT.md) defines. Name the criterion. Do not rewrite the issue. `plan-feature` owns the wording.
+Stop if the acceptance criteria are not observable, as [`docs/PRODUCT.md`](../../docs/PRODUCT.md) defines. Name the criterion. Do not rewrite the issue. `plan-epic` owns the wording.
 
 The epic does not get a branch. If this issue is the epic, ask which story.
 
