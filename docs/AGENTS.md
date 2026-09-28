@@ -24,7 +24,9 @@ Next.js App Router + TS · Vercel · Neon Postgres · Prisma · Route Handlers (
 
 ## Current next step
 
-**F1 — Vercel deploy + Neon** per [`BACKLOG.md`](./BACKLOG.md). The E2E skip gate is removed. Actions migrates and resets the Neon `ci` branch once per run (`CI_DATABASE_URL` / `CI_DATABASE_URL_UNPOOLED`). Taylor's remaining steps are in [`F1-CHECKLIST.md`](./F1-CHECKLIST.md): GitHub secrets, one production reset, and the Vercel deploy.
+**MVP baseline is deployed** at [poe-profit.vercel.app](https://poe-profit.vercel.app/). F1 is checked off in [`BACKLOG.md`](./BACKLOG.md). There is no F2. The public site uses the Neon `production` branch and shows only the demo strategy. Actions migrates and resets the Neon `ci` branch once per run, then Playwright runs there.
+
+Next: paste prep prompt **8** into two new chats, one Claude and one GPT. They write review memos and do not edit the repo. Prompt **9** waits until both memos are back. Prompt **10** waits until that cleanup is done.
 
 Prep prompt **1 is done.** `tests/catalog/` has strategies and sessions (create, update, delete). The five judgment calls from that chat stay off the pages.
 
@@ -36,7 +38,7 @@ Prep prompt **4 is done.** `.cursor/commands/plan-feature.md` plans a feature. T
 
 A finished prep prompt is the brief for that chat. The rules now live in the docs, not in the prompt.
 
-E3 is done. Prompt **5** creates the definition-of-done command. Prompt **7** creates the dev wrap-up command. Neither blocks F1. Prompts 3 and 4 are done.
+E3 and F1 are done. Prompt **5** creates the definition-of-done command. Prompt **7** creates the dev wrap-up command. Prompts 3 and 4 are done.
 
 Do not execute a prep prompt just because this file was read. Run one only when Taylor pastes that prompt as the task.
 
@@ -139,7 +141,7 @@ Do not execute a prep prompt just because this file was read. Run one only when 
 
 - Order is lint → typecheck → unit → API → build → E2E. Typecheck runs **before** `build`, so app code must not depend on Next-generated types like `LayoutProps` (`app/layout.tsx` uses plain React props for this reason).
 - API tests still have **no database access**; CI only runs `prisma generate` for them. Migrations for the app are applied locally against Neon. D1 and D2 API tests use an in-process Prisma fake. A Neon round-trip for those contract tests is still deferred.
-- Playwright runs on every CI job against the Neon `ci` branch. Before Playwright, once per job, the workflow runs `prisma migrate deploy` and `prisma/reset-to-seed.ts` with `DATABASE_RESET=ci`. That wipe is refused unless `CI=true`, so it cannot run against `.env.local`. It does not run after each test. E2E jobs queue on one concurrency group so two runs cannot wipe `ci` together. The homepage smoke runs in that same job. Locally, each describe passes the strategies it owns into `installUiTestCleanup` (`e2e/fixtures.ts`, `e2e/dbCleanup.ts`). A strategy with only a name is deleted, sessions first. A strategy that lists `keepSessionIds` stays, and every other session on it is deleted. Hand-created strategies with other names stay. A killed run can leave rows until the next `beforeAll`, which finds them by those names.
+- Playwright runs on every CI job against the Neon `ci` branch. The job is a GitHub-hosted Ubuntu runner. It installs Chromium, builds the app, and Playwright starts `next start` on that same machine at `http://127.0.0.1:3000`. It does not open the Vercel URL. Before Playwright, once per job, the workflow runs `prisma migrate deploy` and `prisma/reset-to-seed.ts` with `DATABASE_RESET=ci`. That wipe is refused unless `CI=true`, so it cannot run against `.env.local`. It does not run after each test. E2E jobs queue on one concurrency group so two runs cannot wipe `ci` together. The homepage smoke runs in that same job. CI retries a failed test once (`playwright.config.ts`). Locally, each describe passes the strategies it owns into `installUiTestCleanup` (`e2e/fixtures.ts`, `e2e/dbCleanup.ts`). A strategy with only a name is deleted, sessions first. A strategy that lists `keepSessionIds` stays, and every other session on it is deleted. Hand-created strategies with other names stay. A killed run can leave rows until the next `beforeAll`, which finds them by those names.
 - `format:check` is **not** a CI gate, `docs/` is in `.prettierignore`, and a few pre-existing `src/contracts` files fail Prettier. Don't reformat them as drive-by noise.
 - `actions/checkout@v4` / `actions/setup-node@v4` emit a Node 20 deprecation annotation. Runs still pass; bump to `@v5` when convenient.
 
@@ -254,5 +256,113 @@ When later invoked on the feature branch, it commits that work. Invoking the com
 The pull request description is the pull request. The issue comment that lists tests added or updated is definition-of-done. This command does not post that comment, does not move the board, and does not write a pass/fail report. That report is FF-006.
 
 Do not run it against the current branch while creating it. Show the command file and stop.
+```
+
+### 8 — Outside review memo
+
+Paste this into two new chats, one Claude and one GPT. Bring both memos back before prompt 9.
+
+```text
+You are an outside reviewer of POE Profit. You did not build it. Taylor will defend the decisions. You write a memo. You do not edit files, open a branch, or file issues.
+
+Taylor has finished MVP coding. F1 is done: the app is deployed at https://poe-profit.vercel.app/ against the Neon production branch, and GitHub Actions migrates and resets the Neon ci branch once per run. The E2E_DATABASE skip gate is removed. There is no F2. Do not look for a second deploy epic, and do not treat its absence as missing scope. The only code changes still on the table are ones Taylor accepts from this memo.
+
+F1 is checked off in docs/BACKLOG.md and docs/F1-CHECKLIST.md. Sentences that still say the ticket flow is not in force during the MVP backlog belong to a later cleanup. Do not spend the memo on them.
+
+Load https://poe-profit.vercel.app/ and compare what a visitor can do with MVP_SPEC §34.
+
+Read, in this order:
+- docs/AGENTS.md (product, stack, locked E1/E2/D1/D2 notes)
+- docs/MVP_SPEC.md §1–§4 and §34 (what v1 is, what it refuses, when it is done)
+- docs/DECISIONS.md (every accepted ADR: the decision and the why)
+- docs/ARCHITECTURE.md
+- docs/TEST_STRATEGY.md §3–§4, §6–§7, §10, §12
+- docs/F1-CHECKLIST.md only for the branch split: local, ci, and production. The boxes are already done.
+- docs/PRODUCT.md and docs/QA_WORKFLOW.md only to see the post-baseline process. Do not review that process as product code.
+
+Then read the code those docs name: src/domain/calc, src/contracts, src/server, app/api, the strategy and session UI, prisma/schema.prisma, tests/api, e2e/, tests/catalog/, and the CI workflow.
+
+Lenses, in this order:
+1. Money. Chaos is canonical. A player can save a session and see a profit the engine did not compute, or a Divine figure that is not derived from the stored rate.
+2. Domain. Strategy and MapSession stay separate. The UI recomputes profit instead of showing the API payload.
+3. Honesty of the tests. A coverage line, an ADR, or a README claim is stronger than the test or the code behind it. Name the file.
+4. Public no-auth deploy (ADR-007). The production URL is live. Anyone with it can create, edit, and delete rows on the production branch. That branch is separate from local and from ci. Judge input validation and abuse basics. Do not design an auth system.
+5. Interview defense. Choices a hiring manager will ask Taylor to explain.
+
+Rules:
+- An accepted ADR stands unless the code contradicts it, or the decision produces a concrete failure you can point at (wrong money, lost or overwritten rows, a test that cannot fail, a public endpoint that trusts the client).
+- A documented non-goal is a risk to name, not a feature to specify. Auth, poe.ninja, live preview, and creator sharing stay off the recommendation list.
+- The E2E skip gate was removed in F1. If you still find it, that is a contradiction.
+- Style, naming taste, and framework swaps are out of scope.
+- Do not propose the next product phase. Do not propose restoring F2.
+
+Write one markdown memo with these sections only:
+
+## What holds
+Decisions and boundaries that match the code. One line each. Cite the ADR or file.
+
+## Contradictions
+Doc, test, or comment versus code. File and behavior. Skip the known "ticket flow is not in force yet" handoff lines.
+
+## Holes that can ship wrong
+Wrong money, lost data, or a false claim that the suite locks a behavior. For each: what fails, where, and the smallest check that would expose it. No patch.
+
+## Accepted risks
+Documented non-goals or deferred gaps that are real. What breaks later if they stay. No design.
+
+## Questions Taylor should answer without the repo open
+At most ten. Each question is one decision.
+
+Stop. Taylor compares your memo with the other model's memo.
+```
+
+### 9 — Clean the MVP-phase instructions
+
+Run this only after both prompt 8 memos are back and Taylor has answered them.
+
+```text
+You are cleaning the MVP-phase instructions. The baseline has shipped. F1 is done, including the Vercel deploy and the Neon ci branch in Actions. F2 was removed on purpose. Do not recreate it.
+
+This is a docs and handoff pass. Read docs/AGENTS.md, docs/QA_WORKFLOW.md, docs/PRODUCT.md, docs/AI_DEVELOPMENT.md, docs/BACKLOG.md, docs/F1-CHECKLIST.md, docs/TEST_STRATEGY.md, docs/ARCHITECTURE.md, and .cursor/commands/.
+
+Keep docs/MVP_SPEC.md as the v1 spec. Keep the ADRs. Keep docs/FUTURE_FEATURES.md as the idea list. Do not rename domain concepts. Do not delete tests. Do not implement a feature.
+
+Propose one cut list, then wait. Group it as:
+
+1. Operational tense. Places that still tell a chat to stop because the MVP backlog is current, including command gates and the QA workflow status line. definition-of-done and dev-wrap-up already exist; the workflow status line is behind the repo. The pipeline should include wrap-up where the command already sits.
+2. Handoff weight. Prep prompts 1–7 in docs/AGENTS.md. The rules now live in the docs. Propose removing the pasted prompts from the live handoff. Git history keeps them. Prompts 8–10 stay until Taylor says each one is finished.
+3. Current next step. F1 is done. After this cleanup, new work starts with plan-feature, then ticket-test-plan, implementation, dev-wrap-up, definition-of-done. Prompt 10 still runs before the first epic is filed.
+4. F1 record. F1 is already checked off. docs/F1-CHECKLIST.md still holds the branch split (local, ci, production) and the rule that anyone with the public URL can change production rows. Propose where those lasting facts live, and whether the checklist file stays as a runbook or is retired. Do not invent a follow-on deploy epic.
+5. Baseline note. A short dated note: what v1 includes, https://poe-profit.vercel.app/, and the gaps Taylor is keeping on purpose (API tests on the Prisma fake, format:check is not a gate, no auth, manual prices). Fold in any review findings Taylor accepted as documentation.
+6. Optional, separate, and only if Taylor says yes: one closed Foundation issue on the POE Profit board summarizing Phase 1. It is not a product epic. Do not file it in this proposal.
+
+Leave product code alone unless a comment instructs the next chat to treat the ticket flow as not in force, or still describes the E2E skip gate as waiting on F1. List those comments. Do not fix them in the proposal. If Taylor accepted a code change from the review memos, that change is a separate chat.
+
+After Taylor cuts the list, edit only the accepted items. Show the diff summary and stop. Do not start a roadmap.
+```
+
+### 10 — Phase map
+
+Run this only after prompt 9 is done.
+
+```text
+You are planning the next product phases of POE Profit. The MVP baseline has shipped, including the public deploy at https://poe-profit.vercel.app/. F2 does not exist. You produce a phase map. You do not file GitHub issues, write stories, or edit the repo.
+
+Read docs/PRODUCT.md, docs/MVP_SPEC.md (non-goals and §34), docs/FUTURE_FEATURES.md, docs/DECISIONS.md ADR-009, and the baseline note in the handoff if it is there. Read docs/QA_WORKFLOW.md only so you know plan-feature is the next command after this chat.
+
+An epic is an outcome that closes. A theme is not an epic. "Authentication" does not close. "Sign in with an email account" does. Product areas today are strategies and sessions. A new area exists only when a visitor could recheck it without those pages.
+
+FUTURE_FEATURES.md is input, not a commitment. An FF item can be dropped, split, or moved. A documented non-goal stays out unless you ask Taylor to reopen it, in one line, with the reason.
+
+Write phases as a sequence Taylor could build. For each phase:
+- the player outcome of the phase
+- the epic titles that close inside it
+- one sentence on the problem for each epic
+- what must already be true before that epic starts
+- what you are leaving in a later phase on purpose
+
+Aim for a handful of phases and a handful of epics. A second outcome is a later epic. Do not add epics to fill a template. Do not write acceptance criteria. Do not design schema. Do not propose an F2.
+
+Stop after the map. Taylor cuts phases and epics. Each accepted epic is later split by the plan-feature command in its own chat.
 ```
 

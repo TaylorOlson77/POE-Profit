@@ -2,6 +2,8 @@
 
 Farming strategy profitability tracker for Path of Exile (PoE2-first MVP).
 
+Live demo: [poe-profit.vercel.app](https://poe-profit.vercel.app/). It shows the demo strategy only. There is no login.
+
 ## Requirements
 
 - Node.js 22 (CI and Vercel use **22**)
@@ -67,6 +69,8 @@ Never commit `.env.local`, `.env.neon-production`, or `.env.neon-ci`. The public
 
 Production environment only: `DATABASE_URL` and `DATABASE_URL_UNPOOLED` from the Neon `production` branch. Node.js 22. Do not set `DATABASE_RESET` on Vercel, and do not give Preview those URLs. The build runs `prisma generate` before `next build`. Apply migrations with `npm run db:migrate:deploy:production` rather than during the Vercel build.
 
+The live app is [poe-profit.vercel.app](https://poe-profit.vercel.app/). CI does not test that URL. Playwright on Actions starts `next start` on the runner and talks to the Neon `ci` branch.
+
 ## Testing layers (ADR-014 / ADR-019)
 
 | Layer | Tool       | Location                     | Command            |
@@ -77,7 +81,7 @@ Production environment only: `DATABASE_URL` and `DATABASE_URL_UNPOOLED` from the
 
 Jest does **not** run Playwright specs, and Playwright does **not** run unit/API math cases.
 
-**E2E server:** locally Playwright starts `next dev` (or reuses one already running) against the Neon database in `.env.local`. The demo seed has to be applied (`npm run db:seed`). Restarting the dev server does not reset that database. When the journey groups start, and again when they finish (including after a failure), each group deletes the strategies it owns. The create/update/delete strategy is removed. The seed strategy stays, and any session on it other than the seeded demo session is removed. Strategies created by hand, under other names, stay. In CI the workflow builds, then Playwright starts `next start` against the Neon `ci` branch. Once per job, before Playwright, that branch is migrated and reset to the seed. It is not reset after each test.
+**E2E server:** locally Playwright starts `next dev` (or reuses one already running) against the Neon database in `.env.local`. The demo seed has to be applied (`npm run db:seed`). Restarting the dev server does not reset that database. When the journey groups start, and again when they finish (including after a failure), each group deletes the strategies it owns. The create/update/delete strategy is removed. The seed strategy stays, and any session on it other than the seeded demo session is removed. Strategies created by hand, under other names, stay. In CI the workflow builds on a GitHub-hosted runner, then Playwright starts `next start` on that same machine against the Neon `ci` branch. It uses real Chromium. It does not open the Vercel site. Once per job, before Playwright, that branch is migrated and reset to the seed. It is not reset after each test. A failed test is retried once.
 
 ## CI
 

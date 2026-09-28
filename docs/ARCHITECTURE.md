@@ -187,7 +187,7 @@ CI: lint → typecheck → unit → API → build → E2E (see `TEST_STRATEGY.md
 | --- | --- |
 | DB URL | Pooled `DATABASE_URL` and direct `DATABASE_URL_UNPOOLED`. Local: `.env.local` (Neon `local`). Public: Vercel and `.env.neon-production` (Neon `production`). CI: secrets `CI_DATABASE_URL` / `CI_DATABASE_URL_UNPOOLED` (Neon `ci`). |
 | Never commit | `.env` / credentials |
-| Public demo | Sample data only (ADR-007) |
+| Public demo | [poe-profit.vercel.app](https://poe-profit.vercel.app/) — sample data only (ADR-007) |
 
 ---
 
@@ -205,7 +205,7 @@ See `FUTURE_FEATURES.md` for later product ideas.
 
 ## 11. Next engineering steps (after this doc)
 
-Track progress by checking off [`BACKLOG.md`](./BACKLOG.md) (no foundation GitHub Issues — ADR-009).
+The MVP baseline is deployed at [poe-profit.vercel.app](https://poe-profit.vercel.app/). Steps below are done. New work uses the GitHub Project board (ADR-009).
 
 1. Scaffold Next.js + Prisma + Jest + Playwright tooling (Phase 1 A1–A5).
 2. Write first **contracts** for Strategy CRUD.

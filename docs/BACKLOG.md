@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Status | Active — Phase 1 tracked here; GitHub Issues after MVP baseline |
+| Status | MVP baseline deployed — [poe-profit.vercel.app](https://poe-profit.vercel.app/). New work uses GitHub Issues. |
 | Based on | [`ARCHITECTURE.md`](./ARCHITECTURE.md), [`MVP_SPEC.md`](./MVP_SPEC.md), [`TEST_STRATEGY.md`](./TEST_STRATEGY.md) |
 | Board | [POE Profit](https://github.com/users/TaylorOlson77/projects/1) (ADR-009) — use after baseline app |
 
@@ -192,11 +192,11 @@ Epics B–F below are the rest of the path to MVP. Keep checking them off here. 
 **Labels:** `setup`  
 **Depends on:** D2 (min), preferably E2  
 **AC:**
-- [ ] App deployed to Vercel
-- [ ] Env vars set; migrations applied
-- [ ] Demo/sample data only on public URL (ADR-007)
-- [ ] README deploy notes
-- [ ] CI E2E: secrets `CI_DATABASE_URL` / `CI_DATABASE_URL_UNPOOLED` point at the Neon `ci` branch (not `production` and not `local`). Once per Actions run, before Playwright, reset that database to the seed (migrate, clear application data, seed). Do not reset after each test, and do not reset the local database from CI. The `E2E_DATABASE` skip gate is removed. The seven Playwright journeys pass in that run.
+- [x] App deployed to Vercel — [poe-profit.vercel.app](https://poe-profit.vercel.app/)
+- [x] Env vars set; migrations applied
+- [x] Demo/sample data only on public URL (ADR-007)
+- [x] README deploy notes
+- [x] CI E2E: secrets `CI_DATABASE_URL` / `CI_DATABASE_URL_UNPOOLED` point at the Neon `ci` branch (not `production` and not `local`). Once per Actions run, before Playwright, reset that database to the seed (migrate, clear application data, seed). Do not reset after each test, and do not reset the local database from CI. The `E2E_DATABASE` skip gate is removed. The seven Playwright journeys pass in that run. [Actions run](https://github.com/TaylorOlson77/POE-Profit/actions/runs/36368179561)
 
 ---
 

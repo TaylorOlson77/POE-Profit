@@ -223,7 +223,7 @@ Explicitly **out of scope** for MVP automated testing:
 | --- | --- |
 | Local | Dev loop; unit + API + optional headed E2E |
 | CI | Every pull request. The gates are §10. |
-| Deployed staging / demo | Manual or scheduled smoke against a live URL (portfolio demo) |
+| Deployed demo | [poe-profit.vercel.app](https://poe-profit.vercel.app/). Smoke against this URL is manual. CI does not open it. |
 
 Test data on public demos should be **synthetic**, not personal league economy data (ADR-007).
 
