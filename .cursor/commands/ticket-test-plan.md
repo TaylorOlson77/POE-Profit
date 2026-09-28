@@ -25,7 +25,7 @@ Use `gh` and read the story: number, title, body, labels, and parent.
 
 Rename this chat to `{number}-test-plan`.
 
-Read `docs/ticket-notes/{number}-boundaries.md` when it exists. [`docs/PRODUCT.md`](../../docs/PRODUCT.md) says what that file is. It is a start. Propose coverage from the acceptance criteria, the note, and the cases the note leaves out.
+Read the latest issue comment that starts with `## Boundary notes`, when one exists. [`docs/PRODUCT.md`](../../docs/PRODUCT.md) says what that comment is. It is a start. Propose coverage from the acceptance criteria, the comment, and the cases the comment leaves out.
 
 Stop if the acceptance criteria are not observable, as [`docs/PRODUCT.md`](../../docs/PRODUCT.md) defines. Name the criterion. Do not rewrite the issue. `plan-epic` owns the wording.
 

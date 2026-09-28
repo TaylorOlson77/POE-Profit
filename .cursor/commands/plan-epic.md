@@ -39,8 +39,10 @@ Use `gh`. Create the epic first and label it `epic`. Create each ticket with `--
 
 If the epic list in `PHASES.md` changed and he accepted the change, update that phase in `PHASES.md` so the next run reads the same split.
 
-After the epic issue exists, rename this chat to the epic number, a space, then those same few words.
+After filing, rename this chat to the epic number when an epic issue exists, otherwise the ticket number, then a space and a few words from the title.
 
-Write `docs/ticket-notes/{number}-boundaries.md` the way [`docs/PRODUCT.md`](../../docs/PRODUCT.md) describes. The note is a start for the test command. The boundaries note uses the ticket number, not the epic number.
+Post a comment on the ticket that starts with `## Boundary notes`, the way [`docs/PRODUCT.md`](../../docs/PRODUCT.md) describes. One ticket and no epic: the comment goes on that issue. The note is a start for the test command.
+
+This command starts on `main` and does not create a branch. If it edited docs or commands, name those files at the end. They go on a `docs-short-name` branch, as [`docs/QA_WORKFLOW.md`](../../docs/QA_WORKFLOW.md) describes.
 
 Then stop. No branch, no coverage page, no tests, no product code. The test-plan command names the branch later, from the ticket number, not the epic.
