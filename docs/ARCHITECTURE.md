@@ -189,6 +189,7 @@ CI: lint → typecheck → unit → API contract → build, then the e2e job. Th
 | Concern | Approach |
 | --- | --- |
 | DB URL | Pooled `DATABASE_URL` and direct `DATABASE_URL_UNPOOLED`. Local: `.env.local` (Neon `local`). Public: Vercel and `.env.neon-production` (Neon `production`). CI: secrets `CI_DATABASE_URL` / `CI_DATABASE_URL_UNPOOLED` (Neon `ci`). |
+| Production schema | A Vercel production build runs `prisma migrate deploy` before `next build`. Preview builds and `npm run build` do not. CI migrates the `ci` branch in the e2e job. |
 | Never commit | `.env` / credentials |
 | Public demo | [poe-profit.vercel.app](https://poe-profit.vercel.app/) — sample data only (ADR-007) |
 

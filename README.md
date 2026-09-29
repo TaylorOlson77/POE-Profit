@@ -23,7 +23,8 @@ Open [http://localhost:3000](http://localhost:3000).
 | Script                                 | Purpose                                         |
 | -------------------------------------- | ----------------------------------------------- |
 | `npm run dev`                          | Next.js dev server                              |
-| `npm run build`                        | Production build                                |
+| `npm run build`                        | Generate the Prisma client and build Next.js    |
+| `npm run build:vercel`                 | Vercel build; migrates when `VERCEL_ENV=production` |
 | `npm run start`                        | Serve production build                          |
 | `npm run lint`                         | ESLint                                          |
 | `npm run typecheck`                    | TypeScript (`tsc --noEmit`)                     |
@@ -57,7 +58,7 @@ Three Neon branches. Each has its own pooled `DATABASE_URL` (hostname contains `
 3. `npm run db:migrate:status` — should report all migrations applied.
 4. `npm run db:seed` — demo strategy and session. Re-running replaces only those rows.
 
-`.env.neon-production` holds the public branch URLs and `DATABASE_RESET=production`. `npm run db:migrate:deploy:production` applies migrations there. `npm run db:reset:production` deletes every strategy and session on that branch, then inserts the demo seed. Those scripts do not read `.env.local`.
+`.env.neon-production` holds the public branch URLs and `DATABASE_RESET=production`. `npm run db:migrate:deploy:production` applies migrations there from this machine. A production Vercel build does the same apply before it compiles. `npm run db:reset:production` deletes every strategy and session on that branch, then inserts the demo seed. Those scripts do not read `.env.local`.
 
 Schema lives in [`prisma/schema.prisma`](./prisma/schema.prisma); committed SQL in
 `prisma/migrations/`. Money and quantities are `Decimal(20, 8)` (ADR-015) and
@@ -68,7 +69,7 @@ Never commit `.env.local`, `.env.neon-production`, or `.env.neon-ci`. Anyone wit
 
 ## Deploy (Vercel)
 
-Production environment only: `DATABASE_URL` and `DATABASE_URL_UNPOOLED` from the Neon `production` branch. Node.js 22. Do not set `DATABASE_RESET` on Vercel, and do not give Preview those URLs. The build runs `prisma generate` before `next build`. Apply migrations with `npm run db:migrate:deploy:production` rather than during the Vercel build.
+Production environment only: `DATABASE_URL` and `DATABASE_URL_UNPOOLED` from the Neon `production` branch. Node.js 22. Do not set `DATABASE_RESET` on Vercel, and do not give Preview those URLs. [`vercel.json`](./vercel.json) sets the build command to `npm run build:vercel`. That script runs `prisma migrate deploy` when `VERCEL_ENV` is `production`, then `prisma generate` and `next build`. Preview builds and `npm run build` generate the client and build, and they do not migrate. `npm run db:migrate:deploy:production` remains the way to apply a migration from this machine when a deploy is not running.
 
 The live app is [poe-profit.vercel.app](https://poe-profit.vercel.app/). CI does not test that URL. Playwright on Actions starts `next start` on the runner and talks to the Neon `ci` branch.
 

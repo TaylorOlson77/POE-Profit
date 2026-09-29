@@ -81,6 +81,74 @@ test.describe("Create, update, and delete a strategy", () => {
   });
 });
 
+test.describe("Change the game on a strategy", () => {
+  installUiTestCleanup([{ name: "Game change tablets" }]);
+
+  test("clears the tablet rows only after the game change is confirmed", async ({
+    page,
+  }) => {
+    const strategy = {
+      name: "Game change tablets",
+      game: "Path of Exile 2",
+      description: "Rows clear only after confirm",
+      mapNotes: "T16 waystones",
+      mapCost: "2",
+      lines: [
+        {
+          name: "Expedition Tablet",
+          quantity: "1",
+          unitCost: "100",
+          uses: "10",
+        },
+      ],
+    };
+
+    await openHome(page);
+    await page.getByRole("link", { name: "New strategy" }).click();
+    await fillStrategy(page, strategy);
+
+    await page.getByLabel("Game").selectOption({ label: "Path of Exile 1" });
+    await expect(
+      page.getByText("Switch games and clear the tablets?"),
+    ).toBeVisible();
+
+    await page.getByRole("button", { name: "Cancel" }).click();
+    await expect(page.getByLabel("Game")).toHaveValue("POE2");
+    await expect(page.getByLabel("Tablet name 1")).toHaveValue(
+      "Expedition Tablet",
+    );
+    await expect(page.getByLabel("Name", { exact: true })).toHaveValue(
+      strategy.name,
+    );
+    await expect(page.getByLabel("Description")).toHaveValue(
+      strategy.description,
+    );
+    await expect(page.getByLabel("Waystone notes")).toHaveValue(
+      strategy.mapNotes,
+    );
+    await expect(page.getByLabel("Waystone cost (chaos)")).toHaveValue(
+      strategy.mapCost,
+    );
+
+    await page.getByLabel("Game").selectOption({ label: "Path of Exile 1" });
+    await page.getByRole("button", { name: "Confirm" }).click();
+
+    await expect(page.getByLabel("Game")).toHaveValue("POE1");
+    await expect(page.getByLabel("Name", { exact: true })).toHaveValue(
+      strategy.name,
+    );
+    await expect(page.getByLabel("Description")).toHaveValue(
+      strategy.description,
+    );
+    await expect(page.getByLabel("Map notes")).toHaveValue(strategy.mapNotes);
+    await expect(page.getByLabel("Map cost (chaos)")).toHaveValue(
+      strategy.mapCost,
+    );
+    await expect(page.getByLabel("Tablet name 1")).toHaveCount(0);
+    await expect(page.getByLabel("Scarab name 1")).toHaveCount(0);
+  });
+});
+
 test.describe("Delete a strategy that still has sessions", () => {
   installUiTestCleanup([strategyWithSessions]);
 
