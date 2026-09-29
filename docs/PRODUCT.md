@@ -116,6 +116,10 @@ After the issue is filed, `plan-epic` posts a comment that starts with `## Bound
 
 The comment holds the decisions and examples already discussed: the formula, the defaults, a second quantity, the empty row, the failure cases. It is a start for `ticket-test-plan`. It is not the test list. That command reads the latest comment with that heading, then still proposes cases the comment does not mention. Taylor still cuts the list.
 
+When a decision changes, edit that comment and keep the heading. A second comment that starts with `## Boundary notes` is the one the test command reads, so the older decisions would drop out. If Taylor changes an acceptance criterion in that chat, update the bullet on the issue too.
+
+The epic title is the outcome. It does not start with `EPIC -`. The `epic` label marks it. A ticket filed alone can gain a sibling later. File the epic then, and set the parent on the ticket that already exists.
+
 Four places hold the work:
 
 | Place | Holds |

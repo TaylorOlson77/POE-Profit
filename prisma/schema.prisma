@@ -82,7 +82,11 @@ model StrategyEnhancementLine {
   quantity      Decimal @db.Decimal(20, 8)
   unitCostChaos Decimal @db.Decimal(20, 8)
 
-  /// Calculated: quantity × unitCostChaos.
+  /// Maps one purchase lasts. Default 1 so a row saved before this column
+  /// existed keeps quantity × unit cost until the player sets a count and saves.
+  uses Int @default(1)
+
+  /// Calculated: (quantity × unitCostChaos) / uses.
   lineTotalChaos Decimal @db.Decimal(20, 8)
 
   /// Stable display order within a strategy.

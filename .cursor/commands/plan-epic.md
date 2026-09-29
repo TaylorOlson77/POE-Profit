@@ -35,14 +35,14 @@ Wait.
 
 File only after he accepts the tickets. If he changes the split, file his.
 
-Use `gh`. Two or more tickets: create the epic first and label it `epic`. Create each ticket with `--parent` set to that epic, so GitHub records the sub-issue. Do not write `Part of #` in the body. One ticket and no siblings: file that one issue, and skip the epic label and the parent. Add every ticket to the POE Profit board, Backlog column. When an epic issue exists, add it to Backlog too, and leave it there. Do not move the epic through Ready, In Progress, In Review, or Testing. Only tickets leave Backlog for those columns. If the Backlog column is missing, ask.
+Use `gh`. Create the epic first and label it `epic`. The title is the outcome. Do not prefix it with `EPIC -`. Create each ticket with `--parent` set to that epic, so GitHub records the sub-issue. Do not write `Part of #` in the body. One ticket and no siblings: file that one issue, and skip the epic label and the parent. If a second story is accepted later, file the epic then and set the parent on the ticket that already exists. Add the issues to the POE Profit board, Backlog column. If that column is missing, ask. Leave them in Backlog.
 
 If the epic list in `PHASES.md` changed and he accepted the change, update that phase in `PHASES.md` so the next run reads the same split.
 
 After filing, rename this chat to the epic number when an epic issue exists, otherwise the ticket number, then a space and a few words from the title.
 
-Post a comment on the ticket that starts with `## Boundary notes`, the way [`docs/PRODUCT.md`](../../docs/PRODUCT.md) describes. One ticket and no epic: the comment goes on that issue. The note is a start for the test command.
+Post a comment on the ticket that starts with `## Boundary notes`, the way [`docs/PRODUCT.md`](../../docs/PRODUCT.md) describes. One ticket and no epic: the comment goes on that issue. The note is a start for the test command. When a decision changes, edit that comment. Do not post a second one with the same heading.
 
-This command starts on `main` and does not create a branch. If it edited docs or commands, name those files at the end. They go on a `docs-short-name` branch, as [`docs/QA_WORKFLOW.md`](../../docs/QA_WORKFLOW.md) describes.
+This command starts on `main` and does not create a branch. If it edited docs or commands, name those files at the end. They may ride on the ticket branch, as [`docs/QA_WORKFLOW.md`](../../docs/QA_WORKFLOW.md) describes.
 
 Then stop. No branch, no coverage page, no tests, no product code. The test-plan command names the branch later, from the ticket number, not the epic.

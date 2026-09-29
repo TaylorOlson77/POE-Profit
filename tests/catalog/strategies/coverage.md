@@ -19,18 +19,21 @@ The create, update, and delete lines for `POC Expedition Tablet Farming` are one
 - [x] rejects a sort order above the database integer limit — [`strategy contracts`](../../../src/contracts/strategies.test.ts)
 - [x] rejects a calculated cost that does not fit the money column — [`POST /api/strategies`](../../../tests/api/strategies.test.ts)
 - [x] rejects a name or note past its length cap — [`text contracts`](../../../src/contracts/text.test.ts)
+- [x] rejects a use count that is not a whole number of at least 1 — [`POST /api/strategies`](../../../tests/api/strategies.test.ts)
 
 ### Cost
 
 - [x] stores the line totals and the per-map cost — [`POST /api/strategies`](../../../tests/api/strategies.test.ts)
 - [x] keeps a total the engine left past two places — [`POST /api/strategies`](../../../tests/api/strategies.test.ts)
-- [x] per-map cost is waystone plus quantity × unit cost — [`calculateStrategyCosts`](../../../src/domain/calc/index.test.ts)
+- [x] per-map cost is waystone plus quantity × unit cost divided by uses — [`calculateStrategyCosts`](../../../src/domain/calc/index.test.ts)
 - [x] no tablets leaves the waystone cost — [`calculateStrategyCosts`](../../../src/domain/calc/index.test.ts)
 
 ### Form
 
-- [x] drops blank tablet rows — [`buildStrategyWriteBody`](../../../src/ui/strategyForm.test.ts)
+- [x] drops a tablet row that has only the default uses — [`buildStrategyWriteBody`](../../../src/ui/strategyForm.test.ts)
 - [x] omits modifier notes on a PoE1 strategy — [`buildStrategyWriteBody`](../../../src/ui/strategyForm.test.ts)
+- [x] a PoE1 strategy does not show uses — [`strategyLabels`](../../../src/ui/strategyLabels.test.ts)
+- [x] saves a PoE1 line at 1 use — [`buildStrategyWriteBody`](../../../src/ui/strategyForm.test.ts)
 - [x] points a validation error at the tablet row on the form — [`formDetailPath`](../../../src/ui/strategyForm.test.ts)
 
 ## Update a strategy

@@ -11,7 +11,7 @@ import { calculateSession, calculateStrategyCosts } from "../src/domain/calc";
  * engine call is obvious at a glance):
  *
  * Strategy (per map):
- *   waystone 2 + expedition tablet 1×7 + temple tablet 1×1 = 10 chaos/map
+ *   waystone 2 + expedition tablet 1×7/1 use + temple tablet 1×1/1 use = 10 chaos/map
  *
  * Session (40 maps, extrapolated 10 maps / 20 min = 2 min per map):
  *   map investment      40 × 2                   =    80
@@ -40,6 +40,7 @@ const STRATEGY_ENHANCEMENTS = [
     modifierNotes: "+% expedition artifact quantity",
     quantity: "1",
     unitCostChaos: "7",
+    uses: 1,
     sortOrder: 0,
   },
   {
@@ -47,6 +48,7 @@ const STRATEGY_ENHANCEMENTS = [
     modifierNotes: "+% monster pack size",
     quantity: "1",
     unitCostChaos: "1",
+    uses: 1,
     sortOrder: 1,
   },
 ] as const;
@@ -109,6 +111,7 @@ async function writeDemoData(prisma: PrismaClient): Promise<void> {
     enhancementLines: STRATEGY_ENHANCEMENTS.map((line) => ({
       quantity: line.quantity,
       unitCostChaos: line.unitCostChaos,
+      uses: line.uses,
     })),
   });
 
@@ -152,6 +155,7 @@ async function writeDemoData(prisma: PrismaClient): Promise<void> {
           modifierNotes: line.modifierNotes,
           quantity: line.quantity,
           unitCostChaos: line.unitCostChaos,
+          uses: line.uses,
           lineTotalChaos:
             strategyCosts.enhancementLineTotals[index]!.toString(),
           sortOrder: line.sortOrder,

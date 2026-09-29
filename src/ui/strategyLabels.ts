@@ -10,6 +10,7 @@ export type StrategyLabels = {
   enhancement: string;
   enhancementSingular: string;
   showModifierNotes: boolean;
+  showUses: boolean;
 };
 
 const POE2_LABELS: StrategyLabels = {
@@ -22,6 +23,7 @@ const POE2_LABELS: StrategyLabels = {
   enhancement: "Tablets",
   enhancementSingular: "Tablet",
   showModifierNotes: true,
+  showUses: true,
 };
 
 const POE1_LABELS: StrategyLabels = {
@@ -34,6 +36,7 @@ const POE1_LABELS: StrategyLabels = {
   enhancement: "Scarabs",
   enhancementSingular: "Scarab",
   showModifierNotes: false,
+  showUses: false,
 };
 
 export function strategyLabels(game: Game): StrategyLabels {

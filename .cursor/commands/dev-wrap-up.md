@@ -4,15 +4,16 @@ description: Commit a feature branch, propose doc updates the change made stale,
 
 # Dev wrap-up
 
-You are wrapping up one story after implementation. Taylor invokes this on the feature branch.
+You are wrapping up one story in the chat that already ran `ticket-test-plan` and the implementation. Taylor invokes this on the feature branch. Stay in that chat. [`definition-of-done`](./definition-of-done.md) is the fresh chat, after the pull request is open.
 
-Read [`docs/QA_WORKFLOW.md`](../../docs/QA_WORKFLOW.md). This step sits after implementation and before [`definition-of-done`](./definition-of-done.md).
+Do not read [`docs/QA_WORKFLOW.md`](../../docs/QA_WORKFLOW.md) or [`docs/TEST_STRATEGY.md`](../../docs/TEST_STRATEGY.md) again. This chat already read them for the test plan.
 
-Read and follow:
+If this chat did not run `ticket-test-plan`, stop and say so.
 
-- [`docs/QA_WORKFLOW.md`](../../docs/QA_WORKFLOW.md) — the pipeline and the branch
-- [`docs/TEST_STRATEGY.md`](../../docs/TEST_STRATEGY.md) §10 — the implemented gates. `format:check` is not a gate.
-- [`docs/AGENTS.md`](../../docs/AGENTS.md) — the Commits section, the PowerShell commit note, and the handoff notes a chat keeps current
+Read:
+
+- The Commits section and the PowerShell commit note in [`docs/AGENTS.md`](../../docs/AGENTS.md)
+- The diff on this branch
 
 Do not edit [`docs/QA_WORKFLOW.md`](../../docs/QA_WORKFLOW.md), [`docs/TEST_STRATEGY.md`](../../docs/TEST_STRATEGY.md), [`docs/PRODUCT.md`](../../docs/PRODUCT.md), [`docs/DECISIONS.md`](../../docs/DECISIONS.md), or [`tests/catalog/README.md`](../../tests/catalog/README.md) to match the code.
 
@@ -20,7 +21,7 @@ If this run hit a pain point in the command, name it and the one-line change. Wa
 
 ## Notes
 
-Read the current docs and compare them to this branch. That is everything in [`docs/`](../../docs/), including the gitignored study notes, and the catalog rules in [`tests/catalog/README.md`](../../tests/catalog/README.md).
+From the diff, open the docs that describe behavior this branch changed, including a gitignored study note and [`tests/catalog/README.md`](../../tests/catalog/README.md) when the diff touches them. Skip a doc the diff does not affect. This pass is for stale sentences. It is not a second read of the pipeline.
 
 Propose a change only when this work makes a current doc wrong or incomplete. Show the edits and wait. After Taylor accepts, edit those files. If the branch does not change what they say, say so and continue.
 
@@ -38,7 +39,15 @@ Name the commit the way the Commits section in [`docs/AGENTS.md`](../../docs/AGE
 
 ## Gates, then stop
 
-Run the implemented gates in [`docs/TEST_STRATEGY.md`](../../docs/TEST_STRATEGY.md) §10 locally, in that order. This repo runs them as [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml). If a gate fails, stop. Do not push.
+Run these gates locally, in this order. [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml) is that list. `format:check` is not a gate. If a gate fails, stop. Do not push.
+
+1. `npm run lint`
+2. `npm run typecheck`
+3. `npm test`
+4. `npm run test:api`
+5. `npm run build`
+6. `npm run test:api:db`
+7. `npm run test:e2e`
 
 ## Pull request, then stop
 

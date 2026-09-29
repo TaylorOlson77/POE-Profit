@@ -7,6 +7,7 @@ type StoredLine = {
   modifierNotes: string | null;
   quantity: string;
   unitCostChaos: string;
+  uses: number;
   lineTotalChaos: string;
   sortOrder: number;
 };
@@ -30,6 +31,7 @@ type LineCreate = {
   modifierNotes?: string | null;
   quantity: { toString(): string };
   unitCostChaos: { toString(): string };
+  uses: number;
   lineTotalChaos: { toString(): string };
   sortOrder: number;
 };
@@ -70,6 +72,7 @@ function asLine(line: LineCreate): StoredLine {
     modifierNotes: line.modifierNotes ?? null,
     quantity: line.quantity.toString(),
     unitCostChaos: line.unitCostChaos.toString(),
+    uses: line.uses,
     lineTotalChaos: line.lineTotalChaos.toString(),
     sortOrder: line.sortOrder,
   };
@@ -95,6 +98,7 @@ function toRow(strategy: StoredStrategy) {
         modifierNotes: line.modifierNotes,
         quantity: new Decimal(line.quantity),
         unitCostChaos: new Decimal(line.unitCostChaos),
+        uses: line.uses,
         lineTotalChaos: new Decimal(line.lineTotalChaos),
         sortOrder: line.sortOrder,
       })),
