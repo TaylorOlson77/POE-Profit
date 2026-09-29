@@ -133,6 +133,7 @@ A build chat does not read this list. `ticket-test-plan` names what that chat re
 - `prisma` / `@prisma/client` are **pinned to 6.19.0**. Do not run `npm install prisma@latest` — it pulls 7.x/8.x release candidates and previously corrupted `node_modules` with hanging installs.
 - This repo blocks postinstall scripts by default. New packages with binaries (`esbuild`, Prisma engines) must be listed in `package.json#allowScripts` and reinstalled, or their binaries never land.
 - Every `db:*` script is wrapped in `dotenv -e .env.local --`. A bare `npx prisma validate` fails with `Environment variable not found: DATABASE_URL_UNPOOLED` — that is a missing env var, **not** schema drift. Use `npm run db:migrate:status` to check drift.
+- Production schema changes apply in the Vercel production build. `vercel.json` runs `npm run build:vercel`, which calls `prisma migrate deploy` only when `VERCEL_ENV=production`. `npm run build` does not migrate. CI still migrates the Neon `ci` branch in the e2e job. `npm run db:migrate:deploy:production` is the manual apply from this machine.
 - `package.json#prisma` (the seed hook) prints a Prisma 7 deprecation warning on every command. Harmless; migrate to `prisma.config.ts` when the version is bumped.
 - `npx prisma format` reformats `schema.prisma` but does not change semantics — re-run `db:migrate:status` after to confirm.
 

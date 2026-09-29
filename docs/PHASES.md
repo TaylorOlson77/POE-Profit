@@ -91,9 +91,9 @@ Must already be true: deleting a strategy with sessions returns 409. Left for la
 
 Do not start this phase while phases 1–3 are open. Phase 4 can overlap. Inside this phase, `plan-epic` follows the epic order below.
 
-**Epic: Apply a release's schema changes to the live database.** Accounts cannot reach the public site while production migrations stay manual.
+**Epic: Apply a release's schema changes to the live database.** Accounts cannot reach the public site while a schema change and the app that reads it can ship on different schedules.
 
-Must already be true: the Neon production branch is the live database. Left for later: migrating on every Vercel build with no release step.
+Must already be true: the Neon production branch is the live database, and a production Vercel build runs `prisma migrate deploy` before `next build`. Left for later: a release step that is not every production build.
 
 **Epic: Sign in with an email account.** A visitor cannot come back to their own strategies.
 
