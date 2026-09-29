@@ -582,6 +582,34 @@ The chaos-per-divine number is a lookup. The player should not have to leave the
 
 ---
 
+## FF-026: Number fields refuse letters
+
+| Field | Value |
+| --- | --- |
+| Status | Idea |
+| Horizon | Unknown |
+| Date | 2026-09-29 |
+
+### Summary
+
+A chaos, quantity, or count field does not accept letters. Typing `abc` into waystone cost, or map cost, does not put those characters in the field. The same limit covers quantity, unit cost, and uses on the strategy form, and the matching number fields on the session form. Digits still belong. A decimal point still belongs where that field allows a decimal. The save-time rejection of a bad decimal stays.
+
+### Why
+
+Those boxes take letters today. The player finds out when they save.
+
+### Risks
+
+- Refusing a decimal point, or a minus while the player is still typing, blocks a real amount.
+- Stripping letters out of a paste can hide what the player meant to enter.
+
+### Open questions
+
+1. Does the field refuse the key, or drop letters from a paste?
+2. Is a leading minus allowed while typing?
+
+---
+
 ## Folded on 2026-09-28
 
 Do not bring these back as new ideas unless the reason below is wrong.
@@ -623,3 +651,4 @@ Do not bring these back as new ideas unless the reason below is wrong.
 | FF-023 | Setup costs that are not tablets or scarabs | Idea |
 | FF-024 | Show a large list cost in divines | Idea |
 | FF-025 | Fill the divine rate from poe.ninja | Idea |
+| FF-026 | Number fields refuse letters | Idea |

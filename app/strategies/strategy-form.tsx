@@ -23,6 +23,8 @@ import {
   DEFAULT_TABLET_USES,
   detailsFromZod,
   formDetailPath,
+  gameChangeNeedsConfirm,
+  gameChangePrompt,
   type EnhancementLineDraft,
 } from "@/src/ui/strategyForm";
 import { strategyLabels } from "@/src/ui/strategyLabels";
@@ -91,6 +93,7 @@ export function StrategyForm(
   const [loadError, setLoadError] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [game, setGame] = useState<Game>("POE2");
+  const [pendingGame, setPendingGame] = useState<Game | null>(null);
   const [description, setDescription] = useState("");
   const [mapNotes, setMapNotes] = useState("");
   const [mapUnitCostChaos, setMapUnitCostChaos] = useState("");
@@ -122,6 +125,7 @@ export function StrategyForm(
       const strategy = result.data;
       setName(strategy.name);
       setGame(strategy.game);
+      setPendingGame(null);
       setDescription(strategy.description);
       setMapNotes(strategy.mapNotes ?? "");
       setMapUnitCostChaos(strategy.mapUnitCostChaos);
@@ -140,6 +144,7 @@ export function StrategyForm(
   function applySaved(strategy: Strategy) {
     setName(strategy.name);
     setGame(strategy.game);
+    setPendingGame(null);
     setDescription(strategy.description);
     setMapNotes(strategy.mapNotes ?? "");
     setMapUnitCostChaos(strategy.mapUnitCostChaos);
@@ -276,16 +281,45 @@ export function StrategyForm(
           value={game}
           onChange={(event) => {
             const next = event.target.value;
-            if (next !== "POE2" && next !== "POE1") {
+            if ((next !== "POE2" && next !== "POE1") || next === game) {
               return;
             }
             clearNotices();
-            setGame(next);
+            if (!gameChangeNeedsConfirm(lines)) {
+              setPendingGame(null);
+              setGame(next);
+              return;
+            }
+            setPendingGame(next);
           }}
         >
           <option value="POE2">Path of Exile 2</option>
           <option value="POE1">Path of Exile 1</option>
         </select>
+        {pendingGame !== null ? (
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            <p className="text-sm">{gameChangePrompt(game)}</p>
+            <button
+              type="button"
+              className={buttonClass}
+              onClick={() => {
+                clearNotices();
+                setGame(pendingGame);
+                setLines([]);
+                setPendingGame(null);
+              }}
+            >
+              Confirm
+            </button>
+            <button
+              type="button"
+              className={buttonClass}
+              onClick={() => setPendingGame(null)}
+            >
+              Cancel
+            </button>
+          </div>
+        ) : null}
         {messageFor(details, "game") ? (
           <p className="mt-1 text-sm">{messageFor(details, "game")}</p>
         ) : null}

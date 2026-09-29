@@ -84,7 +84,8 @@ New work starts with `plan-epic` in a fresh chat, once per epic, on the current 
 - Display money with `formatChaos` (`roundForDisplay` + `c`). No `Number()`.
 - Delete asks in the row. **204** removes it. **409** and **404** show `error.message`.
 - New strategies default to `POE2`. Labels follow `game`: Waystone / Tablets for PoE2, Map / Scarabs for PoE1. Modifier notes are sent only for PoE2.
-- Unit tests cover `buildStrategyWriteBody` and `formDetailPath` in `src/ui/strategyForm.test.ts`. Those transforms never reach the API (blank rows dropped, PoE1 notes omitted, Zod line indexes mapped back to the form row). `detailsFromZod` only joins Zod paths; the validation rules stay in the contract tests. The create/edit/delete browser journey is E3.
+- Switching games asks before it clears tablet or scarab rows. The prompt is `Switch games and clear the tablets?` or `Switch games and clear the scarabs?`. Confirm removes the rows and changes the game. Cancel leaves both. A row with no name, quantity, or unit cost does not ask. Name, description, map notes, and map cost stay.
+- Unit tests cover `buildStrategyWriteBody`, `formDetailPath`, `gameChangeNeedsConfirm`, and `gameChangePrompt` in `src/ui/strategyForm.test.ts`. Those transforms never reach the API (blank rows dropped, PoE1 notes omitted, Zod line indexes mapped back to the form row). `detailsFromZod` only joins Zod paths; the validation rules stay in the contract tests. The create/edit/delete browser journey is E3.
 
 ### D1 decisions (locked unless Taylor reopens them)
 
@@ -133,12 +134,14 @@ A build chat does not read this list. `ticket-test-plan` names what that chat re
 - `prisma` / `@prisma/client` are **pinned to 6.19.0**. Do not run `npm install prisma@latest` — it pulls 7.x/8.x release candidates and previously corrupted `node_modules` with hanging installs.
 - This repo blocks postinstall scripts by default. New packages with binaries (`esbuild`, Prisma engines) must be listed in `package.json#allowScripts` and reinstalled, or their binaries never land.
 - Every `db:*` script is wrapped in `dotenv -e .env.local --`. A bare `npx prisma validate` fails with `Environment variable not found: DATABASE_URL_UNPOOLED` — that is a missing env var, **not** schema drift. Use `npm run db:migrate:status` to check drift.
+- Production schema changes apply in the Vercel production build. `vercel.json` runs `npm run build:vercel`, which calls `prisma migrate deploy` only when `VERCEL_ENV=production`. `npm run build` does not migrate. CI still migrates the Neon `ci` branch in the e2e job. `npm run db:migrate:deploy:production` is the manual apply from this machine.
 - `package.json#prisma` (the seed hook) prints a Prisma 7 deprecation warning on every command. Harmless; migrate to `prisma.config.ts` when the version is bumped.
 - `npx prisma format` reformats `schema.prisma` but does not change semantics — re-run `db:migrate:status` after to confirm.
 
 **Next.js dev server**
 
 - A second `npm run dev` exits with code 1 when one is already running. The message names the existing PID and `http://localhost:3000`. Use that server. Local Playwright sets `reuseExistingServer`, so `npm run test:e2e` attaches to it.
+- `npm run build` runs `prisma generate` first. On Windows that rewrite fails with `EPERM` while `next dev` has `query_engine-windows.dll.node` open. The build keeps the engine already on disk and continues. After a Prisma upgrade, stop the dev server and run `npm run db:generate`.
 
 **Playwright browsers**
 
