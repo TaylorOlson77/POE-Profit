@@ -19,6 +19,15 @@ When this session disagrees with a rule in `docs/QA_WORKFLOW.md`, propose a date
 
 If this run hit a pain point in the command, name it and the one-line change. Wait. After Taylor accepts, add that line here.
 
+Learned on 2026-09-28, from the tablet-uses cut:
+
+- The propose half does not edit files. Plan mode fits it. Switch to agent after the cut.
+- If this session cannot rename the chat, say the title `{number}-test-plan` and continue.
+- Name the existing tests whose assertions change, including a test whose coverage sentence stays. That list stays in the chat.
+- Keep a browser sentence when the screen still shows that outcome. A new field and a new number go in the steps.
+- A decision Taylor changes here updates the issue bullet and the existing boundary comment. Do not post a second `## Boundary notes` comment.
+- A sibling story is a draft until Taylor accepts the title and the acceptance criteria. Then file it under the epic. It does not go on this branch.
+
 ## Read the ticket, then stop
 
 Use `gh` and read the story: number, title, body, labels, and parent.
@@ -27,7 +36,7 @@ Rename this chat to `{number}-test-plan`.
 
 Read the latest issue comment that starts with `## Boundary notes`, when one exists. [`docs/PRODUCT.md`](../../docs/PRODUCT.md) says what that comment is. It is a start. Propose coverage from the acceptance criteria, the comment, and the cases the comment leaves out.
 
-Stop if the acceptance criteria are not observable, as [`docs/PRODUCT.md`](../../docs/PRODUCT.md) defines. Name the criterion. Do not rewrite the issue. `plan-epic` owns the wording.
+Stop if the acceptance criteria are not observable, as [`docs/PRODUCT.md`](../../docs/PRODUCT.md) defines. Name the criterion. Do not rewrite the issue on your own. `plan-epic` owns the first wording. When Taylor changes a decision in this chat, update that bullet and edit the existing boundary comment.
 
 The epic does not get a branch. If this issue is the epic, ask which story.
 

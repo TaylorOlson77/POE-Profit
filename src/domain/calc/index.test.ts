@@ -77,31 +77,71 @@ describe("IEEE float contrast (why decimal.js)", () => {
 });
 
 describe("calculateStrategyCosts", () => {
-  it("multiplies each enhancement quantity by unit cost, then adds map cost", () => {
-    // Guard: 2×100 + 1×10 = 210, plus map 2 = 212. Not 2+100+10 = 112.
+  it("per-map cost is waystone plus quantity × unit cost divided by uses", () => {
+    // 2×100/10 + 1×10/10 + waystone 2 = 23. Not the undivided 212.
     const result = calculateStrategyCosts({
       mapUnitCostChaos: "2",
       enhancementLines: [
-        { quantity: "2", unitCostChaos: "100" },
-        { quantity: "1", unitCostChaos: "10" },
+        { quantity: "2", unitCostChaos: "100", uses: 10 },
+        { quantity: "1", unitCostChaos: "10", uses: 10 },
       ],
     });
 
     expect(result.enhancementLineTotals).toHaveLength(2);
-    expectDecimal(result.enhancementLineTotals[0], "200");
-    expectDecimal(result.enhancementLineTotals[1], "10");
-    expectDecimal(result.estimatedCostPerMapChaos, "212");
-    expect(
-      result.estimatedCostPerMapChaos.equals(new Decimal("2").plus("100").plus("10")),
-    ).toBe(false);
+    expectDecimal(result.enhancementLineTotals[0], "20");
+    expectDecimal(result.enhancementLineTotals[1], "1");
+    expectDecimal(result.estimatedCostPerMapChaos, "23");
+    expect(result.estimatedCostPerMapChaos.equals(new Decimal("212"))).toBe(
+      false,
+    );
   });
 
-  it("matches the seed strategy: waystone 2 + 1×7 + 1×1 = 10c/map", () => {
+  it("charges 10c of a 100c tablet that lasts 10 uses", () => {
+    const result = calculateStrategyCosts({
+      mapUnitCostChaos: "2",
+      enhancementLines: [{ quantity: "1", unitCostChaos: "100", uses: 10 }],
+    });
+
+    expectDecimal(result.enhancementLineTotals[0], "10");
+    expectDecimal(result.estimatedCostPerMapChaos, "12");
+  });
+
+  it("charges 20c when that tablet lasts 5 uses", () => {
+    const result = calculateStrategyCosts({
+      mapUnitCostChaos: "2",
+      enhancementLines: [{ quantity: "1", unitCostChaos: "100", uses: 5 }],
+    });
+
+    expectDecimal(result.enhancementLineTotals[0], "20");
+    expectDecimal(result.estimatedCostPerMapChaos, "22");
+  });
+
+  it("multiplies quantity before dividing by uses", () => {
+    const result = calculateStrategyCosts({
+      mapUnitCostChaos: "2",
+      enhancementLines: [{ quantity: "2", unitCostChaos: "100", uses: 10 }],
+    });
+
+    expectDecimal(result.enhancementLineTotals[0], "20");
+    expectDecimal(result.estimatedCostPerMapChaos, "22");
+  });
+
+  it("leaves quantity times unit cost when uses is 1", () => {
+    const result = calculateStrategyCosts({
+      mapUnitCostChaos: "2",
+      enhancementLines: [{ quantity: "1", unitCostChaos: "100", uses: 1 }],
+    });
+
+    expectDecimal(result.enhancementLineTotals[0], "100");
+    expectDecimal(result.estimatedCostPerMapChaos, "102");
+  });
+
+  it("matches the seed strategy: waystone 2 + 1×7 + 1×1 at 1 use = 10c/map", () => {
     const result = calculateStrategyCosts({
       mapUnitCostChaos: "2",
       enhancementLines: [
-        { quantity: "1", unitCostChaos: "7" },
-        { quantity: "1", unitCostChaos: "1" },
+        { quantity: "1", unitCostChaos: "7", uses: 1 },
+        { quantity: "1", unitCostChaos: "1", uses: 1 },
       ],
     });
 

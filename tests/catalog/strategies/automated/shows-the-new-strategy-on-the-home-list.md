@@ -7,8 +7,9 @@ A saved strategy shows on the home list, and the cost per waystone is the one th
 Given I am on the home page
 
 When I open New strategy, enter [this strategy](#data), and save
+- Each new tablet shows 10 uses
 
-Then I am back on the home page, and that row shows Path of Exile 2 and `Estimated cost per waystone: 212c`
+Then I am back on the home page, and that row shows Path of Exile 2 and `Estimated cost per waystone: 23c`
 
 ## Data
 
@@ -22,7 +23,9 @@ Then I am back on the home page, and that row shows Path of Exile 2 and `Estimat
 | Tablet name | `Expedition Tablet` |
 | Quantity per map | `2` |
 | Unit cost (chaos) | `100` |
+| Uses | `10` |
 | Tablet name | `Temple Tablet` |
 | Modifier notes | `remnants` |
 | Quantity per map | `1` |
 | Unit cost (chaos) | `10` |
+| Uses | `10` |

@@ -17,11 +17,13 @@ export const crudStrategy = {
       quantity: "2",
       unitCost: "100",
       modifierNotes: "remnants",
+      uses: "10",
     },
     {
       name: "Temple Tablet",
       quantity: "1",
       unitCost: "10",
+      uses: "10",
     },
   ],
 } as const;

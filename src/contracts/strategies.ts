@@ -29,6 +29,8 @@ import { DescriptionSchema, NameSchema, OptionalNotesSchema } from "./text";
 /** Soft UI target ~5 enhancement lines; hard API cap against abuse (no auth). */
 export const MAX_STRATEGY_ENHANCEMENT_LINES = 25;
 
+const USES_COUNT_MESSAGE = "Uses must be a whole number of at least 1";
+
 /** PoE2-first UI; domain allows PoE1 later (ADR-002). */
 export const GameSchema = z.enum(["POE2", "POE1"]);
 
@@ -45,6 +47,12 @@ export const StrategyEnhancementLineInputSchema = z.object({
   /** Per-map quantity. */
   quantity: DecimalStringSchema,
   unitCostChaos: DecimalStringSchema,
+  /** Maps one purchase lasts. Whole number of at least 1, within int4. */
+  uses: z
+    .number({ error: USES_COUNT_MESSAGE })
+    .int({ error: USES_COUNT_MESSAGE })
+    .min(1, { error: USES_COUNT_MESSAGE })
+    .max(POSTGRES_INT_MAX, { error: USES_COUNT_MESSAGE }),
   sortOrder: z.number().int().nonnegative().max(POSTGRES_INT_MAX).optional(),
 });
 
@@ -56,7 +64,7 @@ export type StrategyEnhancementLineInput = z.infer<
 export const StrategyEnhancementLineSchema =
   StrategyEnhancementLineInputSchema.extend({
     id: z.string().min(1),
-    /** quantity × unitCostChaos (Chaos); compute-on-write via calc engine. */
+    /** (quantity × unitCostChaos) / uses (Chaos); compute-on-write via calc engine. */
     lineTotalChaos: DecimalStringSchema,
   });
 
@@ -82,7 +90,8 @@ export const StrategySchema = z.object({
     .max(MAX_STRATEGY_ENHANCEMENT_LINES),
   /**
    * mapUnitCostChaos + sum(enhancement lineTotals).
-   * Each lineTotalChaos = quantity × unitCostChaos (e.g. 2×100 + 1×10 = 210).
+   * Each lineTotalChaos = (quantity × unitCostChaos) / uses.
+   * Uses of 1 leaves quantity × unit cost (e.g. 2×100/1 + 1×10/1 = 210).
    * Calculated — not user-edited (ADR-008 / ADR-018 / ADR-020).
    */
   estimatedCostPerMapChaos: DecimalStringSchema,

@@ -53,6 +53,7 @@ For MVP v1 we will:
 **Owns**
 
 - Line totals (`quantity × unitValue`)
+- Strategy enhancement charge (`(quantity × unit cost) / uses`)
 - Investment / revenue sums
 - Profit, ROI, duration-derived rates
 - Duration methods: observed, extrapolated, manual → effective duration

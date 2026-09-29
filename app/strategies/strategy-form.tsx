@@ -20,6 +20,7 @@ import {
 import { formatChaos } from "@/src/ui/formatChaos";
 import {
   buildStrategyWriteBody,
+  DEFAULT_TABLET_USES,
   detailsFromZod,
   formDetailPath,
   type EnhancementLineDraft,
@@ -49,17 +50,19 @@ function linesFromStrategy(strategy: Strategy): LineState[] {
     quantity: line.quantity,
     unitCostChaos: line.unitCostChaos,
     modifierNotes: line.modifierNotes ?? "",
+    uses: String(line.uses),
     savedLineTotalChaos: line.lineTotalChaos,
   }));
 }
 
-function emptyLine(): LineState {
+function emptyLine(game: Game): LineState {
   return {
     key: crypto.randomUUID(),
     name: "",
     quantity: "",
     unitCostChaos: "",
     modifierNotes: "",
+    uses: game === "POE2" ? DEFAULT_TABLET_USES : "1",
     savedLineTotalChaos: null,
   };
 }
@@ -72,7 +75,7 @@ function messageFor(
 }
 
 function isShownOnField(path: string): boolean {
-  return /^(name|game|description|mapNotes|mapUnitCostChaos|enhancementLines\.\d+\.(name|quantity|unitCostChaos|modifierNotes))$/.test(
+  return /^(name|game|description|mapNotes|mapUnitCostChaos|enhancementLines\.\d+\.(name|quantity|unitCostChaos|modifierNotes|uses))$/.test(
     path,
   );
 }
@@ -360,6 +363,16 @@ export function StrategyForm(
                 updateLine(line.key, { unitCostChaos: value })
               }
             />
+            {labels.showUses ? (
+              <TextField
+                id={`${formId}-line-${line.key}-uses`}
+                label={`Uses ${index + 1}`}
+                value={line.uses}
+                inputMode="numeric"
+                error={messageFor(details, `enhancementLines.${index}.uses`)}
+                onChange={(value) => updateLine(line.key, { uses: value })}
+              />
+            ) : null}
             {labels.showModifierNotes ? (
               <TextField
                 id={`${formId}-line-${line.key}-notes`}
@@ -400,7 +413,7 @@ export function StrategyForm(
           disabled={lines.length >= MAX_STRATEGY_ENHANCEMENT_LINES}
           onClick={() => {
             clearNotices();
-            setLines((current) => [...current, emptyLine()]);
+            setLines((current) => [...current, emptyLine(game)]);
           }}
         >
           Add {labels.enhancementSingular.toLowerCase()}
@@ -439,7 +452,7 @@ function TextField({
   onChange: (value: string) => void;
   error?: string;
   multiline?: boolean;
-  inputMode?: "decimal";
+  inputMode?: "decimal" | "numeric";
   hint?: string;
 }) {
   const errorId = `${id}-error`;

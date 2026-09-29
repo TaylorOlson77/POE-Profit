@@ -15,7 +15,7 @@ A phase is an agreement to build. An idea in this file is not. When an idea beco
 
 These are not repeated below. See [`PHASES.md`](./PHASES.md).
 
-- A tablet's price split across its uses
+- A tablet's price split across its uses. That epic also includes entering a tablet price in divines, and confirming before a game change clears the rows. Showing the list cost in divines, and filling the rate from poe.ninja, stay below as FF-024 and FF-025.
 - Session logging as category totals, divine input, extrapolated time, and costs filled in from the strategy
 - Your compiled results, and leaving your own session out of them
 - Live strategy cost on the dirty form (former FF-005)
@@ -517,6 +517,71 @@ A consumable that is not a tablet is missing from the setup cost, or it is typed
 
 ---
 
+## FF-024: Show a large list cost in divines
+
+| Field | Value |
+| --- | --- |
+| Status | Idea |
+| Horizon | After phase 1 |
+| Date | 2026-09-28 |
+
+### Summary
+
+The strategy list shows estimated cost per waystone, or per map, in chaos. A large chaos number is hard to read. A later change can show that cost in divines. The sketch from this conversation was to switch once the cost is over 100 chaos per waystone. The threshold, the rate, and the empty-rate case are not decided.
+
+Chaos stays what is stored. This is display on the list. It is not part of the phase 1 epic.
+
+### Why
+
+Tablet prices in divines make the per-waystone chaos total large. A player reading the list thinks in divines once the number gets big.
+
+### Risks
+
+- The list has many strategies. They may not share one rate.
+- A strategy with no rate has no divine figure to show.
+- A display rule that also rewrites stored chaos would fight the rule that chaos is the calculation currency.
+
+### Open questions
+
+1. Is 100 chaos per waystone the threshold, and does a PoE1 map use the same line?
+2. Which rate converts the list: the rate stored on that strategy, one rate for the whole list, or a market rate?
+3. What does the row show when that rate is empty?
+4. Is the chaos figure still available on the same row?
+
+---
+
+## FF-025: Fill the divine rate from poe.ninja
+
+| Field | Value |
+| --- | --- |
+| Status | Idea |
+| Horizon | After the strategy can store a divine rate |
+| Date | 2026-09-28 |
+
+### Summary
+
+The player can fill the strategy's divine rate from poe.ninja. That can be the field starting with poe.ninja's value, or a button that copies it in. The player can still type a rate. Saved chaos totals change only when the strategy is saved.
+
+This is the rate field only. Pricing tablets, scarabs, or loot from poe.ninja stays closed, as in [`MVP_SPEC.md`](./MVP_SPEC.md) §4 and [`PHASES.md`](./PHASES.md).
+
+### Why
+
+The chaos-per-divine number is a lookup. The player should not have to leave the form to copy it.
+
+### Risks
+
+- poe.ninja can be down, rate-limited, or on a league the strategy is not using.
+- A fetched rate must not rewrite saved chaos until the player saves.
+- Widening this into item prices is the closed market integration, not this idea.
+
+### Open questions
+
+1. Does the empty field fill when the form opens, or only when the player presses a button?
+2. Which league is the quote for?
+3. What does the form say when poe.ninja does not answer?
+
+---
+
 ## Folded on 2026-09-28
 
 Do not bring these back as new ideas unless the reason below is wrong.
@@ -556,3 +621,5 @@ Do not bring these back as new ideas unless the reason below is wrong.
 | FF-021 | Account recovery and GGG login | Parked |
 | FF-022 | Scale and hygiene | Parked |
 | FF-023 | Setup costs that are not tablets or scarabs | Idea |
+| FF-024 | Show a large list cost in divines | Idea |
+| FF-025 | Fill the divine rate from poe.ninja | Idea |
