@@ -63,7 +63,7 @@ plan-epic  →  ticket-test-plan  →  implement  →  dev-wrap-up  →  definit
 
 | Step | Command | Writes | Does not write |
 | --- | --- | --- | --- |
-| 1 | `.cursor/commands/plan-epic.md` | One phase's epic split, then that epic's tickets, and board placement. The title, description, acceptance criteria, and the boundary comment follow [`PRODUCT.md`](./PRODUCT.md). | A branch. Coverage lines, code, automation. The comment is not a test list. |
+| 1 | `.cursor/commands/plan-epic.md` | One phase's epic split, then that epic's tickets, and board placement. Tickets go to Backlog. A multi-ticket epic goes to Backlog and stays there until Done. The title, description, acceptance criteria, and the boundary comment follow [`PRODUCT.md`](./PRODUCT.md). | A branch. Coverage lines, code, automation. The comment is not a test list. Moving an epic through Ready / In Progress / In Review / Testing. |
 | 2 | `.cursor/commands/ticket-test-plan.md` | Branch. Edits to the coverage page: lines added, retargeted, or removed. A file under `manual/` only when a person would still run the case. Reads the boundary comment when it exists, then still proposes cases the comment leaves out. | Product code. A separate impact table. The coverage diff is the impact. Pasting the test list onto the issue. |
 | 3 | Same chat as `ticket-test-plan` | Product code and the automated tests the new checked lines name, same pull request | A second copy of the cases on the GitHub issue |
 | 4 | `.cursor/commands/dev-wrap-up.md`, same chat | The commit, doc updates Taylor accepted, and the pull request | The definition-of-done comment. A pass/fail report (FF-006). |
@@ -159,7 +159,7 @@ The command checks that links resolve. It does not decide that a line is wise. T
 
 We are not failing CI on an empty pull-request section. The control is this command, plus the rule that "done" means it passed. Revisit a mechanical gate only if we skip it.
 
-An epic is done when every child ticket is Done. The same command checks that list when Taylor names an epic instead of a pull request. It does not re-run CI and it does not open a preview. Taylor confirms the outcome shipped, then the epic moves to Done.
+An epic is done when every child ticket is Done. The same command checks that list when Taylor names an epic instead of a pull request. It does not re-run CI and it does not open a preview. Taylor confirms the outcome shipped, then the epic moves from Backlog to Done. The epic does not sit in In Progress while its children move. Board rules for epics are [`PRODUCT.md`](./PRODUCT.md).
 
 ## Reporting (later)
 

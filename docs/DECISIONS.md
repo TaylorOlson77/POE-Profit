@@ -253,16 +253,17 @@ Incorrect profit math is the highest product risk. Duplicating formulas in the U
 
 ### Amendment (2026-09-28)
 
-The baseline shipped. GitHub Issues on the POE Profit board are the tracker. The Phase 1 checklist is [`archive/BACKLOG.md`](./archive/BACKLOG.md). Do not seed a Foundation epic.
+The baseline shipped. GitHub Issues on the POE Profit board are the tracker. The Phase 1 checklist is [`archive/BACKLOG.md`](./archive/BACKLOG.md). Do not seed a Foundation epic. A multi-ticket epic is a parent issue on the board: tickets move through the columns; the epic stays in Backlog until every child is Done, then moves to Done. It does not sit in In Progress. One ticket and no siblings: no epic issue. Optional view: Group by Parent issue for swimlanes. Rules live in [`PRODUCT.md`](./PRODUCT.md).
 
 ### Context
 
-The developer wants to demonstrate Scrum Master / Kanban / delivery skills alongside engineering. Linear has strong Cursor integration, but GitHub-native tooling keeps the process visible next to the public repository. Cutting Issues for every scaffold chore on a solo MVP adds overhead without much coordination value.
+The developer wants to demonstrate Scrum Master / Kanban / delivery skills alongside engineering. Linear has strong Cursor integration, but GitHub-native tooling keeps the process visible next to the public repository. Cutting Issues for every scaffold chore on a solo MVP adds overhead without much coordination value. Parent issues that crawl through In Progress for the life of a batch recreate the Linear sub-ticket smell without adding signal.
 
 ### Decision
 
 - Use **GitHub Issues + GitHub Projects** (Kanban-style columns) as the process tracker for features and fixes.
 - The Phase 1 checklist is archived at [`archive/BACKLOG.md`](./archive/BACKLOG.md). Do not seed the board with foundation tickets.
+- Tickets are the cards that flow. A multi-ticket epic is a parent grouping card that stays in Backlog until Done.
 - Linear remains a possible later addition, not the default.
 
 ### Consequences
@@ -270,6 +271,7 @@ The developer wants to demonstrate Scrum Master / Kanban / delivery skills along
 - Faster path through scaffold → calc → API → UI without ticket theater.
 - After baseline, hiring managers can still see Issue → branch → PR → CI → Done on real feature work.
 - Do not file a Foundation epic. The archive is the Phase 1 record.
+- Do not treat an epic like a story on the board.
 
 ---
 
