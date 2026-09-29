@@ -77,7 +77,7 @@ Name the branch from the story, because that issue is the one the pull request c
 
 The number, a hyphen, then a few words from the story title. Lowercase. The epic does not get a branch. A story with no epic uses that single issue's number. The implementation chat stays on that branch. A docs change with no story uses `docs-short-name`. Commit subjects follow the Commits section in [`AGENTS.md`](./AGENTS.md).
 
-`plan-epic` starts on `main`. The issue and the boundary comment need no branch. When that command edits docs or commands, those files go on `docs-short-name` and through the same CI gates as any other pull request. They do not ride on the ticket branch. The test command stops when the working tree is dirty, so that docs branch is committed or set aside before the ticket branch is created.
+`plan-epic` starts on `main`. The issue and the boundary comment need no branch. Doc and command edits may ride on the ticket branch while the workflow is still being shaken out (2026-09-28). A later rule can put those edits on their own pull request. Until then, name the doc files in the pull request. A docs change with no story still uses `docs-short-name`. The test command stops when the working tree has changes from something else, and asks before the ticket branch is created.
 
 `main` is the production branch. Vercel deploys it. Do not commit or push feature work to `main`. The pull request needs green CI ([`TEST_STRATEGY.md`](./TEST_STRATEGY.md) §10) and docs that match the code.
 
