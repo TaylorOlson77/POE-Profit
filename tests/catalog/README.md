@@ -10,7 +10,9 @@ There is no `calculations/` page. A calculation earns a line on the capability i
 
 Copy the shape already on the pages. The page does not restate the test. If the name is unclear, rename the test. A new field that changes the saved number does not rename the line. The sentence stays the outcome on screen. The steps record the new field and the new number.
 
-The sentence is plain text. It is not a link. A browser line stays unchecked until a Playwright spec exists. The line links `UI [path]` to that spec, and `Steps` to the step file:
+The sentence is plain text. It is not a link. The word in front of the link is the layer: `UI`, `API`, or `unit`.
+
+A browser line stays unchecked until a Playwright spec exists. The line links `UI [path]` to that spec, and `Steps` to the step file:
 
 ```text
 - [ ] shows the new strategy on the home list with its cost per waystone — UI [`e2e/strategies.spec.ts`](../../../e2e/strategies.spec.ts). [Steps](./manual/shows-the-new-strategy-on-the-home-list.md)
@@ -21,10 +23,11 @@ When that chat adds the spec, it checks the box, keeps `UI [path]` pointed at th
 An API or unit line has no step file. The sentence is still plain text. Checked when the test is already in the repo:
 
 ```text
-- [x] rejects a missing name — [`POST /api/strategies`](../../../tests/api/strategies.test.ts)
+- [x] rejects a missing name — API [`POST /api/strategies`](../../../tests/api/strategies.test.ts)
+- [x] drops a tablet row that has only the default uses — unit [`buildStrategyWriteBody`](../../../src/ui/strategyForm.test.ts)
 ```
 
-The same link, box unchecked, until that test exists.
+The same link, box unchecked, until that test exists. `tests/api/` is `API`, including persistence. A test under `src/` is `unit`.
 
 ## Names
 

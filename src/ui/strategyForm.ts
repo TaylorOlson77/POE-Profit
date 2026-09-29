@@ -1,5 +1,6 @@
 import type { ApiErrorDetail } from "@/src/contracts/errors";
 import type { Game } from "@/src/contracts/strategies";
+import { strategyLabels } from "@/src/ui/strategyLabels";
 import type { ZodError } from "zod";
 
 /** Uses shown on a new PoE2 tablet row. */
@@ -43,6 +44,26 @@ export type StrategyWriteDraftResult = {
   /** Form indexes of lines included in `body.enhancementLines`, in submit order. */
   submittedLineIndexes: number[];
 };
+
+/** A name, quantity, or unit cost is enough. Notes and uses are not. */
+export function gameChangeNeedsConfirm(
+  lines: ReadonlyArray<
+    Pick<EnhancementLineDraft, "name" | "quantity" | "unitCostChaos">
+  >,
+): boolean {
+  return lines.some(
+    (line) =>
+      line.name.trim() !== "" ||
+      line.quantity.trim() !== "" ||
+      line.unitCostChaos.trim() !== "",
+  );
+}
+
+/** Names tablets or scarabs for the game being left. */
+export function gameChangePrompt(game: Game): string {
+  const rows = strategyLabels(game).enhancement.toLowerCase();
+  return `Switch games and clear the ${rows}?`;
+}
 
 function isBlankLine(line: EnhancementLineDraft, game: Game): boolean {
   const contentBlank =
