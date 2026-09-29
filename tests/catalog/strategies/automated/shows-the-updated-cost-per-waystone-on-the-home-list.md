@@ -8,14 +8,15 @@ Given [this strategy](#data) is on the home list
 
 When I edit it and set the waystone cost to the new value
 - The field shows `3`
-- The form still shows `Estimated cost per waystone: 212c`
+- Each tablet still shows 10 uses
+- The form still shows `Estimated cost per waystone: 23c`
 
 And I click save
-- The form shows `Saved.` and `Estimated cost per waystone: 213c`
+- The form shows `Saved.` and `Estimated cost per waystone: 24c`
 
 And I go back to the home page
 
-Then that row shows `Estimated cost per waystone: 213c`
+Then that row shows `Estimated cost per waystone: 24c`
 
 ## Data
 
@@ -23,5 +24,6 @@ Then that row shows `Estimated cost per waystone: 213c`
 | --- | --- |
 | Name | `POC Expedition Tablet Farming` |
 | Waystone cost before the edit | `2` |
-| Cost per waystone before the edit | `212c` |
+| Uses on each tablet | `10` |
+| Cost per waystone before the edit | `23c` |
 | Waystone cost (chaos) | `3` |

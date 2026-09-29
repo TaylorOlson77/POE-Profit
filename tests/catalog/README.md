@@ -8,7 +8,7 @@ There is no `calculations/` page. A calculation earns a line on the capability i
 
 ## Lines
 
-Copy the shape already on the pages. The page does not restate the test. If the name is unclear, rename the test.
+Copy the shape already on the pages. The page does not restate the test. If the name is unclear, rename the test. A new field that changes the saved number does not rename the line. The sentence stays the outcome on screen. The steps record the new field and the new number.
 
 The sentence is plain text. It is not a link. A browser line stays unchecked until a Playwright spec exists. The line links `UI [path]` to that spec, and `Steps` to the step file:
 

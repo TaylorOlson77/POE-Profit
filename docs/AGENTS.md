@@ -37,7 +37,7 @@ A body is for the why, and only when the subject does not already say it. Leave 
 
 The branch name comes from the story: `42-register-and-sign-in`. The number, a hyphen, then a few words from the story title. Lowercase. A docs change with no story uses `docs-short-name`.
 
-`plan-epic` starts on `main`. Doc and command edits from that work go on `docs-short-name` and through the same CI gates. They do not ride on the ticket branch.
+`plan-epic` starts on `main`. Doc and command edits may ride on the ticket branch while the workflow is still being shaken out (2026-09-28). A docs change with no story uses `docs-short-name`.
 
 The pull request title is the story title. The body includes `Closes #N`. Do not put `Closes` on intermediate commits.
 
