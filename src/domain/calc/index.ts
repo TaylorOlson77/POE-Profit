@@ -26,6 +26,8 @@ export type MoneyLineInput = {
 export type StrategyEnhancementCostInput = {
   quantity: Decimal.Value;
   unitCostChaos: Decimal.Value;
+  /** Maps one purchase lasts. 1 leaves quantity × unit cost unchanged. */
+  uses: Decimal.Value;
 };
 
 export type StrategyCostsInput = {
@@ -136,14 +138,15 @@ export function profit(
 
 /**
  * Per-map strategy cost (ADR-020).
- * Each enhancement lineTotal = quantity × unitCostChaos (not unit cost alone).
+ * Each enhancement lineTotal = (quantity × unitCostChaos) / uses.
+ * Uses of 1 leaves quantity × unit cost unchanged.
  * estimatedCostPerMap = mapUnitCostChaos + sum(enhancement line totals).
  */
 export function calculateStrategyCosts(
   input: StrategyCostsInput,
 ): StrategyCostsResult {
   const enhancementLineTotals = input.enhancementLines.map((line) =>
-    lineTotal(line.quantity, line.unitCostChaos),
+    new Decimal(line.quantity).times(line.unitCostChaos).div(line.uses),
   );
 
   return {

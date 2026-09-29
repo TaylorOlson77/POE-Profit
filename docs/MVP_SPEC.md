@@ -175,7 +175,7 @@ A Strategy is a reusable **per-map setup cost template** (ADR-020), not a full r
 
 **Enhancement lines (0–N, per map)**
 
-Scarabs (PoE1) or tablets (PoE2): name, quantity, unit cost in Chaos, optional modifier notes (UI: PoE2 tablets only). Each line total is **quantity × unit cost**. **Estimated cost per map** = map/waystone unit cost + sum of enhancement line totals (example: map 2c + 2×100c + 1×10c = 212c). Totals are calculated by the app.
+Scarabs (PoE1) or tablets (PoE2): name, quantity, unit cost in Chaos, how many maps that purchase lasts, optional modifier notes (UI: PoE2 tablets only). Each line total is **(quantity × unit cost) / uses**. Uses of 1 leaves quantity × unit cost, which is a scarab. **Estimated cost per map** = map/waystone unit cost + sum of enhancement line totals (example: map 2c + 2×100c / 10 uses + 1×10c / 10 uses = 23c). Totals are calculated by the app. A new PoE2 row starts at 10 uses. The Uses field is hidden for PoE1 and the saved line is 1 use.
 
 Tier / party size / quantity-% defaults and external reference URL are **out of MVP Strategy** (rare cases can use description or map notes; atlas links may return later as a dedicated field).
 

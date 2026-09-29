@@ -1,4 +1,4 @@
-import { type Page } from "@playwright/test";
+import { expect, type Page } from "@playwright/test";
 import { strategyLabels } from "../../src/ui/strategyLabels";
 
 const labels = strategyLabels("POE2");
@@ -14,6 +14,7 @@ export type StrategyFormInput = {
     quantity: string;
     unitCost: string;
     modifierNotes?: string;
+    uses?: string;
   }>;
 };
 
@@ -41,6 +42,11 @@ export async function fillStrategy(
       .fill(line.name);
     await page.getByLabel(`Quantity per map ${row}`).fill(line.quantity);
     await page.getByLabel(`Unit cost (chaos) ${row}`).fill(line.unitCost);
+    const uses = page.getByLabel(`Uses ${row}`);
+    await expect(uses).toHaveValue("10");
+    if (line.uses !== undefined) {
+      await uses.fill(line.uses);
+    }
     if (line.modifierNotes !== undefined) {
       await page.getByLabel(`Modifier notes ${row}`).fill(line.modifierNotes);
     }
