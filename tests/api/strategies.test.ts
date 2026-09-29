@@ -24,12 +24,13 @@ const expedition = {
   mapNotes: "T16 waystones",
   mapUnitCostChaos: "2",
   enhancementLines: [
-    { name: "Expedition Tablet", quantity: "2", unitCostChaos: "100" },
+    { name: "Expedition Tablet", quantity: "2", unitCostChaos: "100", uses: 1 },
     {
       name: "Temple Tablet",
       modifierNotes: "remnants",
       quantity: "1",
       unitCostChaos: "10",
+      uses: 1,
     },
   ],
 };
@@ -77,7 +78,7 @@ describe("POST /api/strategies", () => {
       description: "Unrounded line",
       mapUnitCostChaos: "0",
       enhancementLines: [
-        { name: "Dust", quantity: "1", unitCostChaos: "1.005" },
+        { name: "Dust", quantity: "1", unitCostChaos: "1.005", uses: 1 },
       ],
     });
 
@@ -120,6 +121,7 @@ describe("POST /api/strategies", () => {
         name: `Line ${index}`,
         quantity: "1",
         unitCostChaos: "1",
+        uses: 1,
       })),
     });
     expect(tooMany.status).toBe(400);
@@ -136,7 +138,7 @@ describe("POST /api/strategies", () => {
       description: "Product does not fit",
       mapUnitCostChaos: "0",
       enhancementLines: [
-        { name: "Tablet", quantity: "999999999999", unitCostChaos: "2" },
+        { name: "Tablet", quantity: "999999999999", unitCostChaos: "2", uses: 1 },
       ],
     });
 
@@ -149,6 +151,27 @@ describe("POST /api/strategies", () => {
         message: "Calculated total does not fit the money column",
       },
     ]);
+
+    const listed = StrategyListResponseSchema.parse(await (await list()).json());
+    expect(listed.strategies).toEqual([]);
+  });
+
+  it("rejects a use count that is not a whole number of at least 1", async () => {
+    for (const uses of [0, 1.5, ""]) {
+      const response = await post({
+        ...expedition,
+        enhancementLines: [
+          { name: "Expedition Tablet", quantity: "1", unitCostChaos: "100", uses },
+        ],
+      });
+      expect(response.status).toBe(400);
+      const body = ApiErrorBodySchema.parse(await response.json());
+      expect(body.error.message).toBe("Invalid strategy payload");
+      expect(body.error.details).toContainEqual({
+        path: "enhancementLines.0.uses",
+        message: "Uses must be a whole number of at least 1",
+      });
+    }
 
     const listed = StrategyListResponseSchema.parse(await (await list()).json());
     expect(listed.strategies).toEqual([]);
@@ -227,7 +250,7 @@ describe("/api/strategies/:id", () => {
           description: "One tablet",
           mapUnitCostChaos: "3",
           enhancementLines: [
-            { name: "Cheap Tablet", quantity: "1", unitCostChaos: "5" },
+            { name: "Cheap Tablet", quantity: "1", unitCostChaos: "5", uses: 1 },
           ],
         }),
       }),

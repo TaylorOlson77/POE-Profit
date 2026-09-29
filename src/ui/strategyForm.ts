@@ -2,11 +2,15 @@ import type { ApiErrorDetail } from "@/src/contracts/errors";
 import type { Game } from "@/src/contracts/strategies";
 import type { ZodError } from "zod";
 
+/** Uses shown on a new PoE2 tablet row. */
+export const DEFAULT_TABLET_USES = "10";
+
 export type EnhancementLineDraft = {
   name: string;
   quantity: string;
   unitCostChaos: string;
   modifierNotes: string;
+  uses: string;
 };
 
 export type StrategyFormDraft = {
@@ -28,6 +32,7 @@ export type StrategyWriteBody = {
     name: string;
     quantity: string;
     unitCostChaos: string;
+    uses: number;
     sortOrder: number;
     modifierNotes?: string;
   }>;
@@ -39,19 +44,31 @@ export type StrategyWriteDraftResult = {
   submittedLineIndexes: number[];
 };
 
-function isBlankLine(line: EnhancementLineDraft): boolean {
-  return (
+function isBlankLine(line: EnhancementLineDraft, game: Game): boolean {
+  const contentBlank =
     line.name.trim() === "" &&
     line.quantity.trim() === "" &&
     line.unitCostChaos.trim() === "" &&
-    line.modifierNotes.trim() === ""
-  );
+    line.modifierNotes.trim() === "";
+  if (!contentBlank) {
+    return false;
+  }
+  if (game === "POE1") {
+    return true;
+  }
+  const uses = line.uses.trim();
+  return uses === "" || uses === DEFAULT_TABLET_USES;
+}
+
+/** A count, not money. Blank becomes 0 so the contract can reject it. */
+function usesFromDraft(raw: string): number {
+  return Number(raw.trim());
 }
 
 /**
- * Build a create/update body. Blank lines are omitted. Modifier notes are
- * sent only for PoE2. `submittedLineIndexes` maps a Zod path
- * `enhancementLines.N` back to the form row.
+ * Build a create/update body. A row with only the default Uses is omitted.
+ * Modifier notes are sent only for PoE2. A PoE1 line is saved at 1 use.
+ * `submittedLineIndexes` maps a Zod path `enhancementLines.N` back to the form row.
  */
 export function buildStrategyWriteBody(
   draft: StrategyFormDraft,
@@ -60,7 +77,7 @@ export function buildStrategyWriteBody(
   const enhancementLines: StrategyWriteBody["enhancementLines"] = [];
 
   draft.enhancementLines.forEach((line, formIndex) => {
-    if (isBlankLine(line)) {
+    if (isBlankLine(line, draft.game)) {
       return;
     }
     const notes = line.modifierNotes.trim();
@@ -68,6 +85,7 @@ export function buildStrategyWriteBody(
       name: line.name.trim(),
       quantity: line.quantity.trim(),
       unitCostChaos: line.unitCostChaos.trim(),
+      uses: draft.game === "POE1" ? 1 : usesFromDraft(line.uses),
       sortOrder: enhancementLines.length,
     };
     if (draft.game === "POE2" && notes !== "") {

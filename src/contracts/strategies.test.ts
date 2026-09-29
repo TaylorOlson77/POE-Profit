@@ -21,12 +21,14 @@ describe("Strategy contracts (per-map setup template)", () => {
           modifierNotes: "remnants / runaway",
           quantity: "2",
           unitCostChaos: "100",
+          uses: 10,
           sortOrder: 0,
         },
         {
           name: "Temple Tablet",
           quantity: "1",
           unitCostChaos: "10",
+          uses: 10,
           sortOrder: 1,
         },
       ],
@@ -46,11 +48,13 @@ describe("Strategy contracts (per-map setup template)", () => {
           name: "Scarab of Lineage",
           quantity: "2",
           unitCostChaos: "10",
+          uses: 1,
         },
         {
           name: "Scarab of Adversaries",
           quantity: "1",
           unitCostChaos: "100",
+          uses: 1,
         },
       ],
     });
@@ -114,6 +118,7 @@ describe("Strategy contracts (per-map setup template)", () => {
         name: `Line ${i}`,
         quantity: "1",
         unitCostChaos: "1",
+        uses: 1,
       }),
     );
 
@@ -133,6 +138,7 @@ describe("Strategy contracts (per-map setup template)", () => {
       name: "Expedition Tablet",
       quantity: "1",
       unitCostChaos: "1",
+      uses: 1,
     };
     const body = {
       name: "Sort cap",
@@ -155,8 +161,51 @@ describe("Strategy contracts (per-map setup template)", () => {
     ).toBe(true);
   });
 
-  it("documents estimatedCostPerMapChaos as map + sum(qty × unitCost)", () => {
-    // Map 2c + Expedition 2×100c + Temple 1×10c = 2 + 200 + 10 = 212
+  it("rejects 0, a blank use count, a fraction, and a count above the integer cap", () => {
+    const body = {
+      name: "Uses",
+      game: "POE2",
+      description: "Use count",
+      mapUnitCostChaos: "2",
+    };
+    const line = {
+      name: "Expedition Tablet",
+      quantity: "1",
+      unitCostChaos: "100",
+    };
+
+    for (const uses of [0, 1.5, "", -1, 2_147_483_648]) {
+      const parsed = CreateStrategyBodySchema.safeParse({
+        ...body,
+        enhancementLines: [{ ...line, uses }],
+      });
+      expect(parsed.success).toBe(false);
+      if (!parsed.success) {
+        expect(
+          parsed.error.issues.some(
+            (issue) =>
+              issue.message === "Uses must be a whole number of at least 1",
+          ),
+        ).toBe(true);
+      }
+    }
+
+    expect(
+      CreateStrategyBodySchema.safeParse({
+        ...body,
+        enhancementLines: [{ ...line, uses: 1 }],
+      }).success,
+    ).toBe(true);
+    expect(
+      CreateStrategyBodySchema.safeParse({
+        ...body,
+        enhancementLines: [{ ...line, uses: 10 }],
+      }).success,
+    ).toBe(true);
+  });
+
+  it("accepts stored totals where uses of 1 leaves quantity × unit cost", () => {
+    // Uses of 1: map 2 + 2×100/1 + 1×10/1 = 212
     const parsed = StrategySchema.safeParse({
       id: "strat_cost_math",
       name: "Cost math example",
@@ -169,6 +218,7 @@ describe("Strategy contracts (per-map setup template)", () => {
           name: "Expedition Tablet",
           quantity: "2",
           unitCostChaos: "100",
+          uses: 1,
           lineTotalChaos: "200",
           sortOrder: 0,
         },
@@ -177,6 +227,7 @@ describe("Strategy contracts (per-map setup template)", () => {
           name: "Temple Tablet",
           quantity: "1",
           unitCostChaos: "10",
+          uses: 1,
           lineTotalChaos: "10",
           sortOrder: 1,
         },
@@ -207,6 +258,7 @@ describe("Strategy contracts (per-map setup template)", () => {
           modifierNotes: "example mods",
           quantity: "2",
           unitCostChaos: "100",
+          uses: 1,
           lineTotalChaos: "200",
           sortOrder: 0,
         },

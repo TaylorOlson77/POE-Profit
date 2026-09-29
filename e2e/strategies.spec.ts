@@ -26,7 +26,7 @@ test.describe("Create, update, and delete a strategy", () => {
     await expect(page).toHaveURL("/");
     const card = strategyCard(page, crudStrategy.name);
     await expect(card).toContainText(crudStrategy.game);
-    await expect(card).toContainText(costPerWaystone("212c"));
+    await expect(card).toContainText(costPerWaystone("23c"));
   });
 
   test("shows the updated cost per waystone on the home list", async ({
@@ -38,18 +38,20 @@ test.describe("Create, update, and delete a strategy", () => {
       .click();
 
     await expect(waystoneCost(page)).toHaveValue(crudStrategy.mapCost);
-    await expect(savedCostPerWaystone(page, "212c")).toBeVisible();
+    await expect(page.getByLabel("Uses 1")).toHaveValue("10");
+    await expect(page.getByLabel("Uses 2")).toHaveValue("10");
+    await expect(savedCostPerWaystone(page, "23c")).toBeVisible();
 
     await waystoneCost(page).fill("3");
-    await expect(savedCostPerWaystone(page, "212c")).toBeVisible();
+    await expect(savedCostPerWaystone(page, "23c")).toBeVisible();
 
     await saveStrategy(page).click();
     await expect(page.getByRole("status")).toHaveText("Saved.");
-    await expect(savedCostPerWaystone(page, "213c")).toBeVisible();
+    await expect(savedCostPerWaystone(page, "24c")).toBeVisible();
 
     await page.getByRole("link", { name: "Strategies" }).click();
     await expect(strategyCard(page, crudStrategy.name)).toContainText(
-      costPerWaystone("213c"),
+      costPerWaystone("24c"),
     );
   });
 

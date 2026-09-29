@@ -33,6 +33,7 @@ function strategyCosts(body: UpdateStrategyBody): StrategyCostsResult {
     enhancementLines: body.enhancementLines.map((line) => ({
       quantity: line.quantity,
       unitCostChaos: line.unitCostChaos,
+      uses: line.uses,
     })),
   });
 }
@@ -52,6 +53,7 @@ function costFields(body: UpdateStrategyBody, costs: StrategyCostsResult) {
         modifierNotes: line.modifierNotes ?? null,
         quantity: line.quantity,
         unitCostChaos: line.unitCostChaos,
+        uses: line.uses,
         lineTotalChaos: costs.enhancementLineTotals[index].toString(),
         sortOrder: line.sortOrder ?? index,
       })),
@@ -72,6 +74,7 @@ function toStrategy(row: StrategyRow): Strategy {
         name: line.name,
         quantity: decimalToWire(line.quantity),
         unitCostChaos: decimalToWire(line.unitCostChaos),
+        uses: line.uses,
         lineTotalChaos: decimalToWire(line.lineTotalChaos),
         sortOrder: line.sortOrder,
       };

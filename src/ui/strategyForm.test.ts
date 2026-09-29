@@ -18,12 +18,14 @@ function draft(overrides: Partial<StrategyFormDraft> = {}): StrategyFormDraft {
         quantity: "",
         unitCostChaos: "",
         modifierNotes: "",
+        uses: "10",
       },
       {
         name: " Expedition Tablet ",
         quantity: " 2 ",
         unitCostChaos: " 100 ",
         modifierNotes: " remnants ",
+        uses: " 10 ",
       },
     ],
     ...overrides,
@@ -31,7 +33,7 @@ function draft(overrides: Partial<StrategyFormDraft> = {}): StrategyFormDraft {
 }
 
 describe("buildStrategyWriteBody", () => {
-  it("drops blank lines, trims fields, and omits empty map notes", () => {
+  it("drops a tablet row that has only the default uses", () => {
     const { body, submittedLineIndexes } = buildStrategyWriteBody(draft());
 
     expect(submittedLineIndexes).toEqual([1]);
@@ -46,6 +48,7 @@ describe("buildStrategyWriteBody", () => {
           quantity: "2",
           unitCostChaos: "100",
           modifierNotes: "remnants",
+          uses: 10,
           sortOrder: 0,
         },
       ],
@@ -64,6 +67,7 @@ describe("buildStrategyWriteBody", () => {
             quantity: "1",
             unitCostChaos: "10",
             modifierNotes: "should not be sent",
+            uses: "10",
           },
         ],
       }),
@@ -74,9 +78,77 @@ describe("buildStrategyWriteBody", () => {
       name: "Scarab of Lineage",
       quantity: "1",
       unitCostChaos: "10",
+      uses: 1,
       sortOrder: 0,
     });
     expect(CreateStrategyBodySchema.safeParse(body).success).toBe(true);
+  });
+
+  it("saves a PoE1 line at 1 use", () => {
+    const { body } = buildStrategyWriteBody(
+      draft({
+        game: "POE1",
+        enhancementLines: [
+          {
+            name: "Scarab of Lineage",
+            quantity: "1",
+            unitCostChaos: "100",
+            modifierNotes: "",
+            uses: "10",
+          },
+        ],
+      }),
+    );
+
+    expect(body.enhancementLines[0]?.uses).toBe(1);
+    expect(CreateStrategyBodySchema.safeParse(body).success).toBe(true);
+  });
+
+  it("submits a use count of 0, a blank use count, and a fractional use count", () => {
+    for (const uses of ["0", "", "1.5"]) {
+      const { body } = buildStrategyWriteBody(
+        draft({
+          enhancementLines: [
+            {
+              name: "Expedition Tablet",
+              quantity: "1",
+              unitCostChaos: "100",
+              modifierNotes: "",
+              uses,
+            },
+          ],
+        }),
+      );
+      const parsed = CreateStrategyBodySchema.safeParse(body);
+      expect(parsed.success).toBe(false);
+      if (!parsed.success) {
+        expect(
+          parsed.error.issues.some(
+            (issue) =>
+              issue.message === "Uses must be a whole number of at least 1",
+          ),
+        ).toBe(true);
+      }
+    }
+  });
+
+  it("keeps a tablet row whose uses are not the default", () => {
+    const { body, submittedLineIndexes } = buildStrategyWriteBody(
+      draft({
+        enhancementLines: [
+          {
+            name: "",
+            quantity: "",
+            unitCostChaos: "",
+            modifierNotes: "",
+            uses: "5",
+          },
+        ],
+      }),
+    );
+
+    expect(submittedLineIndexes).toEqual([0]);
+    expect(body.enhancementLines[0]?.uses).toBe(5);
   });
 });
 

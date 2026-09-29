@@ -590,7 +590,7 @@ Early Strategy drafts used optional metadata defaults (tier, party size, quantit
 - Enhancement line quantities and costs are **per map** on the strategy. Session prefill copies only `mapUnitCostChaos`. Tablet and other enhancement prefill is later. (Amended 2026-09-28.)
 - `modifierNotes` is optional on enhancement lines; **UI shows it only for PoE2 tablets**.
 - UI labels (Map vs Waystone, Scarab vs Tablet) come from `game` — no `kind` enum on enhancement lines for MVP.
-- `estimatedCostPerMapChaos` = `mapUnitCostChaos` + sum of enhancement `lineTotalChaos` values, where each `lineTotalChaos` = `quantity × unitCostChaos` (e.g. 2×100c + 1×10c = **210c** of enhancements, then add map/waystone unit cost). Calculated (compute-on-write), not user-edited totals.
+- `estimatedCostPerMapChaos` = `mapUnitCostChaos` + sum of enhancement `lineTotalChaos` values, where each `lineTotalChaos` = `(quantity × unitCostChaos) / uses` (e.g. 2×100c / 10 uses + 1×10c / 10 uses = **21c** of enhancements, then add map/waystone unit cost). Uses of 1 leaves quantity × unit cost. Calculated (compute-on-write), not user-edited totals. (Amended 2026-09-28.)
 - UI soft-targets ~5 enhancement lines; API enforces a hard max (25) against abuse on the no-auth MVP.
 - Money/quantities on the wire use **`DecimalStringSchema`** (non-negative decimal strings, not JSON floats).
 
