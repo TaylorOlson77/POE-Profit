@@ -1,7 +1,10 @@
 import { CreateStrategyBodySchema } from "@/src/contracts/strategies";
 import {
   buildStrategyWriteBody,
+  gameChangeNeedsConfirm,
+  gameChangePrompt,
   formDetailPath,
+  type EnhancementLineDraft,
   type StrategyFormDraft,
 } from "./strategyForm";
 
@@ -149,6 +152,59 @@ describe("buildStrategyWriteBody", () => {
 
     expect(submittedLineIndexes).toEqual([0]);
     expect(body.enhancementLines[0]?.uses).toBe(5);
+  });
+});
+
+function contentLine(
+  overrides: Partial<EnhancementLineDraft> = {},
+): EnhancementLineDraft {
+  return {
+    name: "",
+    quantity: "",
+    unitCostChaos: "",
+    modifierNotes: "",
+    uses: "10",
+    ...overrides,
+  };
+}
+
+describe("gameChangeNeedsConfirm", () => {
+  it("changes game without asking when no row has a name, a quantity, or a unit cost", () => {
+    expect(gameChangeNeedsConfirm([])).toBe(false);
+    expect(gameChangeNeedsConfirm([contentLine()])).toBe(false);
+    expect(gameChangeNeedsConfirm([contentLine({ uses: "5" })])).toBe(false);
+    expect(
+      gameChangeNeedsConfirm([contentLine({ modifierNotes: " remnants " })]),
+    ).toBe(false);
+    for (const field of ["name", "quantity", "unitCostChaos"] as const) {
+      expect(gameChangeNeedsConfirm([contentLine({ [field]: "  " })])).toBe(
+        false,
+      );
+    }
+  });
+
+  it("asks when a row has a name, a quantity, or a unit cost", () => {
+    expect(gameChangeNeedsConfirm([contentLine({ name: " Expedition " })])).toBe(
+      true,
+    );
+    expect(gameChangeNeedsConfirm([contentLine({ quantity: "1" })])).toBe(true);
+    expect(
+      gameChangeNeedsConfirm([contentLine({ unitCostChaos: "100" })]),
+    ).toBe(true);
+  });
+});
+
+describe("gameChangePrompt", () => {
+  it("names tablets when leaving Path of Exile 2", () => {
+    expect(gameChangePrompt("POE2")).toBe(
+      "Switch games and clear the tablets?",
+    );
+  });
+
+  it("names scarabs when leaving Path of Exile 1", () => {
+    expect(gameChangePrompt("POE1")).toBe(
+      "Switch games and clear the scarabs?",
+    );
   });
 });
 

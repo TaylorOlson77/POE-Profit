@@ -84,7 +84,8 @@ New work starts with `plan-epic` in a fresh chat, once per epic, on the current 
 - Display money with `formatChaos` (`roundForDisplay` + `c`). No `Number()`.
 - Delete asks in the row. **204** removes it. **409** and **404** show `error.message`.
 - New strategies default to `POE2`. Labels follow `game`: Waystone / Tablets for PoE2, Map / Scarabs for PoE1. Modifier notes are sent only for PoE2.
-- Unit tests cover `buildStrategyWriteBody` and `formDetailPath` in `src/ui/strategyForm.test.ts`. Those transforms never reach the API (blank rows dropped, PoE1 notes omitted, Zod line indexes mapped back to the form row). `detailsFromZod` only joins Zod paths; the validation rules stay in the contract tests. The create/edit/delete browser journey is E3.
+- Switching games asks before it clears tablet or scarab rows. The prompt is `Switch games and clear the tablets?` or `Switch games and clear the scarabs?`. Confirm removes the rows and changes the game. Cancel leaves both. A row with no name, quantity, or unit cost does not ask. Name, description, map notes, and map cost stay.
+- Unit tests cover `buildStrategyWriteBody`, `formDetailPath`, `gameChangeNeedsConfirm`, and `gameChangePrompt` in `src/ui/strategyForm.test.ts`. Those transforms never reach the API (blank rows dropped, PoE1 notes omitted, Zod line indexes mapped back to the form row). `detailsFromZod` only joins Zod paths; the validation rules stay in the contract tests. The create/edit/delete browser journey is E3.
 
 ### D1 decisions (locked unless Taylor reopens them)
 
