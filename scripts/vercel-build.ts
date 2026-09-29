@@ -1,5 +1,6 @@
 import { spawnSync } from "node:child_process";
 
+import { generatePrismaClient } from "../src/server/prismaGenerate";
 import { shouldMigrateProductionDatabase } from "../src/server/vercelBuild";
 
 function run(command: string, args: string[]): void {
@@ -20,5 +21,5 @@ if (shouldMigrateProductionDatabase(process.env.VERCEL_ENV)) {
   run("npx", ["prisma", "migrate", "deploy"]);
 }
 
-run("npx", ["prisma", "generate"]);
+generatePrismaClient();
 run("npx", ["next", "build"]);

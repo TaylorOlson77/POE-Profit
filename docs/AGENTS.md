@@ -141,6 +141,7 @@ A build chat does not read this list. `ticket-test-plan` names what that chat re
 **Next.js dev server**
 
 - A second `npm run dev` exits with code 1 when one is already running. The message names the existing PID and `http://localhost:3000`. Use that server. Local Playwright sets `reuseExistingServer`, so `npm run test:e2e` attaches to it.
+- `npm run build` runs `prisma generate` first. On Windows that rewrite fails with `EPERM` while `next dev` has `query_engine-windows.dll.node` open. The build keeps the engine already on disk and continues. After a Prisma upgrade, stop the dev server and run `npm run db:generate`.
 
 **Playwright browsers**
 
