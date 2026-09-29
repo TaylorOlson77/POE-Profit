@@ -59,12 +59,14 @@ plan-epic  →  ticket-test-plan  →  implement  →  dev-wrap-up  →  definit
 (issue, note)    (branch, coverage)   (code + tests)  (commit, PR)    (comment, then the board)
 ```
 
+`plan-epic` is a fresh chat, once per epic. `ticket-test-plan`, implementation, and `dev-wrap-up` stay in one chat per ticket. `definition-of-done` is a fresh chat per pull request. Do not open a new chat between the test plan and the pull request.
+
 | Step | Command | Writes | Does not write |
 | --- | --- | --- | --- |
 | 1 | `.cursor/commands/plan-epic.md` | One phase's epic split, then that epic's tickets, and board placement. The title, description, acceptance criteria, and the boundary comment follow [`PRODUCT.md`](./PRODUCT.md). | A branch. Coverage lines, code, automation. The comment is not a test list. |
 | 2 | `.cursor/commands/ticket-test-plan.md` | Branch. Edits to the coverage page: lines added, retargeted, or removed. A file under `manual/` only when a person would still run the case. Reads the boundary comment when it exists, then still proposes cases the comment leaves out. | Product code. A separate impact table. The coverage diff is the impact. Pasting the test list onto the issue. |
-| 3 | Implementation chat | Product code and the automated tests the new checked lines name, same pull request | A second copy of the cases on the GitHub issue |
-| 4 | `.cursor/commands/dev-wrap-up.md` | The commit, doc updates Taylor accepted, and the pull request | The definition-of-done comment. A pass/fail report (FF-006). |
+| 3 | Same chat as `ticket-test-plan` | Product code and the automated tests the new checked lines name, same pull request | A second copy of the cases on the GitHub issue |
+| 4 | `.cursor/commands/dev-wrap-up.md`, same chat | The commit, doc updates Taylor accepted, and the pull request | The definition-of-done comment. A pass/fail report (FF-006). |
 | 5 | `.cursor/commands/definition-of-done.md` | A traceability comment on the issue; move the board only after the checks pass | New product scope. It does not invent whether a line belongs on the page. |
 
 The test-plan command reads this file, [`TEST_STRATEGY.md`](./TEST_STRATEGY.md) §4, and [`tests/catalog/README.md`](../tests/catalog/README.md). When a session disagrees with a rule here, the command proposes a dated amendment in this file. The amendment is not in force until Taylor accepts it.
@@ -75,7 +77,7 @@ Name the branch from the story, because that issue is the one the pull request c
 42-register-and-sign-in
 ```
 
-The number, a hyphen, then a few words from the story title. Lowercase. The epic does not get a branch. A story with no epic uses that single issue's number. The implementation chat stays on that branch. A docs change with no story uses `docs-short-name`. Commit subjects follow the Commits section in [`AGENTS.md`](./AGENTS.md).
+The number, a hyphen, then a few words from the story title. Lowercase. The epic does not get a branch. A story with no epic uses that single issue's number. The build chat stays on that branch. A docs change with no story uses `docs-short-name`. Commit subjects follow the Commits section in [`AGENTS.md`](./AGENTS.md).
 
 `plan-epic` starts on `main`. The issue and the boundary comment need no branch. Doc and command edits may ride on the ticket branch while the workflow is still being shaken out (2026-09-28). A later rule can put those edits on their own pull request. Until then, name the doc files in the pull request. A docs change with no story still uses `docs-short-name`. The test command stops when the working tree has changes from something else, and asks before the ticket branch is created.
 

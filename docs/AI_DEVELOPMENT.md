@@ -38,16 +38,20 @@ Chats do **not** fully remember each other. Carry context via the repo:
 
 | Mechanism | Use for |
 | --- | --- |
-| [`AGENTS.md`](./AGENTS.md) | **Start here** — product name, process, stack, baseline, commits |
-| `docs/*.md` | Specs, ADRs, architecture, test strategy, ticket flow |
+| [`AGENTS.md`](./AGENTS.md) | Handoff when the chat is not running a command: product name, process, stack, baseline, commits |
+| `docs/*.md` | The command names which of these to open. A build chat does not read the set. |
 | `.cursor/rules` | Always-on working rules (`ai-development-workflow.mdc`) |
 | `@`-mention files | Pull exact docs into a new chat |
-| Same chat | Stay when mid-decision or mid-implementation |
-| New chat | Clean phase (for example, planning done → start the story) |
+| Same chat | One build chat per ticket: `ticket-test-plan`, then implementation, then `dev-wrap-up`. Close it when the pull request is open. |
+| New chat | `plan-epic` once per epic. `definition-of-done` once per pull request. `brainstorm` only when the phase list is thin. Close each when it stops. |
 
-**Suggested opener for a build chat:**
+**Build chat**
 
-> Read `docs/AGENTS.md`, then `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/MVP_SPEC.md`, `docs/TEST_STRATEGY.md`, `docs/QA_WORKFLOW.md`, `docs/PRODUCT.md`, and `docs/PHASES.md`. v1 has shipped. New work starts with `plan-epic` on the current phase in `PHASES.md`. The planning rules are `docs/PRODUCT.md`. Propose a short plan, then implement.
+Name the story and run `ticket-test-plan`. That command lists what to read. Stay in the chat through implementation and `dev-wrap-up`. Do not open with a pass over `AGENTS.md`, `ARCHITECTURE.md`, `DECISIONS.md`, `MVP_SPEC.md`, `TEST_STRATEGY.md`, `QA_WORKFLOW.md`, `PRODUCT.md`, and `PHASES.md`.
+
+**Plan-epic and definition-of-done**
+
+Each is a fresh chat. Follow that command's read list.
 
 ## Anti-patterns (avoid)
 

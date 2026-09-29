@@ -1,6 +1,6 @@
 # Agent handoff — POE Profit
 
-Read this first in a new chat, then the docs listed under **Required reading**.
+Read this first in a new chat. A command chat then follows that command's read list. The list under **Required reading** is for a chat that is not running a command.
 
 ## Product / repo
 
@@ -62,7 +62,7 @@ Gaps kept on purpose:
 - No rate limits, pagination, snapshot restore, or automatic production migrations.
 - The Prisma fake's `$transaction` does not roll back.
 
-New work starts with `plan-epic` on the current phase in [`PHASES.md`](./PHASES.md), then `ticket-test-plan`, implementation, `dev-wrap-up`, and `definition-of-done`. One ticket per chat. `brainstorm` is off that pipeline. The words are in [`PRODUCT.md`](./PRODUCT.md).
+New work starts with `plan-epic` in a fresh chat, once per epic, on the current phase in [`PHASES.md`](./PHASES.md). Each ticket is one build chat: `ticket-test-plan`, then implementation, then `dev-wrap-up`. `definition-of-done` is a fresh chat per pull request. `brainstorm` is off that pipeline, and it is its own chat only when the phase list is thin. The words are in [`PRODUCT.md`](./PRODUCT.md).
 
 ### E2 decisions (locked unless Taylor reopens them)
 
@@ -101,7 +101,9 @@ New work starts with `plan-epic` on the current phase in [`PHASES.md`](./PHASES.
 - Delete session is **204** or **404**. No 409. Nullable money uses `nullableDecimalToWire`.
 - Calculated fields are not on the write schema, so a client cannot supply them as the source of truth. `profitDivineApprox` stays null when the divine rate is not positive.
 
-## Required reading (build chat)
+## Required reading
+
+A build chat does not read this list. `ticket-test-plan` names what that chat reads, and `dev-wrap-up` reads the Commits section of this file plus the branch diff. `plan-epic` and `definition-of-done` name their own lists. Open one of these when the work needs it:
 
 1. [`ARCHITECTURE.md`](./ARCHITECTURE.md) — system map + folder layout  
 2. [`DECISIONS.md`](./DECISIONS.md) — ADRs (especially 006–016)  
