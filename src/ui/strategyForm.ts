@@ -1,5 +1,5 @@
 import type { ApiErrorDetail } from "@/src/contracts/errors";
-import type { Game } from "@/src/contracts/strategies";
+import type { Currency, Game } from "@/src/contracts/strategies";
 import { strategyLabels } from "@/src/ui/strategyLabels";
 import type { ZodError } from "zod";
 
@@ -9,7 +9,8 @@ export const DEFAULT_TABLET_USES = "10";
 export type EnhancementLineDraft = {
   name: string;
   quantity: string;
-  unitCostChaos: string;
+  userCostInput: string;
+  currency: Currency;
   modifierNotes: string;
   uses: string;
 };
@@ -20,6 +21,7 @@ export type StrategyFormDraft = {
   description: string;
   mapNotes: string;
   mapUnitCostChaos: string;
+  divineRateChaos: string;
   enhancementLines: EnhancementLineDraft[];
 };
 
@@ -29,10 +31,12 @@ export type StrategyWriteBody = {
   description: string;
   mapNotes?: string;
   mapUnitCostChaos: string;
+  divineRateChaos: string | null;
   enhancementLines: Array<{
     name: string;
     quantity: string;
-    unitCostChaos: string;
+    userCostInput: string;
+    currency: Currency;
     uses: number;
     sortOrder: number;
     modifierNotes?: string;
@@ -48,14 +52,14 @@ export type StrategyWriteDraftResult = {
 /** A name, quantity, or unit cost is enough. Notes and uses are not. */
 export function gameChangeNeedsConfirm(
   lines: ReadonlyArray<
-    Pick<EnhancementLineDraft, "name" | "quantity" | "unitCostChaos">
+    Pick<EnhancementLineDraft, "name" | "quantity" | "userCostInput">
   >,
 ): boolean {
   return lines.some(
     (line) =>
       line.name.trim() !== "" ||
       line.quantity.trim() !== "" ||
-      line.unitCostChaos.trim() !== "",
+      line.userCostInput.trim() !== "",
   );
 }
 
@@ -69,7 +73,7 @@ function isBlankLine(line: EnhancementLineDraft, game: Game): boolean {
   const contentBlank =
     line.name.trim() === "" &&
     line.quantity.trim() === "" &&
-    line.unitCostChaos.trim() === "" &&
+    line.userCostInput.trim() === "" &&
     line.modifierNotes.trim() === "";
   if (!contentBlank) {
     return false;
@@ -105,7 +109,8 @@ export function buildStrategyWriteBody(
     const submitted: StrategyWriteBody["enhancementLines"][number] = {
       name: line.name.trim(),
       quantity: line.quantity.trim(),
-      unitCostChaos: line.unitCostChaos.trim(),
+      userCostInput: line.userCostInput.trim(),
+      currency: line.currency,
       uses: draft.game === "POE1" ? 1 : usesFromDraft(line.uses),
       sortOrder: enhancementLines.length,
     };
@@ -122,6 +127,7 @@ export function buildStrategyWriteBody(
     game: draft.game,
     description: draft.description.trim(),
     mapUnitCostChaos: draft.mapUnitCostChaos.trim(),
+    divineRateChaos: draft.divineRateChaos.trim() || null,
     enhancementLines,
   };
   if (mapNotes !== "") {

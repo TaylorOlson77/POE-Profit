@@ -17,19 +17,37 @@ jest.mock("@/src/server/db/prisma", () => ({
     .fakePrisma,
 }));
 
+const divineTablet = {
+  name: "Divine Tablet",
+  game: "POE2",
+  description: "Priced in divines",
+  mapUnitCostChaos: "2",
+  divineRateChaos: "200",
+  enhancementLines: [
+    {
+      name: "Expedition Tablet",
+      quantity: "1",
+      userCostInput: "10",
+      currency: "DIVINE",
+      uses: 10,
+    },
+  ],
+};
+
 const expedition = {
   name: "Expedition Tablet Farming",
   game: "POE2",
   description: "Tablet-focused expedition farming",
   mapNotes: "T16 waystones",
   mapUnitCostChaos: "2",
+  divineRateChaos: "200",
   enhancementLines: [
-    { name: "Expedition Tablet", quantity: "2", unitCostChaos: "100", uses: 1 },
+    { name: "Expedition Tablet", quantity: "2", userCostInput: "100", uses: 1 },
     {
       name: "Temple Tablet",
       modifierNotes: "remnants",
       quantity: "1",
-      unitCostChaos: "10",
+      userCostInput: "10",
       uses: 1,
     },
   ],
@@ -68,6 +86,19 @@ describe("POST /api/strategies", () => {
     expect(strategy.enhancementLines.map((line) => line.sortOrder)).toEqual([0, 1]);
     expect(strategy.estimatedCostPerMapChaos).toBe("212");
     expect(strategy.mapUnitCostChaos).toBe("2");
+    expect(strategy.divineRateChaos).toBe("200");
+    expect(strategy.enhancementLines.map((line) => line.userCostInput)).toEqual([
+      "100",
+      "10",
+    ]);
+    expect(strategy.enhancementLines.map((line) => line.unitCostChaos)).toEqual([
+      "100",
+      "10",
+    ]);
+    expect(strategy.enhancementLines.map((line) => line.currency)).toEqual([
+      "CHAOS",
+      "CHAOS",
+    ]);
     expect(typeof strategy.estimatedCostPerMapChaos).toBe("string");
   });
 
@@ -77,8 +108,9 @@ describe("POST /api/strategies", () => {
       game: "POE2",
       description: "Unrounded line",
       mapUnitCostChaos: "0",
+      divineRateChaos: null,
       enhancementLines: [
-        { name: "Dust", quantity: "1", unitCostChaos: "1.005", uses: 1 },
+        { name: "Dust", quantity: "1", userCostInput: "1.005", uses: 1 },
       ],
     });
 
@@ -93,6 +125,7 @@ describe("POST /api/strategies", () => {
       game: "POE2",
       description: "No name",
       mapUnitCostChaos: "2",
+      divineRateChaos: null,
     });
     expect(missingName.status).toBe(400);
     const missingBody = ApiErrorBodySchema.parse(await missingName.json());
@@ -117,10 +150,11 @@ describe("POST /api/strategies", () => {
       game: "POE2",
       description: "Cap",
       mapUnitCostChaos: "1",
+      divineRateChaos: null,
       enhancementLines: Array.from({ length: 26 }, (_, index) => ({
         name: `Line ${index}`,
         quantity: "1",
-        unitCostChaos: "1",
+        userCostInput: "1",
         uses: 1,
       })),
     });
@@ -137,8 +171,9 @@ describe("POST /api/strategies", () => {
       game: "POE2",
       description: "Product does not fit",
       mapUnitCostChaos: "0",
+      divineRateChaos: null,
       enhancementLines: [
-        { name: "Tablet", quantity: "999999999999", unitCostChaos: "2", uses: 1 },
+        { name: "Tablet", quantity: "999999999999", userCostInput: "2", uses: 1 },
       ],
     });
 
@@ -161,7 +196,7 @@ describe("POST /api/strategies", () => {
       const response = await post({
         ...expedition,
         enhancementLines: [
-          { name: "Expedition Tablet", quantity: "1", unitCostChaos: "100", uses },
+          { name: "Expedition Tablet", quantity: "1", userCostInput: "100", uses },
         ],
       });
       expect(response.status).toBe(400);
@@ -184,6 +219,96 @@ describe("POST /api/strategies", () => {
     expect(body.error.code).toBe("VALIDATION_ERROR");
     expect(body.error.details).toEqual([{ path: "", message: "Invalid JSON" }]);
   });
+
+  it("saves a 200c line and a 202c cost per waystone for 10 divines at 10 uses", async () => {
+    const response = await post(divineTablet);
+
+    expect(response.status).toBe(201);
+    const strategy = StrategyResponseSchema.parse(await response.json());
+    expect(strategy.divineRateChaos).toBe("200");
+    expect(strategy.enhancementLines[0]).toMatchObject({
+      userCostInput: "10",
+      currency: "DIVINE",
+      unitCostChaos: "2000",
+      lineTotalChaos: "200",
+    });
+    expect(strategy.estimatedCostPerMapChaos).toBe("202");
+  });
+
+  it("saves a chaos-only strategy when the divine rate is empty", async () => {
+    const response = await post({
+      name: "Chaos only",
+      game: "POE2",
+      description: "No rate",
+      mapUnitCostChaos: "2",
+      divineRateChaos: null,
+      enhancementLines: [
+        {
+          name: "Expedition Tablet",
+          quantity: "1",
+          userCostInput: "10",
+          currency: "CHAOS",
+          uses: 1,
+        },
+      ],
+    });
+
+    expect(response.status).toBe(201);
+    const strategy = StrategyResponseSchema.parse(await response.json());
+    expect(strategy.divineRateChaos).toBeNull();
+    expect(strategy.enhancementLines[0]).toMatchObject({
+      userCostInput: "10",
+      currency: "CHAOS",
+      unitCostChaos: "10",
+      lineTotalChaos: "10",
+    });
+    expect(strategy.estimatedCostPerMapChaos).toBe("12");
+  });
+
+  it("saves a chaos scarab as quantity times unit cost", async () => {
+    const response = await post({
+      name: "Scarab",
+      game: "POE1",
+      description: "Chaos scarab",
+      mapUnitCostChaos: "2",
+      divineRateChaos: "200",
+      enhancementLines: [
+        {
+          name: "Scarab of Lineage",
+          quantity: "1",
+          userCostInput: "10",
+          currency: "CHAOS",
+          uses: 1,
+        },
+      ],
+    });
+
+    expect(response.status).toBe(201);
+    const strategy = StrategyResponseSchema.parse(await response.json());
+    expect(strategy.enhancementLines[0]).toMatchObject({
+      userCostInput: "10",
+      currency: "CHAOS",
+      unitCostChaos: "10",
+      lineTotalChaos: "10",
+    });
+    expect(strategy.estimatedCostPerMapChaos).toBe("12");
+  });
+
+  it("rejects a divine unit cost when the rate is missing or zero", async () => {
+    for (const divineRateChaos of [null, "0"]) {
+      const response = await post({ ...divineTablet, divineRateChaos });
+      expect(response.status).toBe(400);
+      const body = ApiErrorBodySchema.parse(await response.json());
+      expect(body.error.message).toBe("Invalid strategy payload");
+      expect(body.error.details).toContainEqual({
+        path: "divineRateChaos",
+        message: "A divine rate is required",
+      });
+    }
+
+    const listed = StrategyListResponseSchema.parse(await (await list()).json());
+    expect(listed.strategies).toEqual([]);
+  });
 });
 
 describe("GET /api/strategies", () => {
@@ -193,12 +318,14 @@ describe("GET /api/strategies", () => {
       game: "POE2",
       description: "Older",
       mapUnitCostChaos: "1",
+      divineRateChaos: null,
     })).json());
     const second = StrategyResponseSchema.parse(await (await post({
       name: "Second",
       game: "POE1",
       description: "Newer",
       mapUnitCostChaos: "3",
+      divineRateChaos: null,
     })).json());
 
     const response = await list();
@@ -249,8 +376,9 @@ describe("/api/strategies/:id", () => {
           game: "POE2",
           description: "One tablet",
           mapUnitCostChaos: "3",
+          divineRateChaos: null,
           enhancementLines: [
-            { name: "Cheap Tablet", quantity: "1", unitCostChaos: "5", uses: 1 },
+            { name: "Cheap Tablet", quantity: "1", userCostInput: "5", uses: 1 },
           ],
         }),
       }),
@@ -273,12 +401,37 @@ describe("/api/strategies/:id", () => {
           game: "POE2",
           description: "Missing",
           mapUnitCostChaos: "1",
+          divineRateChaos: null,
         }),
       }),
       idContext("missing"),
     );
     expect(missing.status).toBe(404);
     expect(ApiErrorBodySchema.parse(await missing.json()).error.code).toBe("NOT_FOUND");
+  });
+
+  it("recalculates the saved chaos total when the divine rate changes", async () => {
+    const created = StrategyResponseSchema.parse(await (await post(divineTablet)).json());
+
+    const response = await PUT(
+      new Request("http://localhost", {
+        method: "PUT",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ ...divineTablet, divineRateChaos: "100" }),
+      }),
+      idContext(created.id),
+    );
+
+    expect(response.status).toBe(200);
+    const updated = StrategyResponseSchema.parse(await response.json());
+    expect(updated.enhancementLines[0]).toMatchObject({
+      userCostInput: "10",
+      currency: "DIVINE",
+      unitCostChaos: "1000",
+      lineTotalChaos: "100",
+    });
+    expect(updated.estimatedCostPerMapChaos).toBe("102");
+    expect(updated.divineRateChaos).toBe("100");
   });
 
   it("deletes a strategy with no sessions and returns an empty 204", async () => {

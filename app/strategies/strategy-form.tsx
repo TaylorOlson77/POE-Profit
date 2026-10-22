@@ -50,7 +50,8 @@ function linesFromStrategy(strategy: Strategy): LineState[] {
     key: line.id,
     name: line.name,
     quantity: line.quantity,
-    unitCostChaos: line.unitCostChaos,
+    userCostInput: line.userCostInput,
+    currency: line.currency,
     modifierNotes: line.modifierNotes ?? "",
     uses: String(line.uses),
     savedLineTotalChaos: line.lineTotalChaos,
@@ -62,7 +63,8 @@ function emptyLine(game: Game): LineState {
     key: crypto.randomUUID(),
     name: "",
     quantity: "",
-    unitCostChaos: "",
+    userCostInput: "",
+    currency: "CHAOS",
     modifierNotes: "",
     uses: game === "POE2" ? DEFAULT_TABLET_USES : "1",
     savedLineTotalChaos: null,
@@ -77,7 +79,7 @@ function messageFor(
 }
 
 function isShownOnField(path: string): boolean {
-  return /^(name|game|description|mapNotes|mapUnitCostChaos|enhancementLines\.\d+\.(name|quantity|unitCostChaos|modifierNotes|uses))$/.test(
+  return /^(name|game|description|mapNotes|mapUnitCostChaos|divineRateChaos|enhancementLines\.\d+\.(name|quantity|userCostInput|currency|modifierNotes|uses))$/.test(
     path,
   );
 }
@@ -97,6 +99,7 @@ export function StrategyForm(
   const [description, setDescription] = useState("");
   const [mapNotes, setMapNotes] = useState("");
   const [mapUnitCostChaos, setMapUnitCostChaos] = useState("");
+  const [divineRateChaos, setDivineRateChaos] = useState("");
   const [lines, setLines] = useState<LineState[]>([]);
   const [savedEstimatedCost, setSavedEstimatedCost] = useState<string | null>(
     null,
@@ -129,6 +132,7 @@ export function StrategyForm(
       setDescription(strategy.description);
       setMapNotes(strategy.mapNotes ?? "");
       setMapUnitCostChaos(strategy.mapUnitCostChaos);
+      setDivineRateChaos(strategy.divineRateChaos ?? "");
       setLines(linesFromStrategy(strategy));
       setSavedEstimatedCost(strategy.estimatedCostPerMapChaos);
       setLoadError(null);
@@ -148,6 +152,7 @@ export function StrategyForm(
     setDescription(strategy.description);
     setMapNotes(strategy.mapNotes ?? "");
     setMapUnitCostChaos(strategy.mapUnitCostChaos);
+    setDivineRateChaos(strategy.divineRateChaos ?? "");
     setLines(linesFromStrategy(strategy));
     setSavedEstimatedCost(strategy.estimatedCostPerMapChaos);
   }
@@ -181,6 +186,7 @@ export function StrategyForm(
         description,
         mapNotes,
         mapUnitCostChaos,
+        divineRateChaos,
         enhancementLines: lines,
       });
       const parsed = CreateStrategyBodySchema.safeParse(body);
@@ -362,6 +368,19 @@ export function StrategyForm(
         }}
       />
 
+      <TextField
+        id={`${formId}-divine-rate`}
+        label="Divine rate (chaos per divine)"
+        value={divineRateChaos}
+        inputMode="decimal"
+        hint="Required when a tablet or scarab cost is in divines."
+        error={messageFor(details, "divineRateChaos")}
+        onChange={(value) => {
+          clearNotices();
+          setDivineRateChaos(value);
+        }}
+      />
+
       <fieldset className="flex flex-col gap-4">
         <legend className="font-medium">{labels.enhancement}</legend>
         {lines.map((line, index) => (
@@ -384,17 +403,37 @@ export function StrategyForm(
               error={messageFor(details, `enhancementLines.${index}.quantity`)}
               onChange={(value) => updateLine(line.key, { quantity: value })}
             />
+            <div className="flex flex-col">
+              <label htmlFor={`${formId}-line-${line.key}-currency`}>
+                Currency {index + 1}
+              </label>
+              <select
+                id={`${formId}-line-${line.key}-currency`}
+                className={inputClass}
+                value={line.currency}
+                onChange={(event) => {
+                  const next = event.target.value;
+                  if (next !== "CHAOS" && next !== "DIVINE") {
+                    return;
+                  }
+                  updateLine(line.key, { currency: next });
+                }}
+              >
+                <option value="CHAOS">Chaos</option>
+                <option value="DIVINE">Divines</option>
+              </select>
+            </div>
             <TextField
               id={`${formId}-line-${line.key}-cost`}
-              label={`Unit cost (chaos) ${index + 1}`}
-              value={line.unitCostChaos}
+              label={`Unit cost ${index + 1}`}
+              value={line.userCostInput}
               inputMode="decimal"
               error={messageFor(
                 details,
-                `enhancementLines.${index}.unitCostChaos`,
+                `enhancementLines.${index}.userCostInput`,
               )}
               onChange={(value) =>
-                updateLine(line.key, { unitCostChaos: value })
+                updateLine(line.key, { userCostInput: value })
               }
             />
             {labels.showUses ? (

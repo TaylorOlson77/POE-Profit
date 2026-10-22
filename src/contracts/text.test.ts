@@ -10,6 +10,7 @@ const strategyBody = {
   game: "POE2" as const,
   description: "Tablets",
   mapUnitCostChaos: "2",
+  divineRateChaos: null,
 };
 
 const sessionBody = {

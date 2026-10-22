@@ -15,18 +15,21 @@ function draft(overrides: Partial<StrategyFormDraft> = {}): StrategyFormDraft {
     description: " Tablet farming ",
     mapNotes: "  ",
     mapUnitCostChaos: " 2 ",
+    divineRateChaos: "",
     enhancementLines: [
       {
         name: "",
         quantity: "",
-        unitCostChaos: "",
+        userCostInput: "",
+        currency: "CHAOS",
         modifierNotes: "",
         uses: "10",
       },
       {
         name: " Expedition Tablet ",
         quantity: " 2 ",
-        unitCostChaos: " 100 ",
+        userCostInput: " 100 ",
+        currency: "CHAOS",
         modifierNotes: " remnants ",
         uses: " 10 ",
       },
@@ -45,11 +48,13 @@ describe("buildStrategyWriteBody", () => {
       name: "Breach tablets",
       description: "Tablet farming",
       mapUnitCostChaos: "2",
+      divineRateChaos: null,
       enhancementLines: [
         {
           name: "Expedition Tablet",
           quantity: "2",
-          unitCostChaos: "100",
+          userCostInput: "100",
+          currency: "CHAOS",
           modifierNotes: "remnants",
           uses: 10,
           sortOrder: 0,
@@ -68,7 +73,8 @@ describe("buildStrategyWriteBody", () => {
           {
             name: "Scarab of Lineage",
             quantity: "1",
-            unitCostChaos: "10",
+            userCostInput: "10",
+            currency: "CHAOS",
             modifierNotes: "should not be sent",
             uses: "10",
           },
@@ -80,7 +86,8 @@ describe("buildStrategyWriteBody", () => {
     expect(body.enhancementLines[0]).toEqual({
       name: "Scarab of Lineage",
       quantity: "1",
-      unitCostChaos: "10",
+      userCostInput: "10",
+      currency: "CHAOS",
       uses: 1,
       sortOrder: 0,
     });
@@ -95,7 +102,8 @@ describe("buildStrategyWriteBody", () => {
           {
             name: "Scarab of Lineage",
             quantity: "1",
-            unitCostChaos: "100",
+            userCostInput: "100",
+            currency: "CHAOS",
             modifierNotes: "",
             uses: "10",
           },
@@ -115,7 +123,8 @@ describe("buildStrategyWriteBody", () => {
             {
               name: "Expedition Tablet",
               quantity: "1",
-              unitCostChaos: "100",
+              userCostInput: "100",
+              currency: "CHAOS",
               modifierNotes: "",
               uses,
             },
@@ -142,7 +151,8 @@ describe("buildStrategyWriteBody", () => {
           {
             name: "",
             quantity: "",
-            unitCostChaos: "",
+            userCostInput: "",
+            currency: "CHAOS",
             modifierNotes: "",
             uses: "5",
           },
@@ -161,7 +171,8 @@ function contentLine(
   return {
     name: "",
     quantity: "",
-    unitCostChaos: "",
+    userCostInput: "",
+    currency: "CHAOS",
     modifierNotes: "",
     uses: "10",
     ...overrides,
@@ -176,7 +187,10 @@ describe("gameChangeNeedsConfirm", () => {
     expect(
       gameChangeNeedsConfirm([contentLine({ modifierNotes: " remnants " })]),
     ).toBe(false);
-    for (const field of ["name", "quantity", "unitCostChaos"] as const) {
+    expect(gameChangeNeedsConfirm([contentLine({ currency: "DIVINE" })])).toBe(
+      false,
+    );
+    for (const field of ["name", "quantity", "userCostInput"] as const) {
       expect(gameChangeNeedsConfirm([contentLine({ [field]: "  " })])).toBe(
         false,
       );
@@ -189,7 +203,7 @@ describe("gameChangeNeedsConfirm", () => {
     );
     expect(gameChangeNeedsConfirm([contentLine({ quantity: "1" })])).toBe(true);
     expect(
-      gameChangeNeedsConfirm([contentLine({ unitCostChaos: "100" })]),
+      gameChangeNeedsConfirm([contentLine({ userCostInput: "100" })]),
     ).toBe(true);
   });
 });
@@ -212,6 +226,9 @@ describe("formDetailPath", () => {
   it("maps a submitted line index back to the form row", () => {
     expect(formDetailPath("enhancementLines.0.quantity", [1])).toBe(
       "enhancementLines.1.quantity",
+    );
+    expect(formDetailPath("enhancementLines.0.userCostInput", [1])).toBe(
+      "enhancementLines.1.userCostInput",
     );
     expect(formDetailPath("name", [1])).toBe("name");
   });

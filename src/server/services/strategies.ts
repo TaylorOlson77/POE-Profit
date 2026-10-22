@@ -1,11 +1,17 @@
 import type { Prisma, PrismaClient } from "@prisma/client";
+import Decimal from "decimal.js";
 import type { Strategy, UpdateStrategyBody } from "@/src/contracts/strategies";
 import {
+  calculateDivineToChaos,
   calculateStrategyCosts,
   type StrategyCostsResult,
 } from "@/src/domain/calc";
 import { isForeignKeyRestrictError } from "@/src/server/apiError";
-import { decimalToWire, fitsMoneyColumn } from "@/src/server/money";
+import {
+  decimalToWire,
+  fitsMoneyColumn,
+  nullableDecimalToWire,
+} from "@/src/server/money";
 
 const strategyInclude = {
   enhancementLines: { orderBy: { sortOrder: "asc" as const } },
@@ -27,15 +33,38 @@ export type UpdateStrategyResult =
   | { status: "not_found" }
   | { status: "total_overflow" };
 
-function strategyCosts(body: UpdateStrategyBody): StrategyCostsResult {
-  return calculateStrategyCosts({
-    mapUnitCostChaos: body.mapUnitCostChaos,
-    enhancementLines: body.enhancementLines.map((line) => ({
-      quantity: line.quantity,
-      unitCostChaos: line.unitCostChaos,
-      uses: line.uses,
-    })),
-  });
+function lineUnitCostChaos(
+  line: UpdateStrategyBody["enhancementLines"][number],
+  rate: string | null,
+): Decimal {
+  if (line.currency === "CHAOS") {
+    return new Decimal(line.userCostInput);
+  }
+  const converted = calculateDivineToChaos(line.userCostInput, rate);
+  if (converted === null) {
+    throw new Error("Divine line is missing a positive rate");
+  }
+  return converted;
+}
+
+function preparedStrategy(body: UpdateStrategyBody): {
+  costs: StrategyCostsResult;
+  unitCosts: Decimal[];
+} {
+  const unitCosts = body.enhancementLines.map((line) =>
+    lineUnitCostChaos(line, body.divineRateChaos),
+  );
+  return {
+    unitCosts,
+    costs: calculateStrategyCosts({
+      mapUnitCostChaos: body.mapUnitCostChaos,
+      enhancementLines: body.enhancementLines.map((line, index) => ({
+        quantity: line.quantity,
+        unitCostChaos: unitCosts[index]!,
+        uses: line.uses,
+      })),
+    }),
+  };
 }
 
 function strategyCostsFit(costs: StrategyCostsResult): boolean {
@@ -44,7 +73,11 @@ function strategyCostsFit(costs: StrategyCostsResult): boolean {
   );
 }
 
-function costFields(body: UpdateStrategyBody, costs: StrategyCostsResult) {
+function costFields(
+  body: UpdateStrategyBody,
+  costs: StrategyCostsResult,
+  unitCosts: Decimal[],
+) {
   return {
     estimatedCostPerMapChaos: costs.estimatedCostPerMapChaos.toString(),
     enhancementLines: {
@@ -52,9 +85,11 @@ function costFields(body: UpdateStrategyBody, costs: StrategyCostsResult) {
         name: line.name,
         modifierNotes: line.modifierNotes ?? null,
         quantity: line.quantity,
-        unitCostChaos: line.unitCostChaos,
+        userCostInput: line.userCostInput,
+        currency: line.currency,
+        unitCostChaos: unitCosts[index]!.toString(),
         uses: line.uses,
-        lineTotalChaos: costs.enhancementLineTotals[index].toString(),
+        lineTotalChaos: costs.enhancementLineTotals[index]!.toString(),
         sortOrder: line.sortOrder ?? index,
       })),
     },
@@ -68,11 +103,14 @@ function toStrategy(row: StrategyRow): Strategy {
     game: row.game,
     description: row.description,
     mapUnitCostChaos: decimalToWire(row.mapUnitCostChaos),
+    divineRateChaos: nullableDecimalToWire(row.divineRateChaos),
     enhancementLines: row.enhancementLines.map((line) => {
       const mapped = {
         id: line.id,
         name: line.name,
         quantity: decimalToWire(line.quantity),
+        userCostInput: decimalToWire(line.userCostInput),
+        currency: line.currency,
         unitCostChaos: decimalToWire(line.unitCostChaos),
         uses: line.uses,
         lineTotalChaos: decimalToWire(line.lineTotalChaos),
@@ -117,7 +155,7 @@ export async function createStrategy(
   db: PrismaClient,
   body: UpdateStrategyBody,
 ): Promise<CreateStrategyResult> {
-  const costs = strategyCosts(body);
+  const { costs, unitCosts } = preparedStrategy(body);
   if (!strategyCostsFit(costs)) {
     return { status: "total_overflow" };
   }
@@ -129,7 +167,8 @@ export async function createStrategy(
       description: body.description,
       mapNotes: body.mapNotes ?? null,
       mapUnitCostChaos: body.mapUnitCostChaos,
-      ...costFields(body, costs),
+      divineRateChaos: body.divineRateChaos,
+      ...costFields(body, costs, unitCosts),
     },
     include: strategyInclude,
   });
@@ -142,7 +181,7 @@ export async function updateStrategy(
   id: string,
   body: UpdateStrategyBody,
 ): Promise<UpdateStrategyResult> {
-  const costs = strategyCosts(body);
+  const { costs, unitCosts } = preparedStrategy(body);
   if (!strategyCostsFit(costs)) {
     return { status: "total_overflow" };
   }
@@ -161,7 +200,8 @@ export async function updateStrategy(
         description: body.description,
         mapNotes: body.mapNotes ?? null,
         mapUnitCostChaos: body.mapUnitCostChaos,
-        ...costFields(body, costs),
+        divineRateChaos: body.divineRateChaos,
+        ...costFields(body, costs, unitCosts),
       },
       include: strategyInclude,
     });

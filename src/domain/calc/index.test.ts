@@ -13,6 +13,7 @@ import {
   roiPercent,
   roundForDisplay,
   sumLineTotals,
+  calculateDivineToChaos,
 } from "./index";
 
 function expectDecimal(actual: Decimal, expected: Decimal.Value) {
@@ -553,5 +554,39 @@ describe("calculateSession", () => {
     expect(result.profitDivineApprox).toBeNull();
     expectDecimal(result.profitChaos, "1920");
     expectDecimal(result.profitPerHourChaos as Decimal, "1440");
+  });
+});
+
+describe("calculateDivineToChaos", () => {
+  it("multiplies a divine amount by the rate", () => {
+    expectDecimal(calculateDivineToChaos("10", "200") as Decimal, "2000");
+  });
+
+  it("multiplies a fractional amount by a fractional rate", () => {
+    expectDecimal(calculateDivineToChaos("50.5", "2.5") as Decimal, "126.25");
+  });
+
+  it("returns null when the rate is missing", () => {
+    expect(calculateDivineToChaos("100", null)).toBeNull();
+  });
+
+  it("returns null when the amount is missing", () => {
+    expect(calculateDivineToChaos(null, "2")).toBeNull();
+  });
+
+  it("returns null when the amount is negative", () => {
+    expect(calculateDivineToChaos("-100", "2")).toBeNull();
+  });
+
+  it("returns null when the rate is negative", () => {
+    expect(calculateDivineToChaos("100", "-2")).toBeNull();
+  });
+
+  it("returns null when the rate is zero", () => {
+    expect(calculateDivineToChaos("100", "0")).toBeNull();
+  });
+
+  it("returns zero when the amount is zero", () => {
+    expectDecimal(calculateDivineToChaos("0", "2") as Decimal, "0");
   });
 });

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { DecimalStringSchema, POSTGRES_INT_MAX } from "./decimal";
+import { DecimalStringSchema, NullableDecimalStringSchema, POSTGRES_INT_MAX } from "./decimal";
 import { DescriptionSchema, NameSchema, OptionalNotesSchema } from "./text";
 
 /**
@@ -23,6 +23,8 @@ import { DescriptionSchema, NameSchema, OptionalNotesSchema } from "./text";
  *
  * Map/waystone is a required 1:1 slot on Strategy (qty always 1 per map).
  * Enhancement lines are scarabs (PoE1) or tablets (PoE2); quantities are per map.
+ * A line is typed in chaos or divines. The service stores the chaos unit cost.
+ * A divine line requires divineRateChaos. A chaos-only strategy may leave it null.
  * A map session of N maps scales these costs by N when prefilling/estimating investment.
  */
 
@@ -30,6 +32,17 @@ import { DescriptionSchema, NameSchema, OptionalNotesSchema } from "./text";
 export const MAX_STRATEGY_ENHANCEMENT_LINES = 25;
 
 const USES_COUNT_MESSAGE = "Uses must be a whole number of at least 1";
+
+export const DIVINE_RATE_REQUIRED_MESSAGE = "A divine rate is required";
+
+export const CurrencySchema = z.enum(["CHAOS", "DIVINE"]);
+
+export type Currency = z.infer<typeof CurrencySchema>;
+
+/** "0" and "0.00" are not a usable divine rate. Other decimals already passed the wire schema. */
+function isPositiveDecimal(value: string): boolean {
+  return !/^0+(?:\.0+)?$/.test(value);
+}
 
 /** PoE2-first UI; domain allows PoE1 later (ADR-002). */
 export const GameSchema = z.enum(["POE2", "POE1"]);
@@ -46,7 +59,8 @@ export const StrategyEnhancementLineInputSchema = z.object({
   modifierNotes: OptionalNotesSchema,
   /** Per-map quantity. */
   quantity: DecimalStringSchema,
-  unitCostChaos: DecimalStringSchema,
+  /** Typed amount, in `currency`. */
+  userCostInput: DecimalStringSchema,
   /** Maps one purchase lasts. Whole number of at least 1, within int4. */
   uses: z
     .number({ error: USES_COUNT_MESSAGE })
@@ -54,6 +68,7 @@ export const StrategyEnhancementLineInputSchema = z.object({
     .min(1, { error: USES_COUNT_MESSAGE })
     .max(POSTGRES_INT_MAX, { error: USES_COUNT_MESSAGE }),
   sortOrder: z.number().int().nonnegative().max(POSTGRES_INT_MAX).optional(),
+  currency: CurrencySchema.default("CHAOS"),
 });
 
 export type StrategyEnhancementLineInput = z.infer<
@@ -66,6 +81,8 @@ export const StrategyEnhancementLineSchema =
     id: z.string().min(1),
     /** (quantity × unitCostChaos) / uses (Chaos); compute-on-write via calc engine. */
     lineTotalChaos: DecimalStringSchema,
+    /** Chaos unit cost after a divine line is converted. A chaos line copies userCostInput. */
+    unitCostChaos: DecimalStringSchema,
   });
 
 export type StrategyEnhancementLine = z.infer<
@@ -85,6 +102,7 @@ export const StrategySchema = z.object({
    * UI label: Map (PoE1) / Waystone (PoE2).
    */
   mapUnitCostChaos: DecimalStringSchema,
+  divineRateChaos: NullableDecimalStringSchema,
   enhancementLines: z
     .array(StrategyEnhancementLineSchema)
     .max(MAX_STRATEGY_ENHANCEMENT_LINES),
@@ -102,17 +120,38 @@ export const StrategySchema = z.object({
 export type Strategy = z.infer<typeof StrategySchema>;
 
 /** POST /api/strategies body */
-export const CreateStrategyBodySchema = z.object({
-  name: NameSchema,
-  game: GameSchema,
-  description: DescriptionSchema,
-  mapNotes: OptionalNotesSchema,
-  mapUnitCostChaos: DecimalStringSchema,
-  enhancementLines: z
-    .array(StrategyEnhancementLineInputSchema)
-    .max(MAX_STRATEGY_ENHANCEMENT_LINES)
-    .default([]),
-});
+export const CreateStrategyBodySchema = z
+  .object({
+    name: NameSchema,
+    game: GameSchema,
+    description: DescriptionSchema,
+    mapNotes: OptionalNotesSchema,
+    mapUnitCostChaos: DecimalStringSchema,
+    divineRateChaos: NullableDecimalStringSchema,
+    enhancementLines: z
+      .array(StrategyEnhancementLineInputSchema)
+      .max(MAX_STRATEGY_ENHANCEMENT_LINES)
+      .default([]),
+  })
+  .superRefine((body, ctx) => {
+    const needsRate = body.enhancementLines.some(
+      (line) => line.currency === "DIVINE",
+    );
+    if (!needsRate) {
+      return;
+    }
+    if (
+      body.divineRateChaos !== null &&
+      isPositiveDecimal(body.divineRateChaos)
+    ) {
+      return;
+    }
+    ctx.addIssue({
+      code: "custom",
+      path: ["divineRateChaos"],
+      message: DIVINE_RATE_REQUIRED_MESSAGE,
+    });
+  });
 
 export type CreateStrategyBody = z.infer<typeof CreateStrategyBodySchema>;
 
