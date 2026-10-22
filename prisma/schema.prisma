@@ -29,6 +29,12 @@ enum Game {
   POE1
 }
 
+/// Chaos or divine. Defaults to chaos.
+enum Currency {
+  CHAOS
+  DIVINE
+}
+
 /// How effective session duration is derived (ADR-006).
 enum DurationMethod {
   EXTRAPOLATED
@@ -54,6 +60,8 @@ model Strategy {
   description String
   /// Map/waystone notes; may become structured/regex later.
   mapNotes    String?
+  /// Chaos per divine. Empty when every enhancement cost is chaos.
+  divineRateChaos Decimal? @db.Decimal(20, 8)
 
   /// Cost of one map/waystone in Chaos (quantity implied = 1).
   mapUnitCostChaos Decimal @db.Decimal(20, 8)
@@ -81,7 +89,9 @@ model StrategyEnhancementLine {
   /// Per-map quantity.
   quantity      Decimal @db.Decimal(20, 8)
   unitCostChaos Decimal @db.Decimal(20, 8)
-
+  /// The amount the player typed, in `currency`.
+  userCostInput Decimal @db.Decimal(20, 8) @default(0)
+  currency      Currency @default(CHAOS)
   /// Maps one purchase lasts. Default 1 so a row saved before this column
   /// existed keeps quantity × unit cost until the player sets a count and saves.
   uses Int @default(1)

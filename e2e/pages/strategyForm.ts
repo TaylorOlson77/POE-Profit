@@ -9,10 +9,12 @@ export type StrategyFormInput = {
   description: string;
   mapNotes: string;
   mapCost: string;
+  divineRate?: string;
   lines: ReadonlyArray<{
     name: string;
     quantity: string;
     unitCost: string;
+    currency?: string;
     modifierNotes?: string;
     uses?: string;
   }>;
@@ -33,6 +35,11 @@ export async function fillStrategy(
   await page.getByLabel("Description").fill(strategy.description);
   await page.getByLabel(labels.mapNotes).fill(strategy.mapNotes);
   await page.getByLabel(labels.mapCost).fill(strategy.mapCost);
+  if (strategy.divineRate !== undefined) {
+    await page
+      .getByLabel("Divine rate (chaos per divine)")
+      .fill(strategy.divineRate);
+  }
 
   for (const [index, line] of strategy.lines.entries()) {
     const row = index + 1;
@@ -41,7 +48,12 @@ export async function fillStrategy(
       .getByLabel(`${labels.enhancementSingular} name ${row}`)
       .fill(line.name);
     await page.getByLabel(`Quantity per map ${row}`).fill(line.quantity);
-    await page.getByLabel(`Unit cost (chaos) ${row}`).fill(line.unitCost);
+    if (line.currency !== undefined) {
+      await page
+        .getByLabel(`Currency ${row}`)
+        .selectOption({ label: line.currency });
+    }
+    await page.getByLabel(`Unit cost ${row}`).fill(line.unitCost);
     const uses = page.getByLabel(`Uses ${row}`);
     await expect(uses).toHaveValue("10");
     if (line.uses !== undefined) {

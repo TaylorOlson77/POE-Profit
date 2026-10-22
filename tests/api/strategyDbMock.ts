@@ -6,6 +6,8 @@ type StoredLine = {
   name: string;
   modifierNotes: string | null;
   quantity: string;
+  userCostInput: string;
+  currency: "CHAOS" | "DIVINE";
   unitCostChaos: string;
   uses: number;
   lineTotalChaos: string;
@@ -19,6 +21,7 @@ type StoredStrategy = {
   description: string;
   mapNotes: string | null;
   mapUnitCostChaos: string;
+  divineRateChaos: string | null;
   estimatedCostPerMapChaos: string;
   createdAt: Date;
   updatedAt: Date;
@@ -30,6 +33,8 @@ type LineCreate = {
   name: string;
   modifierNotes?: string | null;
   quantity: { toString(): string };
+  userCostInput: { toString(): string };
+  currency: "CHAOS" | "DIVINE";
   unitCostChaos: { toString(): string };
   uses: number;
   lineTotalChaos: { toString(): string };
@@ -42,6 +47,7 @@ type StrategyData = {
   description: string;
   mapNotes?: string | null;
   mapUnitCostChaos: { toString(): string };
+  divineRateChaos?: { toString(): string } | null;
   estimatedCostPerMapChaos: { toString(): string };
   enhancementLines?: { create: LineCreate[] };
 };
@@ -71,6 +77,8 @@ function asLine(line: LineCreate): StoredLine {
     name: line.name,
     modifierNotes: line.modifierNotes ?? null,
     quantity: line.quantity.toString(),
+    userCostInput: line.userCostInput.toString(),
+    currency: line.currency,
     unitCostChaos: line.unitCostChaos.toString(),
     uses: line.uses,
     lineTotalChaos: line.lineTotalChaos.toString(),
@@ -86,6 +94,10 @@ function toRow(strategy: StoredStrategy) {
     description: strategy.description,
     mapNotes: strategy.mapNotes,
     mapUnitCostChaos: new Decimal(strategy.mapUnitCostChaos),
+    divineRateChaos:
+      strategy.divineRateChaos === null
+        ? null
+        : new Decimal(strategy.divineRateChaos),
     estimatedCostPerMapChaos: new Decimal(strategy.estimatedCostPerMapChaos),
     createdAt: strategy.createdAt,
     updatedAt: strategy.updatedAt,
@@ -97,6 +109,8 @@ function toRow(strategy: StoredStrategy) {
         name: line.name,
         modifierNotes: line.modifierNotes,
         quantity: new Decimal(line.quantity),
+        userCostInput: new Decimal(line.userCostInput),
+        currency: line.currency,
         unitCostChaos: new Decimal(line.unitCostChaos),
         uses: line.uses,
         lineTotalChaos: new Decimal(line.lineTotalChaos),
@@ -111,6 +125,8 @@ function applyData(strategy: StoredStrategy, data: StrategyData): void {
   strategy.description = data.description;
   strategy.mapNotes = data.mapNotes ?? null;
   strategy.mapUnitCostChaos = data.mapUnitCostChaos.toString();
+  strategy.divineRateChaos =
+    data.divineRateChaos == null ? null : data.divineRateChaos.toString();
   strategy.estimatedCostPerMapChaos = data.estimatedCostPerMapChaos.toString();
   if (data.enhancementLines) {
     strategy.lines.push(...data.enhancementLines.create.map(asLine));
@@ -149,6 +165,7 @@ const strategyDelegate = {
       description: "",
       mapNotes: null,
       mapUnitCostChaos: "0",
+      divineRateChaos: null,
       estimatedCostPerMapChaos: "0",
       createdAt: now,
       updatedAt: now,
