@@ -147,6 +147,7 @@ async function writeDemoData(prisma: PrismaClient): Promise<void> {
         "Demo strategy: run expedition and temple tablets on tier 15 waystones.",
       mapNotes: "T15 waystone, prefer +% quantity and +% rarity mods.",
       mapUnitCostChaos: MAP_UNIT_COST_CHAOS,
+      divineRateChaos: null,
       estimatedCostPerMapChaos:
         strategyCosts.estimatedCostPerMapChaos.toString(),
       enhancementLines: {
@@ -154,6 +155,8 @@ async function writeDemoData(prisma: PrismaClient): Promise<void> {
           name: line.name,
           modifierNotes: line.modifierNotes,
           quantity: line.quantity,
+          userCostInput: line.unitCostChaos,
+          currency: "CHAOS",
           unitCostChaos: line.unitCostChaos,
           uses: line.uses,
           lineTotalChaos:

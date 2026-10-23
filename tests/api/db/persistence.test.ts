@@ -76,6 +76,7 @@ async function createStrategy(label: string): Promise<string> {
         game: "POE2",
         description: "API persistence",
         mapUnitCostChaos: "0",
+        divineRateChaos: null,
         enhancementLines: [],
       }),
     }),
@@ -157,6 +158,54 @@ async function removeOwned(
 }
 
 describe("API persistence", () => {
+  it("stores a divine tablet's typed cost and its chaos unit cost", async () => {
+    const response = await postStrategy(
+      new Request("http://localhost/api/strategies", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          name: strategyName("divine-tablet"),
+          game: "POE2",
+          description: "API persistence",
+          mapUnitCostChaos: "2",
+          divineRateChaos: "200",
+          enhancementLines: [
+            {
+              name: "Expedition Tablet",
+              quantity: "1",
+              userCostInput: "10",
+              currency: "DIVINE",
+              uses: 10,
+            },
+          ],
+        }),
+      }),
+    );
+    const created = await readBody(response);
+    expectStatus(created, 201);
+    const strategyId = StrategySchema.parse(created.json).id;
+    try {
+      const loaded = await readBody(
+        await getStrategy(
+          new Request("http://localhost/api/strategies/" + strategyId),
+          idContext(strategyId),
+        ),
+      );
+      expectStatus(loaded, 200);
+      const stored = StrategySchema.parse(loaded.json);
+      expect(stored.divineRateChaos).toBe("200");
+      expect(stored.estimatedCostPerMapChaos).toBe("202");
+      expect(stored.enhancementLines[0]).toMatchObject({
+        userCostInput: "10",
+        currency: "DIVINE",
+        unitCostChaos: "2000",
+        lineTotalChaos: "200",
+      });
+    } finally {
+      await removeOwned(strategyId, null);
+    }
+  });
+
   it("stores an 8-decimal-place line that still multiplies", async () => {
     const strategyId = await createStrategy("eight-decimal");
     let sessionId: string | null = null;

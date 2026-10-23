@@ -20,6 +20,7 @@ The create, update, and delete lines for `POC Expedition Tablet Farming` are one
 - [x] rejects a calculated cost that does not fit the money column — API [`POST /api/strategies`](../../../tests/api/strategies.test.ts)
 - [x] rejects a name or note past its length cap — unit [`text contracts`](../../../src/contracts/text.test.ts)
 - [x] rejects a use count that is not a whole number of at least 1 — API [`POST /api/strategies`](../../../tests/api/strategies.test.ts)
+- [x] rejects a divine unit cost when the rate is missing or zero — API [`POST /api/strategies`](../../../tests/api/strategies.test.ts)
 
 ### Cost
 
@@ -27,6 +28,9 @@ The create, update, and delete lines for `POC Expedition Tablet Farming` are one
 - [x] keeps a total the engine left past two places — API [`POST /api/strategies`](../../../tests/api/strategies.test.ts)
 - [x] per-map cost is waystone plus quantity × unit cost divided by uses — unit [`calculateStrategyCosts`](../../../src/domain/calc/index.test.ts)
 - [x] no tablets leaves the waystone cost — unit [`calculateStrategyCosts`](../../../src/domain/calc/index.test.ts)
+- [x] saves a 200c line and a 202c cost per waystone for 10 divines at 10 uses — API [`POST /api/strategies`](../../../tests/api/strategies.test.ts)
+- [x] saves a chaos-only strategy when the divine rate is empty — API [`POST /api/strategies`](../../../tests/api/strategies.test.ts)
+- [x] saves a chaos scarab as quantity times unit cost — API [`POST /api/strategies`](../../../tests/api/strategies.test.ts)
 
 ### Form
 
@@ -42,6 +46,7 @@ The create, update, and delete lines for `POC Expedition Tablet Farming` are one
 
 - [x] shows the updated cost per waystone on the home list — UI [`e2e/strategies.spec.ts`](../../../e2e/strategies.spec.ts). [Steps](./automated/shows-the-updated-cost-per-waystone-on-the-home-list.md)
 - [x] replaces the lines and recalculates both totals — API [`PUT /api/strategies/:id`](../../../tests/api/strategies.test.ts)
+- [x] recalculates the saved chaos total when the divine rate changes — API [`PUT /api/strategies/:id`](../../../tests/api/strategies.test.ts)
 
 ## Delete a strategy
 
