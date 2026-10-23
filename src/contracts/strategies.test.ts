@@ -15,19 +15,20 @@ describe("Strategy contracts (per-map setup template)", () => {
       description: "Tablet-focused expedition farming",
       mapNotes: "T16 waystones with quant focus",
       mapUnitCostChaos: "2",
+      divineRateChaos: null,
       enhancementLines: [
         {
           name: "Expedition Tablet",
           modifierNotes: "remnants / runaway",
           quantity: "2",
-          unitCostChaos: "100",
+          userCostInput: "100",
           uses: 10,
           sortOrder: 0,
         },
         {
           name: "Temple Tablet",
           quantity: "1",
-          unitCostChaos: "10",
+          userCostInput: "10",
           uses: 10,
           sortOrder: 1,
         },
@@ -43,17 +44,18 @@ describe("Strategy contracts (per-map setup template)", () => {
       game: "POE1",
       description: "Lineage + adversaries example",
       mapUnitCostChaos: "3",
+      divineRateChaos: null,
       enhancementLines: [
         {
           name: "Scarab of Lineage",
           quantity: "2",
-          unitCostChaos: "10",
+          userCostInput: "10",
           uses: 1,
         },
         {
           name: "Scarab of Adversaries",
           quantity: "1",
-          unitCostChaos: "100",
+          userCostInput: "100",
           uses: 1,
         },
       ],
@@ -77,6 +79,7 @@ describe("Strategy contracts (per-map setup template)", () => {
       game: "POE2",
       description: "Missing name",
       mapUnitCostChaos: "2",
+      divineRateChaos: null,
     });
 
     expect(parsed.success).toBe(false);
@@ -88,6 +91,7 @@ describe("Strategy contracts (per-map setup template)", () => {
       game: "DIABLO",
       description: "Wrong game",
       mapUnitCostChaos: "1",
+      divineRateChaos: null,
     });
 
     expect(parsed.success).toBe(false);
@@ -103,7 +107,7 @@ describe("Strategy contracts (per-map setup template)", () => {
         {
           name: "Expedition Tablet",
           quantity: 1,
-          unitCostChaos: 100,
+          userCostInput: 100,
         },
       ],
     });
@@ -117,7 +121,7 @@ describe("Strategy contracts (per-map setup template)", () => {
       (_, i) => ({
         name: `Line ${i}`,
         quantity: "1",
-        unitCostChaos: "1",
+        userCostInput: "1",
         uses: 1,
       }),
     );
@@ -127,6 +131,7 @@ describe("Strategy contracts (per-map setup template)", () => {
       game: "POE2",
       description: "Abuse / bug guard",
       mapUnitCostChaos: "1",
+      divineRateChaos: null,
       enhancementLines,
     });
 
@@ -137,7 +142,7 @@ describe("Strategy contracts (per-map setup template)", () => {
     const line = {
       name: "Expedition Tablet",
       quantity: "1",
-      unitCostChaos: "1",
+      userCostInput: "1",
       uses: 1,
     };
     const body = {
@@ -145,6 +150,7 @@ describe("Strategy contracts (per-map setup template)", () => {
       game: "POE2",
       description: "Integer column",
       mapUnitCostChaos: "1",
+      divineRateChaos: null,
     };
 
     expect(
@@ -167,11 +173,12 @@ describe("Strategy contracts (per-map setup template)", () => {
       game: "POE2",
       description: "Use count",
       mapUnitCostChaos: "2",
+      divineRateChaos: null,
     };
     const line = {
       name: "Expedition Tablet",
       quantity: "1",
-      unitCostChaos: "100",
+      userCostInput: "100",
     };
 
     for (const uses of [0, 1.5, "", -1, 2_147_483_648]) {
@@ -204,6 +211,54 @@ describe("Strategy contracts (per-map setup template)", () => {
     ).toBe(true);
   });
 
+  it("rejects a divine line when the rate is missing or zero", () => {
+    const body = {
+      name: "Divine Tablet",
+      game: "POE2",
+      description: "Rate required",
+      mapUnitCostChaos: "2",
+    };
+    const line = {
+      name: "Expedition Tablet",
+      quantity: "1",
+      userCostInput: "10",
+      currency: "DIVINE",
+      uses: 10,
+    };
+
+    for (const divineRateChaos of [null, "0", "0.00"]) {
+      const parsed = CreateStrategyBodySchema.safeParse({
+        ...body,
+        divineRateChaos,
+        enhancementLines: [line],
+      });
+      expect(parsed.success).toBe(false);
+      if (!parsed.success) {
+        expect(parsed.error.issues).toContainEqual(
+          expect.objectContaining({
+            path: ["divineRateChaos"],
+            message: "A divine rate is required",
+          }),
+        );
+      }
+    }
+
+    expect(
+      CreateStrategyBodySchema.safeParse({
+        ...body,
+        divineRateChaos: "200",
+        enhancementLines: [line],
+      }).success,
+    ).toBe(true);
+    expect(
+      CreateStrategyBodySchema.safeParse({
+        ...body,
+        divineRateChaos: "0",
+        enhancementLines: [{ ...line, currency: "CHAOS" }],
+      }).success,
+    ).toBe(true);
+  });
+
   it("accepts stored totals where uses of 1 leaves quantity × unit cost", () => {
     // Uses of 1: map 2 + 2×100/1 + 1×10/1 = 212
     const parsed = StrategySchema.safeParse({
@@ -212,11 +267,13 @@ describe("Strategy contracts (per-map setup template)", () => {
       game: "POE2",
       description: "Fixture for per-map cost aggregation",
       mapUnitCostChaos: "2",
+      divineRateChaos: null,
       enhancementLines: [
         {
           id: "line_1",
           name: "Expedition Tablet",
           quantity: "2",
+          userCostInput: "100",
           unitCostChaos: "100",
           uses: 1,
           lineTotalChaos: "200",
@@ -226,6 +283,7 @@ describe("Strategy contracts (per-map setup template)", () => {
           id: "line_2",
           name: "Temple Tablet",
           quantity: "1",
+          userCostInput: "10",
           unitCostChaos: "10",
           uses: 1,
           lineTotalChaos: "10",
@@ -251,12 +309,14 @@ describe("Strategy contracts (per-map setup template)", () => {
       description: "Blight tablet strategy",
       mapNotes: "T16",
       mapUnitCostChaos: "2",
+      divineRateChaos: null,
       enhancementLines: [
         {
           id: "line_1",
           name: "Expedition Tablet",
           modifierNotes: "example mods",
           quantity: "2",
+          userCostInput: "100",
           unitCostChaos: "100",
           uses: 1,
           lineTotalChaos: "200",

@@ -11,18 +11,13 @@ export const crudStrategy = {
   description: "Tablet-focused expedition farming",
   mapNotes: "T16 waystones",
   mapCost: "2",
+  divineRate: "200",
   lines: [
     {
       name: "Expedition Tablet",
-      quantity: "2",
-      unitCost: "100",
-      modifierNotes: "remnants",
-      uses: "10",
-    },
-    {
-      name: "Temple Tablet",
       quantity: "1",
       unitCost: "10",
+      currency: "Divines",
       uses: "10",
     },
   ],

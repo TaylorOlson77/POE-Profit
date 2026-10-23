@@ -157,6 +157,22 @@ export function calculateStrategyCosts(
   };
 }
 
+/** Chaos amount for a divine cost. Null when the cost or the rate cannot convert. */
+export function calculateDivineToChaos(
+  input: Decimal.Value | null,
+  ratio: Decimal.Value | null,
+): Decimal | null {
+  if (input === null || ratio === null) {
+    return null;
+  }
+  const cost = new Decimal(input);
+  const rate = new Decimal(ratio);
+  if (cost.lt(0) || rate.lte(0)) {
+    return null;
+  }
+  return cost.times(rate);
+}
+
 /**
  * Session money (C1). Map spend is mapsCompleted × mapUnitCostChaos and is
  * never read from investment lines — putting the waystone on a line as well
