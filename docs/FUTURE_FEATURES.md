@@ -15,8 +15,9 @@ A phase is an agreement to build. An idea in this file is not. When an idea beco
 
 These are not repeated below. See [`PHASES.md`](./PHASES.md).
 
-- A tablet's price split across its uses. That epic also includes entering a tablet price in divines, and confirming before a game change clears the rows. Showing the list cost in divines, and filling the rate from poe.ninja, stay below as FF-024 and FF-025.
-- Session logging as category totals, divine input, extrapolated time, and costs filled in from the strategy
+- A tablet's price split across its uses. That epic also includes entering a tablet price in divines, and confirming before a game change clears the rows. It shipped on 2026-10-23 (#21, #22, #23). Showing the list cost in divines, and filling the rate from poe.ninja, stay below as FF-024 and FF-025.
+- Session logging as category totals, divine input, extrapolated time, and costs filled in from the strategy. On 2026-10-29 the session-cost epic waits. Category totals wait while this league is logged as item lines.
+- The README shows CI status and the latest Playwright report. That is phase 6. The trend page stays FF-006.
 - Your compiled results, and leaving your own session out of them
 - Live strategy cost on the dirty form (former FF-005)
 - Unsaved-session warning, sort history by profit per hour, hide a strategy that still has sessions
@@ -145,13 +146,15 @@ Phase 5 reopened a favorite. It did not reopen this.
 | Field | Value |
 | --- | --- |
 | Status | Idea |
-| Horizon | Whenever. No player impact. |
+| Horizon | After phase 6. The Playwright HTML report for `main` is that phase. |
 | Date | 2026-09-27 |
 | Related | [`QA_WORKFLOW.md`](./QA_WORKFLOW.md) |
 
 ### Summary
 
 A generated report for each deploy. The summary is the feature and the action, with a pass rate and counts by layer. The drill-down is the coverage page, each line marked manual, browser, API, or unit, plus pass or fail. Manual results are a short log: case file name, pass or fail, date, deploy. Cases added or updated come from the git diff of the catalog.
+
+On 2026-10-29 the in-app `/quality` page joined this idea. It would show test count, pass rate, runtime, and flaky count over time. It reads a generated artifact. A hand-counted number stays out. It waits until phase 6 has a report to point at.
 
 ### Why
 
@@ -450,6 +453,8 @@ One list of recent public sessions across strategies. Phase 5 shows sessions on 
 
 Creating a PoE1 strategy already works. The form says Map and Scarab. Modifier notes are PoE2-only. Scarab uses stay 1 in phase 1. Later phases start from a gap the dry run hits: PoE1 revenue categories, PoE1 league names, or a scarab setup the tablet row does not cover. "PoE1 support" is not an epic.
 
+On 2026-10-27 Taylor said the shared category list is enough for this league. A PoE1 session's profit is the item, how many dropped, and the chaos unit value from the sale. Scarabs, Maps, and Uniques as category names stay in this idea.
+
 ---
 
 ## FF-021: Account recovery and GGG login
@@ -491,14 +496,17 @@ Kept because the baseline named them, not because a player is blocked.
 | Field | Value |
 | --- | --- |
 | Status | Idea |
-| Horizon | After phase 1 |
+| Horizon | After phase 2's cost-prefill epic. Phase 1 shipped on 2026-10-23. |
 | Date | 2026-09-28 |
+| Kept | 2026-10-27 |
 
 ### Summary
 
 A strategy's setup cost is a waystone plus tablets, or a map plus scarabs. Other consumables belong on that cost too. In PoE2, Head of the King affects about five maps. For some consumables that count is a range, such as 4–6. The player enters one use count. The estimate uses the same per-map split as a tablet: `(quantity × unit cost) / uses`. Across runs, a range evens out, so the row does not store a minimum and a maximum.
 
-Phase 1 keeps that split as the strategy cost formula, with no tablet-only branch, so this idea can call it.
+Phase 1 shipped that split as the strategy cost formula, with no tablet-only branch, so this idea can call it.
+
+On 2026-10-27 Taylor kept this for the PoE1 league, after a new session already starts with the strategy's scarab costs. Night one is a map price plus scarabs. Within the first week, a chisel, an alchemy orb, or a chaos orb spent as cost belongs on the strategy, and a new session starts with that line. A session can already record those as investment lines. The gap is storing them on the strategy so the same copy that brings scarabs also brings them. These three are one use per map. The Head of the King range stays the other example.
 
 ### Why
 
@@ -514,6 +522,7 @@ A consumable that is not a tablet is missing from the setup cost, or it is typed
 
 1. One list of setup costs, with a name the player types, or a separate list beside tablets?
 2. Does quantity still mean how many are used per map?
+3. For a chisel, an alchemy orb, or a chaos orb, is the row one use per map?
 
 ---
 
@@ -610,6 +619,127 @@ Those boxes take letters today. The player finds out when they save.
 
 ---
 
+## FF-028: axe checks inside the Playwright journeys
+
+| Field | Value |
+| --- | --- |
+| Status | Idea |
+| Horizon | After phase 6, so a failure shows in the published report |
+| Date | 2026-10-29 |
+
+### Summary
+
+The existing Playwright journeys also run axe-core on the pages they open. A serious violation fails the run.
+
+### Why
+
+The browser suite already walks the strategy and session screens. An accessibility check there is one small addition a hiring manager can see in the same report.
+
+### Risks
+
+- A rule set aimed at a perfect score will fail on the current dark-theme controls and block every merge.
+- Scanning every state of every form is a second suite. The journeys that already exist are the scope.
+
+### Open questions
+
+1. Which violation impact fails the run: serious and critical, or every violation?
+
+---
+
+## FF-029: A k6 load check with a CI threshold
+
+| Field | Value |
+| --- | --- |
+| Status | Parked |
+| Horizon | Only if Taylor reopens the load-test line in [`TEST_STRATEGY.md`](./TEST_STRATEGY.md) §8 |
+| Date | 2026-10-29 |
+
+### Summary
+
+A small k6 script hits the running app and fails CI when a threshold breaks. The target is the app started on the runner, the same way Playwright starts `next start`. It does not hit the public site, and it does not hit the Neon `ci` branch. That branch is one shared database the browser job already queues on.
+
+### Why it is parked
+
+Load testing beyond a smoke was closed for MVP. A script against Neon would fight that queue and spend the database.
+
+---
+
+## FF-030: Explain a saved session, then grade the explanation
+
+| Field | Value |
+| --- | --- |
+| Status | Idea |
+| Horizon | After phase 6. Not the next epic. |
+| Date | 2026-10-29 |
+
+### Summary
+
+One model call explains a saved session's profit in words. The numbers in that explanation match the profit, ROI, and rates already stored for that session. A golden set of sessions locks the expected facts. One prompt-injection case leaves the stored numbers unchanged and does not follow the injected instruction. A pass-rate threshold in CI fails the run when those checks miss.
+
+This is not a strategy recommendation. The app still presents a logged session as an observation. poe.ninja and other automatic pricing stay closed.
+
+An LLM-as-judge, or a tool such as Promptfoo, is how the wording is scored. That scorer arrives with the explanation. A scorer with no model call is an empty suite.
+
+### Why
+
+A hiring manager can see an eval gate on a behavior the calc engine already owns. The check is that the model did not invent a profit.
+
+### Risks
+
+- A live model in CI is slow, billed, and non-deterministic. The golden facts have to be the stored numbers, not a second opinion about whether the farm was good.
+- A judge model can pass fluent text that cites the wrong chaos figure. The number check has to be code.
+- Widening this into "which strategy should I run" fights the rule that results are observations.
+
+### Open questions
+
+1. Which session does the explanation read: one fixture session, or any saved session the player opens?
+2. Does CI call a live model, or a recorded response plus a live call on a schedule?
+
+---
+
+## FF-031: Screenshot locks on the existing journeys
+
+| Field | Value |
+| --- | --- |
+| Status | Parked |
+| Horizon | Only if Taylor reopens the visual-regression line in [`TEST_STRATEGY.md`](./TEST_STRATEGY.md) §8 |
+| Date | 2026-10-29 |
+
+### Summary
+
+There is no screenshot suite today. A full visual-regression suite was closed for MVP. If that line is reopened, the scope is a screenshot of a page the Playwright journeys already open, compared to a committed baseline. A pixel diff of the whole app stays out.
+
+---
+
+## FF-027: Session history says Maps for a PoE1 run
+
+| Field | Value |
+| --- | --- |
+| Status | Idea |
+| Horizon | Whenever. No dependency on the session-cost epic. |
+| Date | 2026-10-27 |
+
+### Summary
+
+The session form already says Maps when the strategy is PoE1. The history column header stays Waystones for every game. That header is the E2 decision in [`AGENTS.md`](./AGENTS.md). This idea reopens that label: a PoE1 run's history row says Maps.
+
+Taylor did not accept this as a phase on 2026-10-27. It can come off the list.
+
+### Why
+
+The list scanned during a PoE1 league still uses the PoE2 word.
+
+### Risks
+
+- One column header for a mixed list of PoE1 and PoE2 sessions has to follow the row's game, or the header stays a single word and is wrong for one of them.
+- Reopening a locked label for one column can spread into other Waystone strings that were left on purpose.
+
+### Open questions
+
+1. Does each row use its strategy's word, or does the column header change with a filter?
+
+---
+
 ## Folded on 2026-09-28
 
 Do not bring these back as new ideas unless the reason below is wrong.
@@ -620,6 +750,16 @@ Do not bring these back as new ideas unless the reason below is wrong.
 | A personal dashboard with its own math | Phase 3 is the compilation. Phase 5 reuses it. |
 | Split compiled stats by duration method | New sessions are extrapolated only. Old rows keep their method label. |
 | Copy a strategy as its own epic | FF-007, versions. |
+
+## Folded on 2026-10-29
+
+Do not bring these back as new ideas unless the reason below is wrong.
+
+| Idea | Where it went |
+| --- | --- |
+| Contract tests and MSW for a third-party economy API | No client exists. poe.ninja and other automatic pricing stay closed in [`MVP_SPEC.md`](./MVP_SPEC.md) §4. The app's own API already has contract tests. |
+| A second public repo that holds only the test framework | The tests live in this repo. Phase 6 makes this repo's report readable. A split repo hides the app those tests hit. |
+| An LLM that recommends a farming strategy | FF-030 explains a saved session. A recommendation presents a profit as advice. |
 
 ---
 
@@ -652,3 +792,8 @@ Do not bring these back as new ideas unless the reason below is wrong.
 | FF-024 | Show a large list cost in divines | Idea |
 | FF-025 | Fill the divine rate from poe.ninja | Idea |
 | FF-026 | Number fields refuse letters | Idea |
+| FF-027 | Session history says Maps for a PoE1 run | Idea |
+| FF-028 | axe checks inside the Playwright journeys | Idea |
+| FF-029 | A k6 load check with a CI threshold | Parked |
+| FF-030 | Explain a saved session, then grade the explanation | Idea |
+| FF-031 | Screenshot locks on the existing journeys | Parked |

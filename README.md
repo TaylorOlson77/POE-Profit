@@ -88,6 +88,8 @@ Jest does **not** run Playwright specs, and Playwright does **not** run unit/API
 
 ## CI
 
+[![CI](https://github.com/TaylorOlson77/POE-Profit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/TaylorOlson77/POE-Profit/actions/workflows/ci.yml)
+
 GitHub Actions (`.github/workflows/ci.yml`) on pull requests and on `main`:
 
 1. Lint
