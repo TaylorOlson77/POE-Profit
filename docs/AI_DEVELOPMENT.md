@@ -38,7 +38,7 @@ Chats do **not** fully remember each other. Carry context via the repo:
 
 | Mechanism | Use for |
 | --- | --- |
-| [`AGENTS.md`](./AGENTS.md) | Handoff when the chat is not running a command: product name, process, stack, baseline, commits |
+| `docs/AGENTS.md` (local only) | Handoff when the chat is not running a command: product name, process, stack, baseline, commits |
 | `docs/*.md` | The command names which of these to open. A build chat does not read the set. |
 | `.cursor/rules` | Always-on working rules (`ai-development-workflow.mdc`) |
 | `@`-mention files | Pull exact docs into a new chat |
@@ -62,7 +62,6 @@ Each is a fresh chat. Follow that command's read list.
 
 ## Related docs
 
-- [`AGENTS.md`](./AGENTS.md) — handoff for new chats
 - [`MVP_SPEC.md`](./MVP_SPEC.md)
 - [`DECISIONS.md`](./DECISIONS.md)
 - [`ARCHITECTURE.md`](./ARCHITECTURE.md)

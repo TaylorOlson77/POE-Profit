@@ -209,9 +209,9 @@ See [`PHASES.md`](./PHASES.md) for the next phases. [`FUTURE_FEATURES.md`](./FUT
 
 ## 11. Where new work starts
 
-The MVP baseline is deployed at [poe-profit.vercel.app](https://poe-profit.vercel.app/). New work follows [`AGENTS.md`](./AGENTS.md): the current phase in [`PHASES.md`](./PHASES.md), then `plan-epic`, `ticket-test-plan`, implementation, `dev-wrap-up`, and `definition-of-done`.
+The MVP baseline is deployed at [poe-profit.vercel.app](https://poe-profit.vercel.app/). New work follows `docs/AGENTS.md`: the current phase in [`PHASES.md`](./PHASES.md), then `plan-epic`, `ticket-test-plan`, implementation, `dev-wrap-up`, and `definition-of-done`.
 
-Handoff for new agents: [`AGENTS.md`](./AGENTS.md).
+Handoff for new agents: `docs/AGENTS.md` (local only, not published).
 
 ---
 
