@@ -1,130 +1,79 @@
 # POE Profit
 
-Farming strategy profitability tracker for Path of Exile (PoE2-first MVP).
+[![CI](https://github.com/TaylorOlson77/POE-Profit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/TaylorOlson77/POE-Profit/actions/workflows/ci.yml)
 
-Live demo: [poe-profit.vercel.app](https://poe-profit.vercel.app/). It shows the demo strategy only. There is no login.
+Profit tracker for Path of Exile 2 farming strategies. You record what a farming session cost and what it returned, and the app calculates profit, ROI, profit per hour, and profit per map.
 
-## Requirements
+Live demo: [poe-profit.vercel.app](https://poe-profit.vercel.app/) (demo data, no login)
 
-- Node.js 22 (CI and Vercel use **22**)
-- npm
+![Session page with revenue lines and calculated performance](docs/images/session-performance.png)
 
-## Local development
+## Important docs
 
-```bash
-npm install
-npm run dev
-```
+- [`docs/TEST_STRATEGY.md`](docs/TEST_STRATEGY.md): risks, which layer tests what, and what isn't automated
+- [`docs/DECISIONS.md`](docs/DECISIONS.md): architecture decision records (ADRs)
+- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md): system map and folder layout
+- [`docs/MVP_SPEC.md`](docs/MVP_SPEC.md): product rules and non-goals
+- [`docs/QA_WORKFLOW.md`](docs/QA_WORKFLOW.md): how a ticket goes from plan to merge
+- [`tests/catalog/`](tests/catalog/README.md): coverage pages per feature area
+- [`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md): setup, scripts, database, and deploy
 
-Open [http://localhost:3000](http://localhost:3000).
+## Tests
 
-## Scripts
+| Layer           | Tool       | Tests | Location           | Covers                                                            |
+| --------------- | ---------- | ----: | ------------------ | ----------------------------------------------------------------- |
+| Unit            | Jest       |   145 | `src/**/*.test.ts` | Calculation engine, rounding, form transforms                     |
+| API contract    | Jest       |    33 | `tests/api/`       | Status codes, validation errors, calculated fields in responses   |
+| API persistence | Jest       |     7 | `tests/api/db/`    | Round-trips against real Postgres: decimal scale, limits, deletes |
+| E2E             | Playwright |     9 | `e2e/`             | Create, edit, and delete for strategies and sessions; home smoke  |
 
-| Script                                 | Purpose                                         |
-| -------------------------------------- | ----------------------------------------------- |
-| `npm run dev`                          | Next.js dev server                              |
-| `npm run build`                        | Generate the Prisma client and build Next.js    |
-| `npm run build:vercel`                 | Vercel build; migrates when `VERCEL_ENV=production` |
-| `npm run start`                        | Serve production build                          |
-| `npm run lint`                         | ESLint                                          |
-| `npm run typecheck`                    | TypeScript (`tsc --noEmit`)                     |
-| `npm run format`                       | Prettier write                                  |
-| `npm run format:check`                 | Prettier check                                  |
-| `npm run test`                         | Jest unit tests (`src/**/*.test.ts`)            |
-| `npm run test:api`                     | Jest API tests (`tests/api/`)                   |
-| `npm run test:api:db`                  | Jest persistence round-trips on the Neon `local` branch |
-| `npm run test:e2e`                     | Playwright E2E (`e2e/`)                         |
-| `npm run db:generate`                  | Generate Prisma Client                          |
-| `npm run db:migrate`                   | Create + apply a migration (dev)                |
-| `npm run db:migrate:deploy`            | Apply existing migrations (local)               |
-| `npm run db:migrate:deploy:production` | Apply migrations to the public Neon branch      |
-| `npm run db:migrate:status`            | Check migration status against Neon             |
-| `npm run db:seed`                      | Replace the demo strategy + session on local    |
-| `npm run db:reset:production`          | Wipe the public branch and insert the demo seed |
-| `npm run db:studio`                    | Open Prisma Studio                              |
+Counts as of 2026-10-30.
 
-## Database (Neon + Prisma)
-
-Three Neon branches. Each has its own pooled `DATABASE_URL` (hostname contains `-pooler`) and direct `DATABASE_URL_UNPOOLED` (same string with `-pooler` removed from the host).
-
-| Branch       | Who uses it                                                         | Where the URLs live                                                              |
-| ------------ | ------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| `local`      | `npm run dev` and the `db:*` scripts without a `:production` suffix | `.env.local`                                                                     |
-| `production` | The public Vercel app                                               | Vercel Production, and `.env.neon-production` for the one-time migrate and reset |
-| `ci`         | GitHub Actions                                                      | Secrets `CI_DATABASE_URL` and `CI_DATABASE_URL_UNPOOLED`                         |
-
-1. Copy the two URL lines from [`.env.example`](./.env.example) into `.env.local` and fill in the `local` branch. Leave `DATABASE_RESET` out of that file.
-2. `npm run db:generate`
-3. `npm run db:migrate:status` — should report all migrations applied.
-4. `npm run db:seed` — demo strategy and session. Re-running replaces only those rows.
-
-`.env.neon-production` holds the public branch URLs and `DATABASE_RESET=production`. `npm run db:migrate:deploy:production` applies migrations there from this machine. A production Vercel build does the same apply before it compiles. `npm run db:reset:production` deletes every strategy and session on that branch, then inserts the demo seed. Those scripts do not read `.env.local`.
-
-Schema lives in [`prisma/schema.prisma`](./prisma/schema.prisma); committed SQL in
-`prisma/migrations/`. Money and quantities are `Decimal(20, 8)` (ADR-015) and
-calculated fields are persisted compute-on-write results (ADR-018). The seed's
-calculated columns come from the calc engine ([`prisma/seed.ts`](./prisma/seed.ts)).
-
-Never commit `.env.local`, `.env.neon-production`, or `.env.neon-ci`. Anyone with the public URL can create, edit, and delete rows on the production branch. That does not reach `local` or `ci`. Keep real league sessions on `local`. `npm run db:reset:production` restores the demo seed.
-
-## Deploy (Vercel)
-
-Production environment only: `DATABASE_URL` and `DATABASE_URL_UNPOOLED` from the Neon `production` branch. Node.js 22. Do not set `DATABASE_RESET` on Vercel, and do not give Preview those URLs. [`vercel.json`](./vercel.json) sets the build command to `npm run build:vercel`. That script runs `prisma migrate deploy` when `VERCEL_ENV` is `production`, then `prisma generate` and `next build`. Preview builds and `npm run build` generate the client and build, and they do not migrate. `npm run db:migrate:deploy:production` remains the way to apply a migration from this machine when a deploy is not running.
-
-The live app is [poe-profit.vercel.app](https://poe-profit.vercel.app/). CI does not test that URL. Playwright on Actions starts `next start` on the runner and talks to the Neon `ci` branch.
-
-## Testing layers (ADR-014 / ADR-019)
-
-| Layer | Tool       | Location                     | Command            |
-| ----- | ---------- | ---------------------------- | ------------------ |
-| Unit  | Jest       | colocated `src/**/*.test.ts` | `npm test`         |
-| API   | Jest       | `tests/api/`                 | `npm run test:api` |
-| API persistence | Jest | `tests/api/db/`            | `npm run test:api:db` |
-| E2E   | Playwright | `e2e/`                       | `npm run test:e2e` |
-
-Jest does **not** run Playwright specs, and Playwright does **not** run unit/API math cases.
-
-**E2E server:** locally Playwright starts `next dev` (or reuses one already running) against the Neon database in `.env.local`. The demo seed has to be applied (`npm run db:seed`). Restarting the dev server does not reset that database. When the journey groups start, and again when they finish (including after a failure), each group deletes the strategies it owns. The create/update/delete strategy is removed. The seed strategy stays, and any session on it other than the seeded demo session is removed. Strategies created by hand, under other names, stay. In CI the workflow builds on a GitHub-hosted runner, then Playwright starts `next start` on that same machine against the Neon `ci` branch. It uses real Chromium. It does not open the Vercel site. Once per job, before Playwright, that branch is migrated and reset to the seed. It is not reset after each test. A failed test is retried once.
+Most of the tests are unit tests on the calculation engine, since a wrong profit or ROI number is the main risk. API tests cover the contract and persistence, and Playwright covers the main user journeys without repeating validation cases.
 
 ## CI
 
-[![CI](https://github.com/TaylorOlson77/POE-Profit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/TaylorOlson77/POE-Profit/actions/workflows/ci.yml)
+GitHub Actions runs on every pull request and push to `main`.
 
-GitHub Actions (`.github/workflows/ci.yml`) on pull requests and on `main`:
-
-1. Lint
-2. Typecheck
-3. Unit tests
-4. API tests
-5. Production build
-6. Playwright E2E (Chromium), after migrating and resetting the Neon `ci` branch
-
-`main` is the production branch. Vercel deploys it. Feature work merges through a pull request. CI on that pull request has to be green, and the docs in the pull request have to match the code.
-
-E2E waits if another run is already using that branch. On E2E failure, the workflow uploads `playwright-report/` and `test-results/` artifacts.
-
-## Project docs
-
-Start with [`docs/AGENTS.md`](docs/AGENTS.md), then:
-
-- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
-- [`docs/DECISIONS.md`](docs/DECISIONS.md)
-- [`docs/MVP_SPEC.md`](docs/MVP_SPEC.md)
-- [`docs/TEST_STRATEGY.md`](docs/TEST_STRATEGY.md)
-- [`docs/QA_WORKFLOW.md`](docs/QA_WORKFLOW.md)
-- [`docs/PRODUCT.md`](docs/PRODUCT.md)
-
-Phase 1 is archived at [`docs/archive/BACKLOG.md`](docs/archive/BACKLOG.md).
-
-## Layout (MVP)
-
-```text
-app/                 # UI + Route Handlers
-src/contracts/       # API contracts (Zod)
-src/domain/calc/     # Pure calculation engine
-src/server/db/       # Prisma client singleton
-docs/                # Specs, ADRs, handoff
-prisma/              # schema + migrations
-e2e/                 # Playwright
-tests/api/           # Jest API tests
+```mermaid
+flowchart LR
+  subgraph quality [Quality job]
+    lint[Lint] --> typecheck[Typecheck] --> unit[Unit tests] --> contract[API contract tests] --> build[Build]
+  end
+  subgraph e2e [E2E job]
+    migrate["Migrate and reset ci database"] --> persist[API persistence tests] --> reset[Reset to seed] --> e2eBuild[Build] --> playwright[Playwright]
+  end
+  build --> migrate
 ```
+
+- Contract tests use a Prisma fake and need no database.
+- The E2E job uses a separate Neon `ci` branch, not the demo site's database.
+- E2E runs are queued so two jobs don't reset the same database at once.
+- A failed Playwright test retries once, and the report is uploaded on failure.
+
+## Design notes
+
+- Money is handled with `decimal.js` and stored as `Decimal(20, 8)`, never as a JavaScript `number`. Values are rounded only for display (ADR-015, ADR-021).
+- The server calculates and stores derived fields on save. The UI displays the API response and doesn't do its own math (ADR-008, ADR-018).
+- Local, CI, and production each use their own Neon database branch.
+
+## AI-assisted development
+
+Built with Cursor. I make the product and architecture calls, record them as ADRs, and every change goes through a pull request with passing CI. The working agreement is in [`docs/AI_DEVELOPMENT.md`](docs/AI_DEVELOPMENT.md), and the ticket workflow prompts are in [`.cursor/commands/`](.cursor/commands/).
+
+## Run locally
+
+Requires Node.js 22.
+
+```bash
+npm install
+npm run dev        # http://localhost:3000
+npm test           # unit tests
+npm run test:api   # API contract tests
+```
+
+The app, persistence tests, and Playwright need a Postgres database. See [`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md).
+
+## Stack
+
+Next.js, TypeScript, Zod, Prisma, Neon Postgres, `decimal.js`, Jest, Playwright, GitHub Actions, Vercel.

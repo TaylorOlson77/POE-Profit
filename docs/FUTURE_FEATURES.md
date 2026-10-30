@@ -721,7 +721,7 @@ There is no screenshot suite today. A full visual-regression suite was closed fo
 
 ### Summary
 
-The session form already says Maps when the strategy is PoE1. The history column header stays Waystones for every game. That header is the E2 decision in [`AGENTS.md`](./AGENTS.md). This idea reopens that label: a PoE1 run's history row says Maps.
+The session form already says Maps when the strategy is PoE1. The history column header stays Waystones for every game. That header is the E2 decision in `docs/AGENTS.md`. This idea reopens that label: a PoE1 run's history row says Maps.
 
 Taylor did not accept this as a phase on 2026-10-27. It can come off the list.
 

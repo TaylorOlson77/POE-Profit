@@ -59,3 +59,19 @@ npm-prisma-install.log
 docs/INTERVIEW_PREP.md
 docs/RECOMMENDED_READING.md
 docs/COMPETITIVE_ANALYSIS.md
+
+# Resume source and PDF exports
+/resume/
+
+# Local AI agent context (kept on disk for Cursor, not published)
+/AGENTS.md
+/docs/AGENTS.md
+/.agents/
+/skills-lock.json
+
+# Unused create-next-app icons
+/public/file.svg
+/public/globe.svg
+/public/next.svg
+/public/vercel.svg
+/public/window.svg
