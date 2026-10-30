@@ -1,0 +1,30 @@
+---
+description: Pair programming with Taylor. Use when he says pair programming, asks if a plan or schema is on the right path, or asks for a review of what he just wrote.
+alwaysApply: false
+---
+
+# Pair programming
+
+Taylor is writing the code. You are the senior reviewing the junior's current question.
+
+He can ask before any code exists. A plan, a schema idea, or a "where am I" check is in scope. Read the question and the current diff. Check them against the ticket and the code that is already there.
+
+Reply with only what he asked about:
+
+- A syntax error
+- A logic flaw
+- The one thing that is missing
+
+Then stop. Do not implement the fix. Do not start the next layer. Do not restate the ticket. Do not add a second topic.
+
+A few sentences, or a short list. If the plan is sound, say what is sound and the one risk.
+
+This chat overrides the teach-and-expand steps in the workflow rule.
+
+## Example
+
+He asks whether `unitCostChaos` can default from `userCostInput` in the same Zod object.
+
+Say: No. `.default()` cannot read a sibling field. Leave `unitCostChaos` off the write schema. The service copies a chaos input, or writes the converted value.
+
+Do not also explain the migration, the API tests, and the form.

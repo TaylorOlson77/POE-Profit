@@ -5,9 +5,9 @@
 | Status | Agreed (2026-09-28) |
 | Applies | What to build after MVP v1, and in what order. |
 | Related | [`PRODUCT.md`](./PRODUCT.md), [`FUTURE_FEATURES.md`](./FUTURE_FEATURES.md), [`MVP_SPEC.md`](./MVP_SPEC.md) §4, [ADR-008](./DECISIONS.md), [ADR-011](./DECISIONS.md) |
-| Next epic | A tablet's price is split across its uses |
+| Next epic | The README shows CI status and the latest Playwright report |
 
-v1 is live. These are the next phases. [`FUTURE_FEATURES.md`](./FUTURE_FEATURES.md) holds everything that did not make a phase.
+v1 is live. Phase 1 shipped on 2026-10-23. These are the next phases. [`FUTURE_FEATURES.md`](./FUTURE_FEATURES.md) holds everything that did not make a phase.
 
 `plan-epic` reads one phase, confirms the epics, then writes tickets for one epic. The rules are [`PRODUCT.md`](./PRODUCT.md). It does not start a later phase while an earlier one is open, except where this file says a phase can overlap. Tickets and acceptance criteria are written in that command, not here.
 
@@ -25,17 +25,21 @@ Still closed: poe.ninja and other automatic pricing, the GGG API, stash reconcil
 
 ## 1. A tablet costs what it lasts
 
+**Shipped** on 2026-10-23. The use-count split is #21 (2026-09-29). The confirm before a game change clears the rows is #22 (2026-09-29). A tablet price entered in divines is #23 (2026-10-23).
+
 **Player outcome:** A PoE2 map's setup cost spreads a tablet's price across the maps it lasts. A PoE1 scarab still costs its full price on the one map that consumes it.
 
-**Epic: A tablet's price is split across its uses.** Today a tablet's quantity times its price is added to every map. A tablet bought for 100c with 10 uses is charged as 100c per map. The per-map enhancement cost is `(quantity × unit cost) / uses`. Uses of 1 keeps today's formula, so a scarab does not change. A new PoE2 tablet row defaults to 10 uses. A scarab defaults to 1. Five-use and twenty-use tablets are a use count the player sets on the row, not separate rules. A row already saved stays at 1 use until the player sets a count. Stored costs do not get divided by 10 on their own.
+**Epic: A tablet's price is split across its uses.** Before this epic, a tablet's quantity times its price was added to every map. A tablet bought for 100c with 10 uses is charged as 100c per map. The per-map enhancement cost is `(quantity × unit cost) / uses`. Uses of 1 keeps today's formula, so a scarab does not change. A new PoE2 tablet row defaults to 10 uses. A scarab defaults to 1. Five-use and twenty-use tablets are a use count the player sets on the row, not separate rules. A row already saved stays at 1 use until the player sets a count. Stored costs do not get divided by 10 on their own.
 
 Must already be true: `calculateStrategyCosts` is the only strategy-cost formula (ADR-008).
 
-Left for later: copying those costs onto a session. That is the next phase, and it waits on this number.
+Left for later: copying those costs onto a session. That is phase 2.
 
 ## 2. Log a session the way the spreadsheet works
 
 **Player outcome:** A farm is logged as known costs, one total per revenue category, and an extrapolated duration that is visible before save.
+
+On 2026-10-27 Taylor is logging PoE1 on the public site. On 2026-10-29 that epic waits. Plan phase 6. This phase's first epic stays next for the game. A scarab copies at one use, so the filled cost is its full price. Loot for this league is the item, the quantity, and a chaos unit value. The category-total epic and the extrapolated-time epic stay in this phase. They are not the next epic. Compiled totals stay phase 3. Chisels, alchemy orbs, and chaos orbs spent as cost are [FF-023](./FUTURE_FEATURES.md), after this epic's copy exists. The history column saying Maps for a PoE1 run is [FF-027](./FUTURE_FEATURES.md).
 
 **Epic: A session starts with the strategy's costs filled in, and those costs stay editable.** The first session still asks the player to retype tablets the strategy already has. Waystone cost already copies. Tablet cost does not, and it has to be the per-use cost from phase 1.
 
@@ -146,3 +150,17 @@ Must already be true: excluding your own session works, and other players can po
 **Epic: Confirm before a far-off session becomes public.** If a session sits far from the strategy's other public sessions, the player confirms it is real before it counts. A real brick stays. The session is not dropped on its own.
 
 Must already be true: the strategy already has other public sessions. Left for later: ranking lists. Those need this confirm and a minimum number of runs, and they are in the backlog.
+
+## 6. A recruiter can open the latest test run
+
+This phase can overlap phase 2. Plan it while the session-cost epic waits.
+
+A hiring manager is the visitor. The outcome is the repo, not a new page in the app.
+
+Before the link is worth putting on a resume, the GitHub repo is public and a secrets check has been done. That check is Taylor's, in GitHub. It is not a ticket. `.env.local`, `.env.neon-production`, and `.env.neon-ci` stay uncommitted.
+
+**Player outcome:** Someone with the repo link can see that CI ran and can open the Playwright report for the latest run on `main`, including a run that passed.
+
+**Epic: The README shows CI status and the latest Playwright report.** Area: repository. CI already runs on every pull request and on `main`, and the README already says how to run the unit, API, and browser layers. A passing Playwright run uploads nothing. The HTML report is uploaded only when E2E fails, and that artifact expires after 7 days.
+
+Must already be true: `.github/workflows/ci.yml` runs Playwright with the HTML reporter. Left for later: a report for every pull request, a `/quality` page, and pass rate, runtime, and flaky count over time. Those need a history of runs. They stay [FF-006](./FUTURE_FEATURES.md). axe, k6, screenshot locks, and an LLM eval stay in the idea backlog. They are not this epic.

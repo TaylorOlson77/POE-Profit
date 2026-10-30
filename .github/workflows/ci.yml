@@ -49,7 +49,8 @@ jobs:
   e2e:
     name: Playwright E2E
     needs: quality
-    runs-on: ubuntu-latest
+    # Playwright 1.55.0 has no Chromium build for Ubuntu 26.04 (ubuntu-latest).
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     # One shared Neon `ci` branch. Queue runs so two jobs cannot wipe it at once.
     concurrency:
