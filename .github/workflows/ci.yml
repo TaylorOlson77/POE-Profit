@@ -59,6 +59,8 @@ jobs:
     env:
       DATABASE_URL: ${{ secrets.CI_DATABASE_URL }}
       DATABASE_URL_UNPOOLED: ${{ secrets.CI_DATABASE_URL_UNPOOLED }}
+    outputs:
+      pages-artifact: ${{ steps.playwright-pages.outcome }}
 
     steps:
       - name: Checkout
@@ -100,6 +102,7 @@ jobs:
         run: npm run build
 
       - name: E2E tests (Playwright)
+        id: playwright
         run: npm run test:e2e
 
       - name: Upload Playwright artifacts on failure
@@ -112,3 +115,27 @@ jobs:
             test-results/
           retention-days: 7
           if-no-files-found: ignore
+
+      - name: Upload Playwright report
+        id: playwright-pages
+        if: ${{ !cancelled() && github.event_name == 'push' && github.ref == 'refs/heads/main' && (steps.playwright.outcome == 'success' || steps.playwright.outcome == 'failure') }}
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: playwright-report
+
+  deploy-report:
+    name: Publish Playwright report
+    needs: e2e
+    if: ${{ always() && needs.e2e.outputs.pages-artifact == 'success' }}
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+      actions: read
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

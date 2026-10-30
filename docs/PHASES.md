@@ -161,6 +161,6 @@ Before the link is worth putting on a resume, the GitHub repo is public and a se
 
 **Player outcome:** Someone with the repo link can see that CI ran and can open the Playwright report for the latest run on `main`, including a run that passed.
 
-**Epic: The README shows CI status and the latest Playwright report.** Area: repository. CI already runs on every pull request and on `main`, and the README already says how to run the unit, API, and browser layers. A passing Playwright run uploads nothing. The HTML report is uploaded only when E2E fails, and that artifact expires after 7 days.
+**Epic: The README shows CI status and the latest Playwright report.** Area: repository. CI already runs on every pull request and on `main`, and the README already says how to run the unit, API, and browser layers. A push to `main` that runs Playwright publishes the HTML report to GitHub Pages, and the README links to that page. A pull request does not publish. On E2E failure, `playwright-report/` and `test-results/` still upload for 7 days.
 
 Must already be true: `.github/workflows/ci.yml` runs Playwright with the HTML reporter. Left for later: a report for every pull request, a `/quality` page, and pass rate, runtime, and flaky count over time. Those need a history of runs. They stay [FF-006](./FUTURE_FEATURES.md). axe, k6, screenshot locks, and an LLM eval stay in the idea backlog. They are not this epic.

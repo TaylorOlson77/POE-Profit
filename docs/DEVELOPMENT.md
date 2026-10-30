@@ -96,4 +96,4 @@ GitHub Actions ([`.github/workflows/ci.yml`](../.github/workflows/ci.yml)) on pu
 
 `main` is the production branch. Vercel deploys it. Feature work merges through a pull request. CI on that pull request has to be green, and the docs in the pull request have to match the code.
 
-E2E waits if another run is already using that branch. On E2E failure, the workflow uploads `playwright-report/` and `test-results/` artifacts.
+E2E waits if another run is already using that branch. A push to `main` that runs Playwright publishes the HTML report to the page linked from the README. A pull request does not. On E2E failure, the workflow still uploads `playwright-report/` and `test-results/` artifacts for 7 days.

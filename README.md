@@ -49,7 +49,9 @@ flowchart LR
 - Contract tests use a Prisma fake and need no database.
 - The E2E job uses a separate Neon `ci` branch, not the demo site's database.
 - E2E runs are queued so two jobs don't reset the same database at once.
-- A failed Playwright test retries once, and the report is uploaded on failure.
+- A failed Playwright test retries once.
+- The [latest Playwright report](https://taylorolson77.github.io/POE-Profit/) is the last run on `main` that executed Playwright. The next one replaces it. A pull request does not.
+- A failed run also uploads `playwright-report/` and `test-results/` for 7 days. That zip is the trace download.
 
 ## Design notes
 
