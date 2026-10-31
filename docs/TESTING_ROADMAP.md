@@ -180,6 +180,8 @@ Suggested cut: one ticket for the workflow and the order. Stryker's Sunday limit
 
 This phase can overlap the tail of phase 7. The pages come from the accessibility epic. The midnight workflow is a convenient place to run it, on its own night, after the phase 7 jobs. A live model stays off the pull request.
 
+The demo page in the next section extends this phase. It shows a visitor one run. It uses the same rule set. It is not a second way to score.
+
 ### Epic: An agent on the pages is scored by a golden rule set
 
 A model run cannot be compared with the next run when the score is the model's wording.
@@ -199,3 +201,31 @@ Decisions for the ticket note:
 Left for later: an LLM-as-judge, scoring the wording, strategy recommendations, production, every pull request.
 
 Suggested cut: the rule file and a model-free scorer, then the agent that walks the pages and records the facts those rules read, then a comparison of two run summaries on rule id and pass or fail.
+
+---
+
+## Demo page (extends phase 8)
+
+**Outcome:** A visitor with the gate can read a finished example run, see how the rules score it, and start one live run that cannot spend the API credit without a cap.
+
+This is the same phase as the golden-rule epic. `plan-epic` takes it after that epic, because the transcripts and the live run cite those rules. The page is not a product feature and it does not join the pull-request gates.
+
+### Epic: A gated page shows example runs and one capped try
+
+The scoring epic produces a run record. Nothing on the site shows that record, and a live Anthropic call with no cap can spend the credit.
+
+Area: one new page. A visitor can open it without the strategy form or the session form.
+
+Must already be true: the golden-rule file exists, and a model-free scorer can mark each rule pass or fail. The Anthropic API key stays on the server.
+
+Decisions for the ticket note:
+
+- The agent calls Anthropic's API. The system prompt is the whole knowledge base for the demo: what POE Profit does, what a strategy is, and the golden rules in plain language. There is no retrieval layer, no vector store, and no second document fetch. Anthropic's API does not search the web, and this demo does not add a search tool.
+- The page shows three things before anyone spends credit: example transcripts of the agent evaluating against the rule set, checked in so they render with the button unused; a short explanation that a run is scored by rule id and pass or fail, so a second run is comparable; and a try-it-out button.
+- The button is rate-limited per demo session. The app has no accounts yet, so the session is a cookie this page sets, not a signed-in user. The ticket names a small cap before the button ships. A request past the cap is refused and says why. The cap is what protects the API credit.
+- The agent loop has a max iteration cap, a small integer named in the ticket before the button ships. The loop stops at that cap even when the model asks for another step.
+- One gate, chosen in the ticket. Preferred: Next.js middleware requires a secret query param, and a missing or wrong secret returns 404 so the route does not advertise itself. A secret header is the same check for a scripted caller. Alternative: the page is not on the production deployment, and the only host is an unguessable Vercel Preview URL. Do not ship the page on production without the middleware gate.
+
+Left for later: retrieval, web search, an account-based limit, an ungated public page, and a try button with no iteration cap.
+
+Suggested cut: the gate, then the page with the transcripts and the explanation, then the button wired to Anthropic with the session limit and the iteration cap.
