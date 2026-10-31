@@ -951,11 +951,7 @@ function PerformanceTerm({
   children: ReactNode;
 }) {
   return (
-    <div
-      role="group"
-      aria-label={term}
-      className="grid grid-cols-[auto_1fr] gap-x-4"
-    >
+    <div className="grid grid-cols-[auto_1fr] gap-x-4">
       <dt>{term}</dt>
       <dd>{children}</dd>
     </div>

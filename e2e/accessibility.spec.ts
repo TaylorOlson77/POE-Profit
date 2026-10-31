@@ -3,7 +3,8 @@ import { expect, test, type Page, type TestInfo } from "@playwright/test";
 
 /**
  * One pass per settled page. Violations are attached for the HTML report.
- * They do not fail the run. A later ticket makes a WCAG A violation fail.
+ * A WCAG A violation fails the run and names the rule and the element.
+ * AA stays in the attachment.
  */
 
 const TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
@@ -69,16 +70,22 @@ async function publishScan(page: Page, testInfo: TestInfo): Promise<void> {
     body: formatViolations(results.violations),
     contentType: "text/plain",
   });
+  const aViolations = results.violations.filter(
+    (violation) => levelOf(violation.tags).rank === 0,
+  );
+  if (aViolations.length > 0) {
+    throw new Error(formatViolations(aViolations));
+  }
 }
 
 test.describe("Scan the six pages", () => {
-  test("publishes the axe violations for /", async ({ page }, testInfo) => {
+  test("has no WCAG A violation on /", async ({ page }, testInfo) => {
     await page.goto("/");
     await expect(page.getByText(DEMO_STRATEGY)).toBeVisible();
     await publishScan(page, testInfo);
   });
 
-  test("publishes the axe violations for /strategies/new", async ({
+  test("has no WCAG A violation on /strategies/new", async ({
     page,
   }, testInfo) => {
     await page.goto("/strategies/new");
@@ -86,7 +93,7 @@ test.describe("Scan the six pages", () => {
     await publishScan(page, testInfo);
   });
 
-  test("publishes the axe violations for /strategies/[id]", async ({
+  test("has no WCAG A violation on /strategies/[id]", async ({
     page,
   }, testInfo) => {
     await page.goto(STRATEGY_PATH);
@@ -96,7 +103,7 @@ test.describe("Scan the six pages", () => {
     await publishScan(page, testInfo);
   });
 
-  test("publishes the axe violations for /sessions", async ({
+  test("has no WCAG A violation on /sessions", async ({
     page,
   }, testInfo) => {
     await page.goto("/sessions");
@@ -106,7 +113,7 @@ test.describe("Scan the six pages", () => {
     await publishScan(page, testInfo);
   });
 
-  test("publishes the axe violations for /sessions/new", async ({
+  test("has no WCAG A violation on /sessions/new", async ({
     page,
   }, testInfo) => {
     await page.goto("/sessions/new");
@@ -114,7 +121,7 @@ test.describe("Scan the six pages", () => {
     await publishScan(page, testInfo);
   });
 
-  test("publishes the axe violations for /sessions/[id]", async ({
+  test("has no WCAG A violation on /sessions/[id]", async ({
     page,
   }, testInfo) => {
     await page.goto(SESSION_PATH);
