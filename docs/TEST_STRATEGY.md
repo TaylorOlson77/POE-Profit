@@ -103,7 +103,7 @@ Postgres rolls back a transaction that throws. The fake's `$transaction` does no
 - Record run with investment + revenue + prices + duration → displayed totals match expected fixture
 - Edit quantity → totals recalculate after save
 - Delete run → confirmation required → run gone from history
-- Basic accessibility smoke where cheap (e.g. critical controls named / reachable)—not a full a11y audit in MVP
+- An axe scan of the six settled pages. Each page's violations are attached to that test in the HTML report. A violation does not fail the pull request until a later ticket says a WCAG A violation does. AA stays in the log.
 
 **Does not own**
 
@@ -111,11 +111,14 @@ Postgres rolls back a transaction that throws. The fake's `$transaction` does no
 - Auth flows (none in MVP)
 - External market APIs
 - Visual regression of the entire app
+- A manual screen-reader and keyboard pass, including unsaved form states
 - Field-level validation. A missing name, a bad decimal, and the other input rules stay in unit and API tests. A browser case for a validation message exists only when that message cannot be asserted below the UI (a specific server error such as `409 CONFLICT` that the screen must show).
 
 The API locking a status code does not skip a browser line. The API does not open the page. The conflict message above is that case: the home list shows the message and the strategy stays.
 
 There is no 404 page. A missing strategy or session shows the API sentence in place of the form. That stays an API line. A not-found sentence for an id a person cannot reach on purpose is not a browser line.
+
+Lint, through `eslint-config-next` and its `jsx-a11y` rules, catches static JSX mistakes. The axe scan catches rules on the rendered page, including color contrast. A screen-reader and keyboard pass is still manual: focus order, announcements, and any state the scan does not open. Unsaved form states stay out of the scan.
 
 ### 4.4 How deep each layer goes
 
