@@ -86,7 +86,11 @@ export function revenueRow(page: Page, row: number) {
 
 /** The Performance value named by its term. Exact, so "Profit" is not "Profit / hour". */
 export function performanceValue(page: Page, term: string) {
+  const exactTerm = new RegExp(
+    `^${term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`,
+  );
   return page
-    .getByRole("group", { name: term, exact: true })
-    .getByRole("definition");
+    .getByRole("term")
+    .filter({ hasText: exactTerm })
+    .locator("xpath=following-sibling::dd");
 }
