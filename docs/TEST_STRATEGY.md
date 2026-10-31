@@ -213,11 +213,11 @@ This table records how the MVP requirements were assigned to layers. Post-MVP ti
 
 Explicitly **out of scope** for MVP automated testing:
 
-- Full visual regression suite
+- Full visual regression suite. Reopened on 2026-10-30 for phase 7: one baseline per page per viewport for the six pages, on the midnight workflow, not on the pull request. A pixel diff of the whole app stays closed.
 - Authentication / authorization tests
 - GGG API or stash reconciliation tests
 - poe.ninja / market provider contract tests
-- Load / performance benchmarking beyond smoke
+- Load / performance benchmarking beyond smoke. Reopened on 2026-10-30 for phase 7: one k6 script against a Vercel Preview, off the pull request. Production and the Neon `ci` branch stay closed.
 - Multi-tenant isolation tests
 - Exhaustive cross-browser matrix (one primary browser in CI is enough for MVP; expand later)
 - Statistical / community aggregation features

@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| Status | Proposal (2026-10-30). Not in [`PHASES.md`](./PHASES.md) until Taylor accepts it. |
+| Status | Phase 7 accepted (2026-10-30) and copied into [`PHASES.md`](./PHASES.md). Phase 8 is still a proposal. |
 | Applies | `plan-epic` for phase 7 or phase 8. |
-| Related | [`PHASES.md`](./PHASES.md), [`TEST_STRATEGY.md`](./TEST_STRATEGY.md) §8 and §10, [`FUTURE_FEATURES.md`](./FUTURE_FEATURES.md) FF-006 and FF-028–FF-031, [`DEVELOPMENT.md`](./DEVELOPMENT.md) |
+| Related | [`PHASES.md`](./PHASES.md), [`TEST_STRATEGY.md`](./TEST_STRATEGY.md) §8 and §10, [`FUTURE_FEATURES.md`](./FUTURE_FEATURES.md) FF-006 and FF-030, [`DEVELOPMENT.md`](./DEVELOPMENT.md) |
 
-`plan-epic` reads this file when Taylor names phase 7 or phase 8. Confirm the epics, then write tickets for one epic. This file has no acceptance criteria. Accepting a phase copies its epics into [`PHASES.md`](./PHASES.md).
+`plan-epic` reads [`PHASES.md`](./PHASES.md) for phase 7. This file keeps the phase 8 proposal. Confirm those epics before copying phase 8. This file has no acceptance criteria.
 
-Phases 1–6 stay in [`PHASES.md`](./PHASES.md). Phase 7 can overlap phase 2 and phase 6. Phase 8 starts after the accessibility epic has named the pages. It does not wait on load, screenshots, or mutation testing.
+Phases 1–7 are in [`PHASES.md`](./PHASES.md). Phase 6 shipped on 2026-10-30. Phase 7 can overlap phase 2. Phase 8 starts after the accessibility epic has named the pages. It does not wait on load, screenshots, or mutation testing.
 
 ## Already in place
 
@@ -31,15 +31,15 @@ Earlier notes disagree with this plan. This file wins when Taylor accepts the ph
 
 | Earlier note | This plan |
 | --- | --- |
-| FF-028. axe inside the existing journeys. A serious violation fails the run. | A scan of each page below. WCAG A fails the job first, then AA. Other rules are logged. |
-| FF-029. k6 against `next start` on the runner. Parked. It must not hit the public site or the Neon `ci` branch. | One script against a Vercel Preview. Production and the Neon `ci` branch stay off limits. |
-| FF-031. A screenshot of a page a journey already opens. Parked. | Pixel baselines per device, including phone sizes, for those pages. |
+| Former FF-028. axe inside the existing journeys. A serious violation fails the run. | Its own spec over the six pages. The first ticket logs and stays green. WCAG A fails the pull request after the A fixes. Then AA. |
+| Former FF-029. k6 against `next start` on the runner. Parked. It must not hit the public site or the Neon `ci` branch. | One script against a Vercel Preview, after that Preview has a database. Last epic in phase 7. Production and the Neon `ci` branch stay off limits. |
+| Former FF-031. A screenshot of a page a journey already opens. Parked. | Pixel baselines per viewport, after the phone epic writes the viewport list. Midnight workflow, not the pull request. |
 | FF-030. A model explains one saved session. | Phase 8 is an agent on the pages, scored by a golden rule set. FF-030 stays its own idea. |
 | FF-006. An in-app `/quality` page. | Phase 7 stores the k6 summary JSON that page will read. Building the page stays FF-006. |
 
 ## Pages and viewports
 
-One page list. The accessibility scan, the phone checks, the screenshots, and the phase 8 agent use it.
+One page list. The accessibility scan, the phone checks, the screenshots, and the phase 8 agent use it. Phase 7 in [`PHASES.md`](./PHASES.md) holds the same list.
 
 | Route | What opens it |
 | --- | --- |
@@ -62,115 +62,23 @@ Emulation only. No device lab, and no second browser engine. Session history is 
 
 ---
 
-## 7. Testing improvements
+## 7. The test suite checks more, and the report shows it
 
-**Outcome:** The heavy checks run on a schedule, each page is held to WCAG A and then AA, and a pull request still finishes on the gates already in place.
+Accepted on 2026-10-30. The epics are in [`PHASES.md`](./PHASES.md). This section keeps the cuts that changed, and the k6 numbers the ticket note still needs.
 
-`plan-epic` order: accessibility, phone sizes, visual baselines, k6, mutation testing, then the midnight workflow. Phone sizes come before screenshots so the baselines use the viewports the phone epic already locked. The midnight workflow is last because it names the jobs above it.
+`plan-epic` order: accessibility, phone sizes, visual baselines, mutation testing, then k6.
 
-### Epic: Each page reports zero WCAG A violations, then zero AA
+- The midnight workflow is not its own epic. The phone epic adds it. The visual, k6, and mutation epics add their jobs behind the phone job. The schedule stays `0 5 * * *`.
+- The accessibility scan is its own spec. The first ticket logs every violation and the run stays green. Fix tickets are filed after that log exists. WCAG A fails the pull request after the A fixes. AA follows. AAA stays in the log.
+- k6 is last. Preview has no database today, so the first ticket is that database. Production and the Neon `ci` branch stay closed.
+- The mutation run reports a score and does not fail. A threshold ticket waits until a score has been read.
 
-Nothing scans the six pages. A hiring manager cannot see an accessibility result in the Playwright report.
+Decisions that stay for the k6 ticket note:
 
-Area: the pages in the list above.
-
-Must already be true: Playwright runs on the pull request and publishes its HTML report from `main`. The seeded demo strategy and session exist, so the `[id]` routes open.
-
-The scan is axe-core, one pass per page. "Zero violations" means zero WCAG A and zero WCAG AA. The tickets land in this order, so the first merge does not turn `main` red:
-
-1. The scan runs and writes the violation log. The job stays green.
-2. A WCAG A violation fails the pull-request Playwright job.
-3. A WCAG AA violation fails that same job. AAA and best-practice rules stay in the log. They do not fail the job.
-
-Left for later: every dirty state of every form. AAA as a failing gate.
-
-Suggested cut: one ticket per row above.
-
-### Epic: The same pages work on a phone-sized viewport
-
-CI opens the app as desktop Chromium only. A control can sit past the edge of a phone and the desktop journeys still pass.
-
-Area: the same pages.
-
-Must already be true: the page list above. The viewport list is written in this epic.
-
-Playwright device emulation opens each page at iPhone 13 and Pixel 7. The action that page is for can be reached: the list scrolls into view, the form can be filled, a primary control is on screen. This epic does not re-run the seven desktop journeys at each size. Horizontal overflow that hides the action fails the run. A pixel match is the next epic.
-
-Left for later: Safari, Firefox, a tablet matrix, a device lab.
-
-Suggested cut: one ticket. The viewport list and the reachability checks ship together.
-
-### Epic: A pixel change at a known viewport fails the visual run
-
-A layout change can ship while the journeys stay green. There is no screenshot suite.
-
-Area: the same pages, at the shared viewport list.
-
-Must already be true: the phone epic has written the viewport list. Playwright already opens these pages.
-
-Playwright screenshot comparison. One committed baseline per page per viewport, including the two phone sizes. A pixel diff fails the run, and the diff is the artifact. The same run fails when session history overflows the viewport. A chart gets that overflow check only after FF-013 exists.
-
-Left for later: a pixel diff of every component state. A full-app suite stays out.
-
-Suggested cut: one ticket. Baselines and the overflow assertion are one suite.
-
-### Epic: A short k6 run against Preview stays inside limits set first
-
-There is no load check. The public app is on Vercel's free tier, so the script cannot discover its limits by hitting production.
-
-Area: repository. The result is an artifact, not a new page.
-
-Must already be true: a Vercel Preview URL answers the routes the script calls. Preview does not receive the production database URLs ([`DEVELOPMENT.md`](./DEVELOPMENT.md)). The script also stays off the Neon `ci` branch, which the Playwright job resets. If no such Preview exists, the first ticket is that URL. The script waits.
-
-Decisions for the ticket note:
-
-- One script file. Scenarios and thresholds live in that file.
-- The base URL is a Vercel Preview, or a named staging deployment. Production (`https://poe-profit.vercel.app/`) stays closed.
-- 5–10 virtual users.
-- Thresholds are written into the file before the first measured run. Starting pair, for the HTTP scenarios: `http_req_duration` p(95) under 200ms, and `http_req_failed` under 1%. Replace the pair in the ticket note if Taylor picks different numbers. Do not copy them off the first run.
+- One script file. 5–10 virtual users.
+- Starting pair, for the HTTP scenarios: `http_req_duration` p(95) under 200ms, and `http_req_failed` under 1%. Replace the pair in the ticket note if Taylor picks different numbers. Do not copy them off the first run.
 - One k6 browser-module scenario is in the same file, as a light UI pass. It does not own the 200ms line.
-- The run writes a k6 summary JSON and stores it as an Actions artifact named for the `/quality` page. The page stays FF-006. Do not commit a history of summaries.
-
-Left for later: more users, production, the `/quality` page, a browser scenario that is itself the load.
-
-Suggested cut: the Preview URL, then the one script (HTTP scenarios, thresholds, the browser scenario, and the summary artifact).
-
-### Epic: Mutation testing covers the calc engine on a weekly run
-
-A green unit suite can miss a profit formula that changed. Running that check on every pull request spends the minutes.
-
-Area: `src/domain/calc`. That module is the only strategy-cost and profit formula (ADR-008). Chaos stays canonical.
-
-Must already be true: the unit tests for that module pass on `main`.
-
-Stryker mutates `src/domain/calc` only. The first weekly runs report the score and do not fail. The threshold is chosen from that baseline, then a later ticket makes the weekly run fail when the score drops. The cadence is weekly, on `main`. A nightly run is the alternative if a week is too stale. Pull requests do not run it.
-
-Left for later: UI, Route Handlers, or the whole repo. Every pull request.
-
-Suggested cut: the weekly report with no failing threshold, then the threshold gate.
-
-### Epic: Midnight CI runs the heavy suites one after another
-
-Phone Playwright, visual regression, and Stryker in parallel would compete for Actions minutes. The pull request already spends minutes on desktop Playwright.
-
-Area: `.github/workflows/`. `main` only.
-
-Must already be true: the phone, visual, and mutation epics exist, even if a later one is still a stub job. k6 joins this workflow when its epic exists. It does not join the pull request, so Preview is not loaded from every push.
-
-One workflow. GitHub cron is UTC and does not follow daylight saving. The schedule is `0 5 * * *` (05:00 UTC): midnight Eastern Standard Time, and 1:00 a.m. Eastern Daylight Time.
-
-Order, each job after the previous one finishes:
-
-1. Playwright at the phone viewports.
-2. Visual regression, including those phone baselines.
-3. k6 against Preview, when that epic exists.
-4. Stryker, on Sunday only, after the others. The other nights stop before it.
-
-Desktop Chromium stays on the pull request. Job 1 does not repeat it. Repeating it is a one-line widening of job 1 if Taylor wants the soak.
-
-Left for later: these jobs on pull requests. A per-pull-request Playwright report (still FF-006's neighborhood).
-
-Suggested cut: one ticket for the workflow and the order. Stryker's Sunday limit is part of that ticket.
+- The run writes a k6 summary JSON as an Actions artifact. The `/quality` page stays FF-006. Do not commit a history of summaries.
 
 ---
 
