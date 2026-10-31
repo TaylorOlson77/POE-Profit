@@ -21,6 +21,8 @@ If this run learns something the product docs should say, propose that edit and 
 
 Read the phase. Show each epic that closes inside it: title, area, one line on the problem, what must already be true, what is left on purpose. Start from the list in `PHASES.md`. Change it when the split is wrong, and say why. If two splits are real, name both and which you recommend.
 
+If the idea is in [`FUTURE_FEATURES.md`](../../docs/FUTURE_FEATURES.md) and not in a phase, name the phase it would join or propose a new one, and wait.
+
 Wait. Do not write tickets yet.
 
 ## Tickets, then stop

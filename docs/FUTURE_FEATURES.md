@@ -17,7 +17,8 @@ These are not repeated below. See [`PHASES.md`](./PHASES.md).
 
 - A tablet's price split across its uses. That epic also includes entering a tablet price in divines, and confirming before a game change clears the rows. It shipped on 2026-10-23 (#21, #22, #23). Showing the list cost in divines, and filling the rate from poe.ninja, stay below as FF-024 and FF-025.
 - Session logging as category totals, divine input, extrapolated time, and costs filled in from the strategy. On 2026-10-29 the session-cost epic waits. Category totals wait while this league is logged as item lines.
-- The README shows CI status and the latest Playwright report. That is phase 6. The trend page stays FF-006.
+- The README shows CI status and the latest Playwright report. That is phase 6. It shipped on 2026-10-30. The trend page stays FF-006.
+- An axe scan of the six pages, phone viewports, screenshot baselines, a weekly mutation report on the calc engine, and a k6 script against Preview. That is phase 7. The `/quality` page stays FF-006. An agent scored by a golden rule set stays the phase 8 proposal in [`TESTING_ROADMAP.md`](./TESTING_ROADMAP.md).
 - Your compiled results, and leaving your own session out of them
 - Live strategy cost on the dirty form (former FF-005)
 - Unsaved-session warning, sort history by profit per hour, hide a strategy that still has sessions
@@ -619,51 +620,6 @@ Those boxes take letters today. The player finds out when they save.
 
 ---
 
-## FF-028: axe checks inside the Playwright journeys
-
-| Field | Value |
-| --- | --- |
-| Status | Idea |
-| Horizon | After phase 6, so a failure shows in the published report |
-| Date | 2026-10-29 |
-
-### Summary
-
-The existing Playwright journeys also run axe-core on the pages they open. A serious violation fails the run.
-
-### Why
-
-The browser suite already walks the strategy and session screens. An accessibility check there is one small addition a hiring manager can see in the same report.
-
-### Risks
-
-- A rule set aimed at a perfect score will fail on the current dark-theme controls and block every merge.
-- Scanning every state of every form is a second suite. The journeys that already exist are the scope.
-
-### Open questions
-
-1. Which violation impact fails the run: serious and critical, or every violation?
-
----
-
-## FF-029: A k6 load check with a CI threshold
-
-| Field | Value |
-| --- | --- |
-| Status | Parked |
-| Horizon | Only if Taylor reopens the load-test line in [`TEST_STRATEGY.md`](./TEST_STRATEGY.md) §8 |
-| Date | 2026-10-29 |
-
-### Summary
-
-A small k6 script hits the running app and fails CI when a threshold breaks. The target is the app started on the runner, the same way Playwright starts `next start`. It does not hit the public site, and it does not hit the Neon `ci` branch. That branch is one shared database the browser job already queues on.
-
-### Why it is parked
-
-Load testing beyond a smoke was closed for MVP. A script against Neon would fight that queue and spend the database.
-
----
-
 ## FF-030: Explain a saved session, then grade the explanation
 
 | Field | Value |
@@ -694,20 +650,6 @@ A hiring manager can see an eval gate on a behavior the calc engine already owns
 
 1. Which session does the explanation read: one fixture session, or any saved session the player opens?
 2. Does CI call a live model, or a recorded response plus a live call on a schedule?
-
----
-
-## FF-031: Screenshot locks on the existing journeys
-
-| Field | Value |
-| --- | --- |
-| Status | Parked |
-| Horizon | Only if Taylor reopens the visual-regression line in [`TEST_STRATEGY.md`](./TEST_STRATEGY.md) §8 |
-| Date | 2026-10-29 |
-
-### Summary
-
-There is no screenshot suite today. A full visual-regression suite was closed for MVP. If that line is reopened, the scope is a screenshot of a page the Playwright journeys already open, compared to a committed baseline. A pixel diff of the whole app stays out.
 
 ---
 
@@ -793,7 +735,4 @@ Do not bring these back as new ideas unless the reason below is wrong.
 | FF-025 | Fill the divine rate from poe.ninja | Idea |
 | FF-026 | Number fields refuse letters | Idea |
 | FF-027 | Session history says Maps for a PoE1 run | Idea |
-| FF-028 | axe checks inside the Playwright journeys | Idea |
-| FF-029 | A k6 load check with a CI threshold | Parked |
 | FF-030 | Explain a saved session, then grade the explanation | Idea |
-| FF-031 | Screenshot locks on the existing journeys | Parked |

@@ -28,6 +28,10 @@ Learned on 2026-09-28, from the tablet-uses cut:
 - A decision Taylor changes here updates the issue bullet and the existing boundary comment. Do not post a second `## Boundary notes` comment.
 - A sibling story is a draft until Taylor accepts the title and the acceptance criteria. Then file it under the epic. It does not go on this branch.
 
+Learned on 2026-10-30, from the Playwright report link:
+
+- Do not add a coverage line, a step file, or a new area page when the case is not worth running again. Say so and stop. A one-off look stays on the pull request.
+
 ## Read the ticket, then stop
 
 Use `gh` and read the story: number, title, body, labels, and parent.

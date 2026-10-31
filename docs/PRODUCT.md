@@ -90,6 +90,8 @@ One completable action. When it merges, a player can finish that action. "Regist
 
 One GitHub issue. One pull request. Implementation is one ticket per chat. Do not plan a slice you will throw away. An email with no password is not an account. Anyone who knows the email is that visitor, and the next ticket replaces it. Do not write an out-of-scope section. If it is not on the issue or in the ticket note, it is not in the ticket.
 
+File a ticket when its outcome and its criteria are decidable. A measurement can supply the examples in the boundary note afterward, and the ticket stays in Backlog until that note is filled in. Do not file a ticket whose criteria are still to be decided.
+
 The "As a / I want / so that" line is the description. It is not the title.
 
 ### Title

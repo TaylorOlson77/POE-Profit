@@ -4,8 +4,8 @@
 | --- | --- |
 | Status | Agreed (2026-09-28) |
 | Applies | What to build after MVP v1, and in what order. |
-| Related | [`PRODUCT.md`](./PRODUCT.md), [`FUTURE_FEATURES.md`](./FUTURE_FEATURES.md), [`MVP_SPEC.md`](./MVP_SPEC.md) §4, [ADR-008](./DECISIONS.md), [ADR-011](./DECISIONS.md) |
-| Next epic | The README shows CI status and the latest Playwright report |
+| Related | [`PRODUCT.md`](./PRODUCT.md), [`FUTURE_FEATURES.md`](./FUTURE_FEATURES.md), [`TESTING_ROADMAP.md`](./TESTING_ROADMAP.md), [`MVP_SPEC.md`](./MVP_SPEC.md) §4, [ADR-008](./DECISIONS.md), [ADR-011](./DECISIONS.md) |
+| Next epic | Each page reports zero WCAG A violations |
 
 v1 is live. Phase 1 shipped on 2026-10-23. These are the next phases. [`FUTURE_FEATURES.md`](./FUTURE_FEATURES.md) holds everything that did not make a phase.
 
@@ -153,6 +153,8 @@ Must already be true: the strategy already has other public sessions. Left for l
 
 ## 6. A recruiter can open the latest test run
 
+**Shipped** on 2026-10-30 (#24, #25, #26).
+
 This phase can overlap phase 2. Plan it while the session-cost epic waits.
 
 A hiring manager is the visitor. The outcome is the repo, not a new page in the app.
@@ -163,4 +165,72 @@ Before the link is worth putting on a resume, the GitHub repo is public and a se
 
 **Epic: The README shows CI status and the latest Playwright report.** Area: repository. CI already runs on every pull request and on `main`, and the README already says how to run the unit, API, and browser layers. A push to `main` that runs Playwright publishes the HTML report to GitHub Pages, and the README links to that page. A pull request does not publish. On E2E failure, `playwright-report/` and `test-results/` still upload for 7 days.
 
-Must already be true: `.github/workflows/ci.yml` runs Playwright with the HTML reporter. Left for later: a report for every pull request, a `/quality` page, and pass rate, runtime, and flaky count over time. Those need a history of runs. They stay [FF-006](./FUTURE_FEATURES.md). axe, k6, screenshot locks, and an LLM eval stay in the idea backlog. They are not this epic.
+Must already be true: `.github/workflows/ci.yml` runs Playwright with the HTML reporter. Left for later: a report for every pull request, a `/quality` page, and pass rate, runtime, and flaky count over time. Those need a history of runs. They stay [FF-006](./FUTURE_FEATURES.md). The accessibility scan, phone viewports, screenshot baselines, the weekly mutation report, and the k6 script are phase 7. An agent scored by a golden rule set stays the phase 8 proposal in [`TESTING_ROADMAP.md`](./TESTING_ROADMAP.md).
+
+## 7. The test suite checks more, and the report shows it
+
+This phase can overlap phase 2.
+
+**Player outcome:** Every new check publishes a result, and a pull request still finishes on the gates it has today. The accessibility gate is the one exception, once its tickets say the pull request fails.
+
+`plan-epic` order: WCAG A, WCAG AA, phone sizes, visual baselines, mutation testing, then k6.
+
+The six pages are `/`, `/strategies/new`, `/strategies/[id]`, `/sessions`, `/sessions/new`, and `/sessions/[id]`. The two id routes open the seeded demo strategy and the seeded demo session. The accessibility scan, the phone checks, and the screenshots use this list.
+
+**Epic: Each page reports zero WCAG A violations.** Nothing scans the six pages. The published report shows no accessibility result.
+
+Area: the six pages.
+
+Must already be true: Playwright runs on the pull request and publishes its HTML report from `main`. The seeded demo strategy and session exist.
+
+The scan is axe-core, one pass per page, in its own spec. The first ticket logs every violation and the run stays green. The next ticket fixes the WCAG A violations the log names and makes a WCAG A violation fail the pull-request job. AA, AAA, and best-practice rules stay in the log.
+
+Left for later: failing the job on AA. That is the next epic. Every unsaved state of every form stays out.
+
+**Epic: Each page reports zero WCAG AA violations.** The A epic's log shows AA violations, including color contrast, and the pull request still passes.
+
+Area: the six pages.
+
+Must already be true: the A epic has shipped, and the scan already logs AA. Left for later: failing the job on AAA, and every unsaved state of every form.
+
+**Epic: The same pages work on a phone-sized viewport.** CI opens the app as desktop Chromium only. A control can sit past the edge of a phone and the desktop journeys still pass.
+
+Area: the six pages.
+
+Must already be true: the page list above.
+
+Playwright device emulation opens each page at iPhone 13 and Pixel 7. The action that page is for can be reached. This epic does not re-run the seven desktop journeys at each size. Horizontal overflow that hides the action fails the run. This epic adds the midnight workflow, because the check stays off the pull request. One workflow on `main`, scheduled at `0 5 * * *` (05:00 UTC): midnight Eastern Standard Time, and 1:00 a.m. Eastern Daylight Time. This epic's job is first. The visual, k6, and mutation epics add their jobs behind it, in that order. A job that uses the Neon `ci` branch joins the existing `e2e-ci-database` queue.
+
+The viewport list is desktop Chromium, iPhone 13, and Pixel 7. The visual epic uses that list.
+
+Left for later: Safari, Firefox, a tablet matrix, a device lab.
+
+**Epic: A pixel change at a known viewport fails the visual run.** A layout change can ship while the journeys stay green. There is no screenshot suite.
+
+Area: the six pages, at the viewport list from the phone epic.
+
+Must already be true: the phone epic has written the viewport list.
+
+Playwright screenshot comparison. One committed baseline per page per viewport. A pixel diff fails the run, and the diff is the artifact. The same run fails when session history overflows the viewport. Baselines are generated on the CI image. This reopens the visual-regression line in [`TEST_STRATEGY.md`](./TEST_STRATEGY.md) §8 for these pages only. The run is a job on the midnight workflow, not a pull-request gate.
+
+Left for later: a pixel diff of every component state. A full-app suite stays out.
+
+**Epic: Mutation testing covers the calc engine on a weekly run.** A green unit suite can miss a profit formula that changed. Running that check on every pull request spends the minutes.
+
+Area: `src/domain/calc`. That module is the only strategy-cost and profit formula (ADR-008).
+
+Must already be true: the unit tests for that module pass on `main`.
+
+Stryker mutates `src/domain/calc` only. The weekly run reports the score and does not fail. A threshold that fails the run is filed only after a score has been read. The run is Sunday, inside the midnight workflow.
+
+Left for later: UI, Route Handlers, or the whole repo. Every pull request. A failing threshold.
+
+**Epic: A short k6 run against Preview stays inside limits set first.** There is no load check. The public app is on Vercel's free tier, so the script cannot discover its limits by hitting production.
+
+Area: repository. The result is an artifact, not a new page.
+
+Must already be true: a Vercel Preview answers the routes the script calls, and that Preview has a database. Preview does not receive the production database URLs today ([`DEVELOPMENT.md`](./DEVELOPMENT.md)), so the first ticket is that database. The script also stays off the Neon `ci` branch. Production (`https://poe-profit.vercel.app/`) stays closed.
+
+One script file. 5–10 virtual users. Thresholds are written into the file before the first measured run. The run writes a k6 summary JSON as an Actions artifact. The `/quality` page stays [FF-006](./FUTURE_FEATURES.md). This reopens the load-test line in [`TEST_STRATEGY.md`](./TEST_STRATEGY.md) §8. The run joins the midnight workflow. It does not join the pull request.
+
+Left for later: more users, production, the `/quality` page.
