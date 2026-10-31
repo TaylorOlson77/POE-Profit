@@ -8,16 +8,6 @@ Live demo: [poe-profit.vercel.app](https://poe-profit.vercel.app/) (demo data, n
 
 ![Session page with revenue lines and calculated performance](docs/images/session-performance.png)
 
-## Important docs
-
-- [`docs/TEST_STRATEGY.md`](docs/TEST_STRATEGY.md): risks, which layer tests what, and what isn't automated
-- [`docs/DECISIONS.md`](docs/DECISIONS.md): architecture decision records (ADRs)
-- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md): system map and folder layout
-- [`docs/MVP_SPEC.md`](docs/MVP_SPEC.md): product rules and non-goals
-- [`docs/QA_WORKFLOW.md`](docs/QA_WORKFLOW.md): how a ticket goes from plan to merge
-- [`tests/catalog/`](tests/catalog/README.md): coverage pages per feature area
-- [`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md): setup, scripts, database, and deploy
-
 ## Tests
 
 | Layer           | Tool       | Tests | Location           | Covers                                                            |
