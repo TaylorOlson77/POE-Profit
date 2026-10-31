@@ -15,9 +15,9 @@ Live demo: [poe-profit.vercel.app](https://poe-profit.vercel.app/) (demo data, n
 | Unit            | Jest       |   145 | `src/**/*.test.ts` | Calculation engine, rounding, form transforms                     |
 | API contract    | Jest       |    33 | `tests/api/`       | Status codes, validation errors, calculated fields in responses   |
 | API persistence | Jest       |     7 | `tests/api/db/`    | Round-trips against real Postgres: decimal scale, limits, deletes |
-| E2E             | Playwright |     9 | `e2e/`             | Create, edit, and delete for strategies and sessions; home smoke  |
+| E2E             | Playwright |    15 | `e2e/`             | Create, edit, and delete for strategies and sessions; home smoke; axe scan of the six pages |
 
-Counts as of 2026-10-30.
+Counts as of 2026-10-31.
 
 Most of the tests are unit tests on the calculation engine, since a wrong profit or ROI number is the main risk. API tests cover the contract and persistence, and Playwright covers the main user journeys without repeating validation cases.
 

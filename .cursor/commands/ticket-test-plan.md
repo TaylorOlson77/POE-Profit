@@ -32,6 +32,10 @@ Learned on 2026-10-30, from the Playwright report link:
 
 - Do not add a coverage line, a step file, or a new area page when the case is not worth running again. Say so and stop. A one-off look stays on the pull request.
 
+Learned on 2026-10-30, from the axe scan cut:
+
+- A check whose only job is to prove the scanner reports is not a line. Drop that bullet from the boundary note, and do not write a spec for it.
+
 ## Read the ticket, then stop
 
 Use `gh` and read the story: number, title, body, labels, and parent.
