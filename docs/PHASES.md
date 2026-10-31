@@ -5,7 +5,7 @@
 | Status | Agreed (2026-09-28) |
 | Applies | What to build after MVP v1, and in what order. |
 | Related | [`PRODUCT.md`](./PRODUCT.md), [`FUTURE_FEATURES.md`](./FUTURE_FEATURES.md), [`TESTING_ROADMAP.md`](./TESTING_ROADMAP.md), [`MVP_SPEC.md`](./MVP_SPEC.md) §4, [ADR-008](./DECISIONS.md), [ADR-011](./DECISIONS.md) |
-| Next epic | Each page reports zero WCAG A violations, then zero AA |
+| Next epic | Each page reports zero WCAG A violations |
 
 v1 is live. Phase 1 shipped on 2026-10-23. These are the next phases. [`FUTURE_FEATURES.md`](./FUTURE_FEATURES.md) holds everything that did not make a phase.
 
@@ -173,19 +173,25 @@ This phase can overlap phase 2.
 
 **Player outcome:** Every new check publishes a result, and a pull request still finishes on the gates it has today. The accessibility gate is the one exception, once its tickets say the pull request fails.
 
-`plan-epic` order: accessibility, phone sizes, visual baselines, mutation testing, then k6.
+`plan-epic` order: WCAG A, WCAG AA, phone sizes, visual baselines, mutation testing, then k6.
 
 The six pages are `/`, `/strategies/new`, `/strategies/[id]`, `/sessions`, `/sessions/new`, and `/sessions/[id]`. The two id routes open the seeded demo strategy and the seeded demo session. The accessibility scan, the phone checks, and the screenshots use this list.
 
-**Epic: Each page reports zero WCAG A violations, then zero AA.** Nothing scans the six pages. The published report shows no accessibility result.
+**Epic: Each page reports zero WCAG A violations.** Nothing scans the six pages. The published report shows no accessibility result.
 
 Area: the six pages.
 
 Must already be true: Playwright runs on the pull request and publishes its HTML report from `main`. The seeded demo strategy and session exist.
 
-The scan is axe-core, one pass per page, in its own spec. The first ticket logs every violation and the run stays green. A WCAG A violation fails the pull-request job only after the A violations the log names are fixed. AA follows the same way. AAA and best-practice rules stay in the log. A fix ticket is written after the log exists, because its criteria depend on that measurement.
+The scan is axe-core, one pass per page, in its own spec. The first ticket logs every violation and the run stays green. The next ticket fixes the WCAG A violations the log names and makes a WCAG A violation fail the pull-request job. AA, AAA, and best-practice rules stay in the log.
 
-Left for later: every unsaved state of every form, and failing the job on AAA.
+Left for later: failing the job on AA. That is the next epic. Every unsaved state of every form stays out.
+
+**Epic: Each page reports zero WCAG AA violations.** The A epic's log shows AA violations, including color contrast, and the pull request still passes.
+
+Area: the six pages.
+
+Must already be true: the A epic has shipped, and the scan already logs AA. Left for later: failing the job on AAA, and every unsaved state of every form.
 
 **Epic: The same pages work on a phone-sized viewport.** CI opens the app as desktop Chromium only. A control can sit past the edge of a phone and the desktop journeys still pass.
 

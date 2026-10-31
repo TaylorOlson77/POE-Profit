@@ -31,7 +31,7 @@ Earlier notes disagree with this plan. This file wins when Taylor accepts the ph
 
 | Earlier note | This plan |
 | --- | --- |
-| Former FF-028. axe inside the existing journeys. A serious violation fails the run. | Its own spec over the six pages. The first ticket logs and stays green. WCAG A fails the pull request after the A fixes. Then AA. |
+| Former FF-028. axe inside the existing journeys. A serious violation fails the run. | Its own spec over the six pages. The first ticket logs and stays green. WCAG A fails the pull request after the A fixes. AA is the next epic. |
 | Former FF-029. k6 against `next start` on the runner. Parked. It must not hit the public site or the Neon `ci` branch. | One script against a Vercel Preview, after that Preview has a database. Last epic in phase 7. Production and the Neon `ci` branch stay off limits. |
 | Former FF-031. A screenshot of a page a journey already opens. Parked. | Pixel baselines per viewport, after the phone epic writes the viewport list. Midnight workflow, not the pull request. |
 | FF-030. A model explains one saved session. | Phase 8 is an agent on the pages, scored by a golden rule set. FF-030 stays its own idea. |
@@ -66,10 +66,10 @@ Emulation only. No device lab, and no second browser engine. Session history is 
 
 Accepted on 2026-10-30. The epics are in [`PHASES.md`](./PHASES.md). This section keeps the cuts that changed, and the k6 numbers the ticket note still needs.
 
-`plan-epic` order: accessibility, phone sizes, visual baselines, mutation testing, then k6.
+`plan-epic` order: WCAG A, WCAG AA, phone sizes, visual baselines, mutation testing, then k6.
 
 - The midnight workflow is not its own epic. The phone epic adds it. The visual, k6, and mutation epics add their jobs behind the phone job. The schedule stays `0 5 * * *`.
-- The accessibility scan is its own spec. The first ticket logs every violation and the run stays green. Fix tickets are filed after that log exists. WCAG A fails the pull request after the A fixes. AA follows. AAA stays in the log.
+- The accessibility scan is its own spec. The first ticket logs every violation and the run stays green. WCAG A fails the pull request after the A fixes. AA is the next epic, and it stays in the log until then. AAA stays in the log.
 - k6 is last. Preview has no database today, so the first ticket is that database. Production and the Neon `ci` branch stay closed.
 - The mutation run reports a score and does not fail. A threshold ticket waits until a score has been read.
 
