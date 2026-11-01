@@ -437,7 +437,7 @@ export function SessionForm(
 
   return (
     <form
-      className="flex flex-col gap-6"
+      className="flex min-w-0 flex-col gap-6"
       onSubmit={(event) => void onSubmit(event)}
       autoComplete="off"
     >
@@ -623,13 +623,13 @@ export function SessionForm(
         }}
       />
 
-      <fieldset className="flex flex-col gap-3">
+      <fieldset className="flex min-w-0 flex-col gap-3">
         <legend className="font-medium">Investment</legend>
         <p className="text-sm opacity-70">
           {labels.mapNoun} cost is recorded above, not as a line. Prices are
           manual snapshots.
         </p>
-        <div className="overflow-x-auto">
+        <div className="min-w-0 overflow-x-auto">
           <table className="w-full border-collapse text-sm">
             <thead>
               <tr className="border-b border-current/20 text-left">
@@ -750,10 +750,10 @@ export function SessionForm(
         </button>
       </fieldset>
 
-      <fieldset className="flex flex-col gap-3">
+      <fieldset className="flex min-w-0 flex-col gap-3">
         <legend className="font-medium">Revenue</legend>
         <p className="text-sm opacity-70">Prices are manual snapshots.</p>
-        <div className="overflow-x-auto">
+        <div className="min-w-0 overflow-x-auto">
           <table className="w-full border-collapse text-sm">
             <thead>
               <tr className="border-b border-current/20 text-left">

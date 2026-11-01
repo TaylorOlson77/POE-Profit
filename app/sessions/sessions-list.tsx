@@ -135,9 +135,9 @@ export function SessionsList() {
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex min-w-0 flex-col gap-4">
       {deleteError !== null ? <p role="alert">{deleteError}</p> : null}
-      <div className="overflow-x-auto">
+      <div className="min-w-0 overflow-x-auto">
         <table
           className="w-full border-collapse text-sm"
           aria-label="Map session history"
