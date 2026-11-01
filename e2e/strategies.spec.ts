@@ -6,6 +6,7 @@ import {
   fillStrategy,
   savedCostPerWaystone,
   saveStrategy,
+  strategyLine,
   waystoneCost,
 } from "./pages/strategyForm";
 
@@ -21,6 +22,9 @@ test.describe("Create, update, and delete a strategy", () => {
     await openHome(page);
     await page.getByRole("link", { name: "New strategy" }).click();
     await fillStrategy(page, crudStrategy);
+    await expect(
+      strategyLine(page, 1).getByLabel("Modifier notes", { exact: true }),
+    ).toBeVisible();
     await saveStrategy(page).click();
 
     await expect(page).toHaveURL("/");
@@ -38,9 +42,12 @@ test.describe("Create, update, and delete a strategy", () => {
       .click();
 
     await expect(waystoneCost(page)).toHaveValue(crudStrategy.mapCost);
-    await expect(page.getByLabel("Unit cost 1")).toHaveValue("10");
-    await expect(page.getByLabel("Currency 1")).toHaveValue("DIVINE");
-    await expect(page.getByLabel("Uses 1")).toHaveValue("10");
+    const tablet = strategyLine(page, 1);
+    await expect(tablet.getByLabel("Cost", { exact: true })).toHaveValue("10");
+    await expect(tablet.getByLabel("Currency", { exact: true })).toHaveValue(
+      "DIVINE",
+    );
+    await expect(tablet.getByLabel("Uses", { exact: true })).toHaveValue("10");
     await expect(page.getByLabel("Divine rate (chaos per divine)")).toHaveValue(
       "200",
     );
@@ -118,9 +125,9 @@ test.describe("Change the game on a strategy", () => {
 
     await page.getByRole("button", { name: "Cancel" }).click();
     await expect(page.getByLabel("Game")).toHaveValue("POE2");
-    await expect(page.getByLabel("Tablet name 1")).toHaveValue(
-      "Expedition Tablet",
-    );
+    await expect(
+      page.getByRole("textbox", { name: "Tablet name 1", exact: true }),
+    ).toHaveValue("Expedition Tablet");
     await expect(page.getByLabel("Name", { exact: true })).toHaveValue(
       strategy.name,
     );
@@ -148,8 +155,12 @@ test.describe("Change the game on a strategy", () => {
     await expect(page.getByLabel("Map cost (chaos)")).toHaveValue(
       strategy.mapCost,
     );
-    await expect(page.getByLabel("Tablet name 1")).toHaveCount(0);
-    await expect(page.getByLabel("Scarab name 1")).toHaveCount(0);
+    await expect(
+      page.getByRole("textbox", { name: "Tablet name 1", exact: true }),
+    ).toHaveCount(0);
+    await expect(
+      page.getByRole("textbox", { name: "Scarab name 1", exact: true }),
+    ).toHaveCount(0);
   });
 });
 

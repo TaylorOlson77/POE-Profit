@@ -26,6 +26,13 @@ function addTablet(page: Page) {
   });
 }
 
+export function strategyLine(page: Page, row: number) {
+  return page.getByRole("group", {
+    name: `${labels.enhancementSingular} name ${row}`,
+    exact: true,
+  });
+}
+
 export async function fillStrategy(
   page: Page,
   strategy: StrategyFormInput,
@@ -44,23 +51,28 @@ export async function fillStrategy(
   for (const [index, line] of strategy.lines.entries()) {
     const row = index + 1;
     await addTablet(page).click();
-    await page
-      .getByLabel(`${labels.enhancementSingular} name ${row}`)
+    const lineGroup = strategyLine(page, row);
+    await lineGroup
+      .getByLabel(`${labels.enhancementSingular} name ${row}`, { exact: true })
       .fill(line.name);
-    await page.getByLabel(`Quantity per map ${row}`).fill(line.quantity);
+    await lineGroup
+      .getByLabel("Quantity per map", { exact: true })
+      .fill(line.quantity);
     if (line.currency !== undefined) {
-      await page
-        .getByLabel(`Currency ${row}`)
+      await lineGroup
+        .getByLabel("Currency", { exact: true })
         .selectOption({ label: line.currency });
     }
-    await page.getByLabel(`Unit cost ${row}`).fill(line.unitCost);
-    const uses = page.getByLabel(`Uses ${row}`);
+    await lineGroup.getByLabel("Cost", { exact: true }).fill(line.unitCost);
+    const uses = lineGroup.getByLabel("Uses", { exact: true });
     await expect(uses).toHaveValue("10");
     if (line.uses !== undefined) {
       await uses.fill(line.uses);
     }
     if (line.modifierNotes !== undefined) {
-      await page.getByLabel(`Modifier notes ${row}`).fill(line.modifierNotes);
+      await lineGroup
+        .getByLabel("Modifier notes", { exact: true })
+        .fill(line.modifierNotes);
     }
   }
 }

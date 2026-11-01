@@ -386,6 +386,8 @@ export function StrategyForm(
         {lines.map((line, index) => (
           <div
             key={line.key}
+            role="group"
+            aria-labelledby={`${formId}-line-${line.key}-name-label`}
             className="flex flex-col gap-3 rounded border border-current/15 p-3"
           >
             <TextField
@@ -397,7 +399,7 @@ export function StrategyForm(
             />
             <TextField
               id={`${formId}-line-${line.key}-qty`}
-              label={`Quantity per map ${index + 1}`}
+              label="Quantity per map"
               value={line.quantity}
               inputMode="decimal"
               error={messageFor(details, `enhancementLines.${index}.quantity`)}
@@ -405,7 +407,7 @@ export function StrategyForm(
             />
             <div className="flex flex-col">
               <label htmlFor={`${formId}-line-${line.key}-currency`}>
-                Currency {index + 1}
+                Currency
               </label>
               <select
                 id={`${formId}-line-${line.key}-currency`}
@@ -425,7 +427,7 @@ export function StrategyForm(
             </div>
             <TextField
               id={`${formId}-line-${line.key}-cost`}
-              label={`Unit cost ${index + 1}`}
+              label="Cost"
               value={line.userCostInput}
               inputMode="decimal"
               error={messageFor(
@@ -439,7 +441,7 @@ export function StrategyForm(
             {labels.showUses ? (
               <TextField
                 id={`${formId}-line-${line.key}-uses`}
-                label={`Uses ${index + 1}`}
+                label="Uses"
                 value={line.uses}
                 inputMode="numeric"
                 error={messageFor(details, `enhancementLines.${index}.uses`)}
@@ -449,7 +451,7 @@ export function StrategyForm(
             {labels.showModifierNotes ? (
               <TextField
                 id={`${formId}-line-${line.key}-notes`}
-                label={`Modifier notes ${index + 1}`}
+                label="Modifier notes"
                 value={line.modifierNotes}
                 error={messageFor(
                   details,
@@ -541,7 +543,9 @@ function TextField({
 
   return (
     <div className="flex flex-col">
-      <label htmlFor={id}>{label}</label>
+      <label id={`${id}-label`} htmlFor={id}>
+        {label}
+      </label>
       {multiline ? (
         <textarea {...shared} rows={3} />
       ) : (

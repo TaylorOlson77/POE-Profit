@@ -8,6 +8,7 @@ Given I am on the home page
 
 When I open New strategy, enter [this strategy](#data), and save
 - The new tablet shows 10 uses
+- Modifier notes has no row number
 
 Then I am back on the home page, and that row shows Path of Exile 2 and `Estimated cost per waystone: 202c`
 
@@ -23,6 +24,6 @@ Then I am back on the home page, and that row shows Path of Exile 2 and `Estimat
 | Divine rate (chaos per divine) | `200` |
 | Tablet name | `Expedition Tablet` |
 | Quantity per map | `1` |
-| Unit cost | `10` |
+| Cost | `10` |
 | Currency | Divines |
 | Uses | `10` |

@@ -53,7 +53,9 @@ export async function fillSession(
     }
     await page.getByLabel(`Investment item ${row}`).fill(line.name);
     await page.getByLabel(`Investment quantity ${row}`).fill(line.quantity);
-    await page.getByLabel(`Investment unit value ${row}`).fill(line.unit);
+    await page
+      .getByLabel(`Investment cost ${row}`, { exact: true })
+      .fill(line.unit);
   }
 
   for (const [index, line] of session.revenue.entries()) {
@@ -66,7 +68,9 @@ export async function fillSession(
       .selectOption(line.category);
     await page.getByLabel(`Revenue item ${row}`).fill(line.name);
     await page.getByLabel(`Revenue quantity ${row}`).fill(line.quantity);
-    await page.getByLabel(`Revenue unit value ${row}`).fill(line.unit);
+    await page
+      .getByLabel(`Revenue cost ${row}`, { exact: true })
+      .fill(line.unit);
   }
 }
 

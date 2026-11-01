@@ -31,7 +31,7 @@ Then the tablet rows are gone
 | Waystone cost (chaos) | `2` |
 | Tablet name | `Expedition Tablet` |
 | Quantity per map | `1` |
-| Unit cost (chaos) | `100` |
+| Cost | `100` |
 | Uses | `10` |
 
 This case does not save, so it leaves no strategy.

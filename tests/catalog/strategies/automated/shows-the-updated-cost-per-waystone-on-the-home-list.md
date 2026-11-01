@@ -26,7 +26,7 @@ Then that row shows `Estimated cost per waystone: 203c`
 | Name | `POC Expedition Tablet Farming` |
 | Waystone cost before the edit | `2` |
 | Divine rate (chaos per divine) | `200` |
-| Tablet unit cost | `10` divines |
+| Cost | `10` divines |
 | Uses | `10` |
 | Cost per waystone before the edit | `202c` |
 | Waystone cost (chaos) | `3` |

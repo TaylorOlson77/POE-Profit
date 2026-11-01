@@ -32,6 +32,22 @@ test.describe("Create, update, and delete a session", () => {
     await expect(durationMethod(page).locator("option:checked")).toHaveText(
       "Extrapolated",
     );
+    await expect(
+      page
+        .getByRole("group", { name: "Investment", exact: true })
+        .getByRole("columnheader", {
+          name: "Cost",
+          exact: true,
+        }),
+    ).toBeVisible();
+    await expect(
+      page
+        .getByRole("group", { name: "Revenue", exact: true })
+        .getByRole("columnheader", {
+          name: "Cost",
+          exact: true,
+        }),
+    ).toBeVisible();
 
     await fillSession(page, extrapolatedSession);
     await saveSession(page).click();
