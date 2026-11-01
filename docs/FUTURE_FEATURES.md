@@ -17,8 +17,11 @@ These are not repeated below. See [`PHASES.md`](./PHASES.md).
 
 - A tablet's price split across its uses. That epic also includes entering a tablet price in divines, and confirming before a game change clears the rows. It shipped on 2026-10-23 (#21, #22, #23). Showing the list cost in divines, and filling the rate from poe.ninja, stay below as FF-024 and FF-025.
 - Session logging as category totals, divine input, extrapolated time, and costs filled in from the strategy. On 2026-10-29 the session-cost epic waits. Category totals wait while this league is logged as item lines.
-- The README shows CI status and the latest Playwright report. That is phase 6. It shipped on 2026-10-30. The trend page stays FF-006.
-- An axe scan of the six pages, phone viewports, screenshot baselines, a weekly mutation report on the calc engine, and a k6 script against Preview. That is phase 7. The `/quality` page stays FF-006. An agent scored by a golden rule set stays the phase 8 proposal in [`TESTING_ROADMAP.md`](./TESTING_ROADMAP.md).
+- The README shows CI status and the latest Playwright report. That is phase 6. It shipped on 2026-10-30. The `/quality` page is phase 10.
+- An axe scan of the six pages, phone viewports, screenshot baselines, a weekly mutation report on the calc engine, and a k6 script against Preview. That is phase 7. Visual baselines shipped on 2026-11-01 (#38). Mutation testing shipped on 2026-11-01 (#44).
+- Session history as five columns, with a season that defaults to `standard`. That is phase 8. The history header says Maps for every row. That folds FF-027.
+- Paste a drop list into a session, and a checked run that proves the lines match the paste. That is phase 9.
+- `/quality`, linked from the home page and the README. That is phase 10.
 - Your compiled results, and leaving your own session out of them
 - Live strategy cost on the dirty form (former FF-005)
 - Unsaved-session warning, sort history by profit per hour, hide a strategy that still has sessions
@@ -139,38 +142,6 @@ Liking says "I kept this." It does not say the runs matched the claim.
 2. Is the pair Truth-sayer / Deceiver, or a softer pair?
 
 Phase 5 reopened a favorite. It did not reopen this.
-
----
-
-## FF-006: Deploy test report
-
-| Field | Value |
-| --- | --- |
-| Status | Idea |
-| Horizon | After phase 6. The Playwright HTML report for `main` is that phase. |
-| Date | 2026-09-27 |
-| Related | [`QA_WORKFLOW.md`](./QA_WORKFLOW.md) |
-
-### Summary
-
-A generated report for each deploy. The summary is the feature and the action, with a pass rate and counts by layer. The drill-down is the coverage page, each line marked manual, browser, API, or unit, plus pass or fail. Manual results are a short log: case file name, pass or fail, date, deploy. Cases added or updated come from the git diff of the catalog.
-
-On 2026-10-29 the in-app `/quality` page joined this idea. It would show test count, pass rate, runtime, and flaky count over time. It reads a generated artifact. A hand-counted number stays out. It waits until phase 6 has a report to point at.
-
-### Why
-
-Actions history shows that CI ran. It does not say which behaviors were checked, including the few manual cases.
-
-### Risks
-
-- Hand-written counts will be skipped or wrong. The report has to be generated.
-- Counting every unit test in the repo against one action overstates coverage.
-- Committing every run log into the repo will get noisy.
-
-### Open questions
-
-1. GitHub Actions summary, GitHub Pages, or a release asset?
-2. Where does the manual pass/fail line get entered so it stays small enough to fill in?
 
 ---
 
@@ -653,67 +624,29 @@ A hiring manager can see an eval gate on a behavior the calc engine already owns
 
 ---
 
-## FF-027: Session history says Maps for a PoE1 run
+## FF-033: An agent on the pages, scored by a golden rule set
 
 | Field | Value |
 | --- | --- |
-| Status | Idea |
-| Horizon | Whenever. No dependency on the session-cost epic. |
-| Date | 2026-10-27 |
-
-### Summary
-
-The session form already says Maps when the strategy is PoE1. The history column header stays Waystones for every game. That header is the E2 decision in `docs/AGENTS.md`. This idea reopens that label: a PoE1 run's history row says Maps.
-
-Taylor did not accept this as a phase on 2026-10-27. It can come off the list.
-
-### Why
-
-The list scanned during a PoE1 league still uses the PoE2 word.
-
-### Risks
-
-- One column header for a mixed list of PoE1 and PoE2 sessions has to follow the row's game, or the header stays a single word and is wrong for one of them.
-- Reopening a locked label for one column can spread into other Waystone strings that were left on purpose.
-
-### Open questions
-
-1. Does each row use its strategy's word, or does the column header change with a filter?
-
----
-
-## FF-032: A shorter session history
-
-| Field | Value |
-| --- | --- |
-| Status | Idea |
-| Horizon | Whenever. Not part of the visual baselines. |
+| Status | Parked |
+| Horizon | Unknown. After phase 9, if it is still wanted. |
 | Date | 2026-11-01 |
-| Related | [FF-027](#ff-027-session-history-says-maps-for-a-poe1-run) |
+| Related | [`TESTING_ROADMAP.md`](./TESTING_ROADMAP.md) |
 
 ### Summary
 
-Session history is nine columns, and the row slides sideways inside its own box. The phone check allows that slide. A later change makes the row five columns: season, strategy, maps, investment, and profit per hour.
+A model walks the six settled pages. A checked-in rule set scores the end state, rule id plus pass or fail. The agent's wording is not the score. A gated page can show a finished example run and one capped live try.
 
-Season replaces the date. Waystones becomes Maps. Duration, revenue, and profit come off the row. The list sorts by season, then strategy, then newest session first. Edit and delete may move under the row title so the row does not have to slide. That placement waits until the columns exist.
-
-There is no season field today. FF-027 is only the PoE1 header saying Maps. This idea is the column set. FF-027 stays.
+On 2026-11-01 this stopped being a phase number. Phase 8 is the session list. Phase 9 is the paste check. The decisions stay in [`TESTING_ROADMAP.md`](./TESTING_ROADMAP.md).
 
 ### Why
 
-The row is a comparison of a run, and nine columns do not fit a phone. Five columns are the ones worth scanning.
+Two runs can be compared when the score is the rule list, not the prose.
 
 ### Risks
 
-- Maps as the header for a PoE2 run reopens the Waystone label that was left on purpose.
-- A season with no stored value has nothing to sort on.
-- Edit and delete under the row title is a layout choice for when the columns exist.
-
-### Open questions
-
-1. Does duration stay off, or return as a short label?
-2. Where does the season name come from?
-3. Do edit and delete sit under the strategy name?
+- A live model in a scheduled job is slow, billed, and non-deterministic.
+- A public try button with no cap can spend the API credit.
 
 ---
 
@@ -738,6 +671,15 @@ Do not bring these back as new ideas unless the reason below is wrong.
 | A second public repo that holds only the test framework | The tests live in this repo. Phase 6 makes this repo's report readable. A split repo hides the app those tests hit. |
 | An LLM that recommends a farming strategy | FF-030 explains a saved session. A recommendation presents a profit as advice. |
 
+## Folded on 2026-11-01
+
+Do not bring these back as new ideas unless the reason below is wrong.
+
+| Idea | Where it went |
+| --- | --- |
+| A shorter session history, and Maps on a PoE1 history row | Phase 8. The header is Maps for every row. Season defaults to `standard`. |
+| The `/quality` page and the deploy report | Phase 10. A manual pass/fail line and a coverage-line drill-down stay later. |
+
 ---
 
 ## Index
@@ -748,7 +690,6 @@ Do not bring these back as new ideas unless the reason below is wrong.
 | FF-002 | Product name | Accepted as the name |
 | FF-003 | Buy-filter regex | Idea |
 | FF-004 | Truth-sayer vs Deceiver | Parked |
-| FF-006 | Deploy test report | Idea |
 | FF-007 | Strategy versions | Idea |
 | FF-008 | Current league is the default board | Idea |
 | FF-009 | Logged-out leaderboard lists | Idea |
@@ -769,6 +710,5 @@ Do not bring these back as new ideas unless the reason below is wrong.
 | FF-024 | Show a large list cost in divines | Idea |
 | FF-025 | Fill the divine rate from poe.ninja | Idea |
 | FF-026 | Number fields refuse letters | Idea |
-| FF-027 | Session history says Maps for a PoE1 run | Idea |
 | FF-030 | Explain a saved session, then grade the explanation | Idea |
-| FF-032 | A shorter session history | Idea |
+| FF-033 | An agent on the pages, scored by a golden rule set | Parked |

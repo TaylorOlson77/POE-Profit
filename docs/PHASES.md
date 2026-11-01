@@ -5,11 +5,13 @@
 | Status | Agreed (2026-09-28) |
 | Applies | What to build after MVP v1, and in what order. |
 | Related | [`PRODUCT.md`](./PRODUCT.md), [`FUTURE_FEATURES.md`](./FUTURE_FEATURES.md), [`TESTING_ROADMAP.md`](./TESTING_ROADMAP.md), [`MVP_SPEC.md`](./MVP_SPEC.md) §4, [ADR-008](./DECISIONS.md), [ADR-011](./DECISIONS.md) |
-| Next epic | A pixel change at a known viewport fails the visual run |
+| Next epic | Each page reports zero WCAG AA violations |
 
 v1 is live. Phase 1 shipped on 2026-10-23. These are the next phases. [`FUTURE_FEATURES.md`](./FUTURE_FEATURES.md) holds everything that did not make a phase.
 
 `plan-epic` reads one phase, confirms the epics, then writes tickets for one epic. The rules are [`PRODUCT.md`](./PRODUCT.md). It does not start a later phase while an earlier one is open, except where this file says a phase can overlap. Tickets and acceptance criteria are written in that command, not here.
+
+On 2026-11-01 Taylor paused phases 4 and 5. They stay in this file. After phase 7, the run is phase 8, then phase 9, then phase 10. Those phases can overlap phase 2. Phase 2's cost epic stays the next game epic when logging resumes.
 
 A documented MVP non-goal stays closed unless this file says Taylor reopened it.
 
@@ -22,6 +24,8 @@ Taylor reopened these on 2026-09-28. They are phase 5. They are not the next epi
 - **Liking a strategy.** This is a favorite. Comments, follows, profiles, leaderboards, and Truth-sayer votes stay closed.
 
 Still closed: poe.ninja and other automatic pricing, the GGG API, stash reconciliation, an atlas simulator, image recognition, automatic strategy import, and advanced stats.
+
+Taylor reopened pasted loot text on a session on 2026-11-01. That is phase 9. A player pastes a drop list and the session lines fill in. Importing a strategy from Excel, YouTube, or a website stays closed. Image recognition and OCR stay closed. Automatic pricing stays closed.
 
 ## 1. A tablet costs what it lasts
 
@@ -39,7 +43,7 @@ Left for later: copying those costs onto a session. That is phase 2.
 
 **Player outcome:** A farm is logged as known costs, one total per revenue category, and an extrapolated duration that is visible before save.
 
-On 2026-10-27 Taylor is logging PoE1 on the public site. On 2026-10-29 that epic waits. Plan phase 6. This phase's first epic stays next for the game. A scarab copies at one use, so the filled cost is its full price. Loot for this league is the item, the quantity, and a chaos unit value. The category-total epic and the extrapolated-time epic stay in this phase. They are not the next epic. Compiled totals stay phase 3. Chisels, alchemy orbs, and chaos orbs spent as cost are [FF-023](./FUTURE_FEATURES.md), after this epic's copy exists. The history column saying Maps for a PoE1 run is [FF-027](./FUTURE_FEATURES.md).
+On 2026-10-27 Taylor is logging PoE1 on the public site. On 2026-10-29 that epic waits. Plan phase 6. This phase's first epic stays next for the game. A scarab copies at one use, so the filled cost is its full price. Loot for this league is the item, the quantity, and a chaos unit value. The category-total epic and the extrapolated-time epic stay in this phase. They are not the next epic. Compiled totals stay phase 3. Chisels, alchemy orbs, and chaos orbs spent as cost are [FF-023](./FUTURE_FEATURES.md), after this epic's copy exists. The history column says Maps in phase 8.
 
 **Epic: A session starts with the strategy's costs filled in, and those costs stay editable.** The first session still asks the player to retype tablets the strategy already has. Waystone cost already copies. Tablet cost does not, and it has to be the per-use cost from phase 1.
 
@@ -69,6 +73,8 @@ Must already be true: the compilation epic above. Left for later: a strategy own
 
 ## 4. Small gaps in the dry run
 
+**Paused** on 2026-11-01. This phase waits. The history-sort epic shares the session list with phase 8. When this phase comes back, that epic is a change to the phase 8 row.
+
 **Player outcome:** A dry run does not lose an unsaved session, hide the best run, or keep a finished strategy in the working list.
 
 These four can be taken in any order. The cost preview waits until phase 1, so the number on the form is the per-use cost.
@@ -90,6 +96,8 @@ Must already be true: the session list shows profit per hour. Left for later: th
 Must already be true: deleting a strategy with sessions returns 409. Left for later: versions and archive of a public strategy. That is a different idea, in the backlog.
 
 ## 5. A public board
+
+**Paused** on 2026-11-01. This phase waits until Taylor brings it back. Do not start it during phases 7–10.
 
 **Player outcome:** Someone else can open a public strategy, and the compiled results use the phase 3 model on valid public sessions only.
 
@@ -165,7 +173,7 @@ Before the link is worth putting on a resume, the GitHub repo is public and a se
 
 **Epic: The README shows CI status and the latest Playwright report.** Area: repository. CI already runs on every pull request and on `main`, and the README already says how to run the unit, API, and browser layers. A push to `main` that runs Playwright publishes the HTML report to GitHub Pages, and the README links to that page. A pull request does not publish. On E2E failure, `playwright-report/` and `test-results/` still upload for 7 days.
 
-Must already be true: `.github/workflows/ci.yml` runs Playwright with the HTML reporter. Left for later: a report for every pull request, a `/quality` page, and pass rate, runtime, and flaky count over time. Those need a history of runs. They stay [FF-006](./FUTURE_FEATURES.md). The accessibility scan, phone viewports, screenshot baselines, the weekly mutation report, and the k6 script are phase 7. An agent scored by a golden rule set stays the phase 8 proposal in [`TESTING_ROADMAP.md`](./TESTING_ROADMAP.md).
+Must already be true: `.github/workflows/ci.yml` runs Playwright with the HTML reporter. Left for later: a report for every pull request, and pass rate, runtime, and flaky count over time. Those need a history of runs. The `/quality` page is phase 10. The accessibility scan, phone viewports, screenshot baselines, the weekly mutation report, and the k6 script are phase 7. An agent that walks the pages and is scored by a golden rule set is parked as [FF-033](./FUTURE_FEATURES.md).
 
 ## 7. The test suite checks more, and the report shows it
 
@@ -173,7 +181,7 @@ This phase can overlap phase 2.
 
 **Player outcome:** Every new check publishes a result, and a pull request still finishes on the gates it has today. The accessibility gate is the one exception, once its tickets say the pull request fails.
 
-`plan-epic` order: WCAG A, WCAG AA, phone sizes, visual baselines, mutation testing, then k6. WCAG A shipped on 2026-10-31. On 2026-10-31 Taylor left WCAG AA waiting and planned phone sizes next. AA stays in this phase. The scan still logs AA, and a pull request still passes. Phone sizes shipped on 2026-11-01 (#36, one ticket, no epic issue). Visual baselines is filed as #38, one ticket, with no epic issue.
+`plan-epic` order: WCAG A, WCAG AA, phone sizes, visual baselines, mutation testing, then k6. WCAG A shipped on 2026-10-31. On 2026-10-31 Taylor left WCAG AA waiting and planned phone sizes next. AA stays in this phase, after mutation testing. The scan still logs AA, and a pull request still passes. Phone sizes shipped on 2026-11-01 (#36, one ticket, no epic issue). Visual baselines shipped on 2026-11-01 (#38, one ticket, no epic issue). Mutation testing shipped on 2026-11-01 (#44, one ticket, no epic issue). The AA gate follows it. k6 is last in this phase.
 
 The six pages are `/`, `/strategies/new`, `/strategies/[id]`, `/sessions`, `/sessions/new`, and `/sessions/[id]`. The two id routes open the seeded demo strategy and the seeded demo session. The accessibility scan, the phone checks, and the screenshots use this list.
 
@@ -199,13 +207,13 @@ Area: the six pages.
 
 Must already be true: the page list above.
 
-Playwright device emulation opens each page at iPhone 13 and Pixel 7. The action that page is for can be reached. This epic does not re-run the seven desktop journeys at each size. Horizontal overflow that hides the action fails the run. This epic adds the midnight workflow, because the check stays off the pull request. One workflow on `main`, scheduled at `0 5 * * *` (05:00 UTC): midnight Eastern Standard Time, and 1:00 a.m. Eastern Daylight Time. This epic's job is first. The visual, k6, and mutation epics add their jobs behind it, in that order. A job that uses the Neon `ci` branch joins the existing `e2e-ci-database` queue.
+Playwright device emulation opens each page at iPhone 13 and Pixel 7. The action that page is for can be reached. This epic does not re-run the seven desktop journeys at each size. Horizontal overflow that hides the action fails the run. This epic adds the midnight workflow, because the check stays off the pull request. One workflow on `main`, scheduled at `0 5 * * *` (05:00 UTC): midnight Eastern Standard Time, and 1:00 a.m. Eastern Daylight Time. This epic's job is first. The visual job waits on it. The mutation job does not: it scores `src/domain/calc` on Sunday and does not use the `ci` branch. k6 still adds its job later. A job that uses the Neon `ci` branch joins the existing `e2e-ci-database` queue.
 
 The viewport list is desktop Chromium, iPhone 13, and Pixel 7. The visual epic uses that list.
 
 Left for later: Safari, Firefox, a tablet matrix, a device lab.
 
-**Epic: A pixel change at a known viewport fails the visual run.** A layout change can ship while the journeys stay green. There is no screenshot suite.
+**Epic: A pixel change at a known viewport fails the visual run.** Shipped on 2026-11-01 (#38). A layout change can ship while the journeys stay green. There is no screenshot suite.
 
 Area: the six pages, at the viewport list from the phone epic.
 
@@ -215,15 +223,15 @@ Playwright screenshot comparison. One committed baseline per page per viewport. 
 
 Left for later: a pixel diff of every component state. A full-app suite stays out.
 
-**Epic: Mutation testing covers the calc engine on a weekly run.** A green unit suite can miss a profit formula that changed. Running that check on every pull request spends the minutes.
+**Epic: Mutation testing covers the calc engine on a weekly run.** Shipped on 2026-11-01 (#44). A green unit suite can miss a profit formula that changed. Running that check on every pull request spends the minutes.
 
 Area: `src/domain/calc`. That module is the only strategy-cost and profit formula (ADR-008).
 
 Must already be true: the unit tests for that module pass on `main`.
 
-Stryker mutates `src/domain/calc` only. The weekly run reports the score and does not fail. A threshold that fails the run is filed only after a score has been read. The run is Sunday, inside the midnight workflow.
+Stryker mutates `src/domain/calc` only. The run is Sunday, inside the midnight workflow, and `npm run test:mutation` runs the same check. A score under 90 fails that run.
 
-Left for later: UI, Route Handlers, or the whole repo. Every pull request. A failing threshold.
+Left for later: UI, Route Handlers, or the whole repo. Every pull request.
 
 **Epic: A short k6 run against Preview stays inside limits set first.** There is no load check. The public app is on Vercel's free tier, so the script cannot discover its limits by hitting production.
 
@@ -231,6 +239,56 @@ Area: repository. The result is an artifact, not a new page.
 
 Must already be true: a Vercel Preview answers the routes the script calls, and that Preview has a database. Preview does not receive the production database URLs today ([`DEVELOPMENT.md`](./DEVELOPMENT.md)), so the first ticket is that database. The script also stays off the Neon `ci` branch. Production (`https://poe-profit.vercel.app/`) stays closed.
 
-One script file. 5–10 virtual users. Thresholds are written into the file before the first measured run. The run writes a k6 summary JSON as an Actions artifact. The `/quality` page stays [FF-006](./FUTURE_FEATURES.md). This reopens the load-test line in [`TEST_STRATEGY.md`](./TEST_STRATEGY.md) §8. The run joins the midnight workflow. It does not join the pull request.
+One script file. 5–10 virtual users. Thresholds are written into the file before the first measured run. The run writes a k6 summary JSON as an Actions artifact. The `/quality` page is phase 10. This reopens the load-test line in [`TEST_STRATEGY.md`](./TEST_STRATEGY.md) §8. The run joins the midnight workflow. It does not join the pull request.
 
-Left for later: more users, production, the `/quality` page.
+Left for later: more users, production, and the `/quality` page. That page is phase 10.
+
+## 8. Session history is five columns you can scan
+
+This phase follows phase 7. It can overlap phase 2. Phases 4 and 5 stay paused.
+
+**Player outcome:** You can scan a run on one row without sliding the list.
+
+**Epic: Session history shows season, strategy, maps, investment, and profit per hour.** Nine columns slide sideways, and the phone check allows that slide. Area: sessions.
+
+Must already be true: the session list exists.
+
+Season is a field on the session. A new session, the demo seed, and a session that has no season stored use `standard`. The player can change it. Edit and delete sit under the strategy name so the row does not slide. The list sorts by season, then strategy, then newest session first. The column header is Maps for every row. Duration, revenue, and profit stay off the row.
+
+Left for later: the season defaults to the current league. That is separate from [FF-008](./FUTURE_FEATURES.md), which is the public board. A profit-per-hour sort of this row stays with the paused phase 4 epic. Duration as a short label stays out.
+
+## 9. Paste a drop list and prove the lines
+
+This phase follows phase 8. It can overlap phase 2.
+
+**Player outcome:** You can paste a drop list into a session and the lines fill in, and a checked run proves those lines match the paste.
+
+**Epic: Paste a drop list and the session lines fill in.** Typing each drop is the slow part of a run that is logged as items. Area: sessions.
+
+Must already be true: a session stores item lines as the item, the quantity, and a chaos unit value.
+
+The player pastes text from a notepad or a spreadsheet into one field on the session form. The model fills loot lines from that paste. The player can edit the lines before save. A save stores what is on the form.
+
+Left for later: image recognition, OCR, importing a strategy, automatic pricing, and a recommendation of which strategy to run.
+
+**Epic: A checked run proves the filled lines match the paste.** A model can fill a line the paste did not contain. Area: sessions. The result is a run, not a new page.
+
+Must already be true: the paste epic above.
+
+The check compares the saved lines to the paste. It does not score the model's wording. One prompt-injection case leaves the stored numbers unchanged and does not follow the injected instruction. The live model stays off the pull request.
+
+Left for later: an LLM-as-judge, a page-walking agent, and a public try button. Those stay [FF-033](./FUTURE_FEATURES.md) and [FF-030](./FUTURE_FEATURES.md). The public digest of results is phase 10.
+
+## 10. Open /quality and read the latest results
+
+This phase follows phase 9. It can overlap phase 2.
+
+**Player outcome:** Someone can open one page and read the latest test results without opening GitHub.
+
+**Epic: The home page and the README link to /quality, and that page shows the latest generated results.** Actions history shows that CI ran. It does not show the results in one place. Area: quality. A visitor can open the page without the strategy form or the session form.
+
+Must already be true: a push to `main` publishes the Playwright report, and the phase 7 jobs publish their results. The phase 9 check is one of the results once that phase has shipped.
+
+The numbers come from the generated run. A hand-counted figure stays out. The page does not commit a history of full logs.
+
+Left for later: a manual pass/fail line, a chart of every past run, a coverage-line drill-down, and a report for every pull request.

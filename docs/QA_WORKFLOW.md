@@ -27,7 +27,7 @@ A coverage page is not a second copy of the unit suite. Calculation tests stay i
 
 The catalog is markdown in git, because a case has to change on a branch and stay unchanged on main until merge.
 
-Each product area has one coverage page. Create, update, and delete are sections on that page, added when those behaviors exist. What a checked box means, and how a line is written, is [`tests/catalog/README.md`](../tests/catalog/README.md). Results belong to CI and, later, the deploy report ([FF-006](./FUTURE_FEATURES.md)).
+Each product area has one coverage page. Create, update, and delete are sections on that page, added when those behaviors exist. What a checked box means, and how a line is written, is [`tests/catalog/README.md`](../tests/catalog/README.md). Results belong to CI and, later, the `/quality` page (phase 10 in [`PHASES.md`](./PHASES.md)).
 
 | Word | In this catalog |
 | --- | --- |
@@ -48,7 +48,7 @@ Interview mapping:
 | Test case | The step file for a browser line. Where it lives is [`tests/catalog/README.md`](../tests/catalog/README.md). |
 | Regression suite | CI for every checked line. The manual cases, across the coverage pages, are the human pass. |
 | Requirement link | the pull request that edits the coverage page |
-| Test run | GitHub Actions now; a generated deploy report later (FF-006) |
+| Test run | GitHub Actions now; the `/quality` page later (phase 10) |
 
 ## Pipeline
 
@@ -66,7 +66,7 @@ plan-epic  →  ticket-test-plan  →  implement  →  dev-wrap-up  →  definit
 | 1 | `.cursor/commands/plan-epic.md` | One phase's epic split, then that epic's tickets, and board placement. Tickets go to Backlog. A multi-ticket epic goes to Backlog and stays there until Done. The title, description, acceptance criteria, and the boundary comment follow [`PRODUCT.md`](./PRODUCT.md). | A branch. Coverage lines, code, automation. The comment is not a test list. Moving an epic through Ready / In Progress / In Review / Testing. |
 | 2 | `.cursor/commands/ticket-test-plan.md` | Branch. Edits to the coverage page: lines added, retargeted, or removed. A file under `manual/` only when a person would still run the case. Reads the boundary comment when it exists, then still proposes cases the comment leaves out. | Product code. A separate impact table. The coverage diff is the impact. Pasting the test list onto the issue. |
 | 3 | Same chat as `ticket-test-plan` | Product code and the automated tests the new checked lines name, same pull request | A second copy of the cases on the GitHub issue |
-| 4 | `.cursor/commands/dev-wrap-up.md`, same chat | The commit, doc updates Taylor accepted, and the pull request | The definition-of-done comment. A pass/fail report (FF-006). |
+| 4 | `.cursor/commands/dev-wrap-up.md`, same chat | The commit, doc updates Taylor accepted, and the pull request | The definition-of-done comment. A pass/fail report (phase 10). |
 | 5 | `.cursor/commands/definition-of-done.md` | A traceability comment on the issue; move the board only after the checks pass | New product scope. It does not invent whether a line belongs on the page. |
 
 Amended 2026-11-01. A later check may open the same pages as an earlier spec and keep its own list. The ticket note names that spec and says the copy is deliberate, or names the shared list. Keeping the specs separate is a valid choice. Sharing the list is a valid choice. The note is where that is decided. Review is not where it is discovered.
@@ -165,6 +165,6 @@ An epic is done when every child ticket is Done. The same command checks that li
 
 ## Reporting (later)
 
-[FF-006](./FUTURE_FEATURES.md). A generated deploy report. The summary is the feature and the action (create, update, delete), with a pass rate and counts by layer. Counts come from the run. The drill-down is the coverage page with pass or fail joined on the test name. Manual results name the case file, not a separate id. Do not commit a history of full run logs into the repo.
+Phase 10 in [`PHASES.md`](./PHASES.md). A generated `/quality` page. Counts come from the run. A hand-counted figure stays out. The coverage-line drill-down and a manual pass/fail line stay later. Do not commit a history of full run logs into the repo.
 
 Do not scrape case text onto the ticket. The definition-of-done comment links the coverage page and the run.

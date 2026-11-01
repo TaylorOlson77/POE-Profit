@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| Status | Phase 7 accepted (2026-10-30) and copied into [`PHASES.md`](./PHASES.md). Phase 8 is still a proposal. |
-| Applies | `plan-epic` for phase 7 or phase 8. |
-| Related | [`PHASES.md`](./PHASES.md), [`TEST_STRATEGY.md`](./TEST_STRATEGY.md) §8 and §10, [`FUTURE_FEATURES.md`](./FUTURE_FEATURES.md) FF-006 and FF-030, [`DEVELOPMENT.md`](./DEVELOPMENT.md) |
+| Status | Phase 7 is in [`PHASES.md`](./PHASES.md). On 2026-11-01 phases 8, 9, and 10 were accepted there. The agent proposal below is parked as FF-033. |
+| Applies | Background for phase 7. `plan-epic` reads [`PHASES.md`](./PHASES.md) for phases 8, 9, and 10. |
+| Related | [`PHASES.md`](./PHASES.md), [`TEST_STRATEGY.md`](./TEST_STRATEGY.md) §8 and §10, [`FUTURE_FEATURES.md`](./FUTURE_FEATURES.md) FF-030 and FF-033, [`DEVELOPMENT.md`](./DEVELOPMENT.md) |
 
-`plan-epic` reads [`PHASES.md`](./PHASES.md) for phase 7. This file keeps the phase 8 proposal. Confirm those epics before copying phase 8. This file has no acceptance criteria.
+`plan-epic` reads [`PHASES.md`](./PHASES.md). This file keeps the parked agent proposal. This file has no acceptance criteria.
 
-Phases 1–7 are in [`PHASES.md`](./PHASES.md). Phase 6 shipped on 2026-10-30. Phase 7 can overlap phase 2. Phase 8 starts after the accessibility epic has named the pages. It does not wait on load, screenshots, or mutation testing.
+Phases 1–10 are in [`PHASES.md`](./PHASES.md). Phase 6 shipped on 2026-10-30. Phase 7 can overlap phase 2. Phases 4 and 5 are paused. After phase 7, the run is the session list, then the paste check, then `/quality`.
 
 ## Already in place
 
@@ -34,12 +34,12 @@ Earlier notes disagree with this plan. This file wins when Taylor accepts the ph
 | Former FF-028. axe inside the existing journeys. A serious violation fails the run. | Its own spec over the six pages. The first ticket logs and stays green. WCAG A fails the pull request after the A fixes. AA stays in the log. On 2026-10-31 that epic waits. Phone sizes shipped on 2026-11-01. |
 | Former FF-029. k6 against `next start` on the runner. Parked. It must not hit the public site or the Neon `ci` branch. | One script against a Vercel Preview, after that Preview has a database. Last epic in phase 7. Production and the Neon `ci` branch stay off limits. |
 | Former FF-031. A screenshot of a page a journey already opens. Parked. | Pixel baselines per viewport, after the phone epic writes the viewport list. Midnight workflow, not the pull request. |
-| FF-030. A model explains one saved session. | Phase 8 is an agent on the pages, scored by a golden rule set. FF-030 stays its own idea. |
-| FF-006. An in-app `/quality` page. | Phase 7 stores the k6 summary JSON that page will read. Building the page stays FF-006. |
+| FF-030. A model explains one saved session. | The agent proposal is parked as FF-033. Phase 9 pastes a drop list and checks the lines. FF-030 stays its own idea. |
+| FF-006. An in-app `/quality` page. | Phase 10. Phase 7 still stores the k6 summary JSON that page will read. |
 
 ## Pages and viewports
 
-One page list. The accessibility scan, the phone checks, the screenshots, and the phase 8 agent use it. Phase 7 in [`PHASES.md`](./PHASES.md) holds the same list.
+One page list. The accessibility scan, the phone checks, and the screenshots use it. Phase 7 in [`PHASES.md`](./PHASES.md) holds the same list.
 
 | Route | What opens it |
 | --- | --- |
@@ -66,27 +66,29 @@ Emulation only. No device lab, and no second browser engine. Session history is 
 
 Accepted on 2026-10-30. The epics are in [`PHASES.md`](./PHASES.md). This section keeps the cuts that changed, and the k6 numbers the ticket note still needs.
 
-`plan-epic` order: WCAG A, WCAG AA, phone sizes, visual baselines, mutation testing, then k6. WCAG A shipped on 2026-10-31. AA waits. Phone sizes shipped on 2026-11-01 (#36). Visual baselines is filed as #38.
+`plan-epic` order: WCAG A, WCAG AA, phone sizes, visual baselines, mutation testing, then k6. WCAG A shipped on 2026-10-31. AA waits. Phone sizes shipped on 2026-11-01 (#36). Visual baselines shipped on 2026-11-01 (#38). Mutation testing shipped on 2026-11-01 (#44).
 
-- The midnight workflow is not its own epic. The phone epic adds it. The visual, k6, and mutation epics add their jobs behind the phone job. The schedule stays `0 5 * * *`.
+- The midnight workflow is not its own epic. The phone epic adds it. The visual job waits on the phone job. The mutation job does not. k6 still adds its job later. The schedule stays `0 5 * * *`.
 - The accessibility scan is its own spec. The first ticket logs every violation and the run stays green. WCAG A fails the pull request after the A fixes. AA stays in the log. On 2026-10-31 Taylor left that epic waiting. Phone sizes shipped on 2026-11-01. AAA stays in the log.
 - k6 is last. Preview has no database today, so the first ticket is that database. Production and the Neon `ci` branch stay closed.
-- The mutation run reports a score and does not fail. A threshold ticket waits until a score has been read.
+- The mutation run reports a score. A score under 90 fails the Sunday run and a manual dispatch. It is not a pull request.
 
 Decisions that stay for the k6 ticket note:
 
 - One script file. 5–10 virtual users.
 - Starting pair, for the HTTP scenarios: `http_req_duration` p(95) under 200ms, and `http_req_failed` under 1%. Replace the pair in the ticket note if Taylor picks different numbers. Do not copy them off the first run.
 - One k6 browser-module scenario is in the same file, as a light UI pass. It does not own the 200ms line.
-- The run writes a k6 summary JSON as an Actions artifact. The `/quality` page stays FF-006. Do not commit a history of summaries.
+- The run writes a k6 summary JSON as an Actions artifact. The `/quality` page is phase 10. Do not commit a history of summaries.
 
 ---
 
-## 8. AI testing
+## Parked: an agent on the pages
+
+Parked on 2026-11-01 as [FF-033](./FUTURE_FEATURES.md). Phase 8 in [`PHASES.md`](./PHASES.md) is the session list. Phase 9 is the paste check. This proposal is not a phase number.
 
 **Outcome:** Two agent runs against the same pages produce the same pass and fail on a checked-in rule set.
 
-This phase can overlap the tail of phase 7. The pages come from the accessibility epic. The midnight workflow is a convenient place to run it, on its own night, after the phase 7 jobs. A live model stays off the pull request.
+This was going to overlap the tail of phase 7. The pages come from the accessibility epic. The midnight workflow is a convenient place to run it, on its own night, after the phase 7 jobs. A live model stays off the pull request.
 
 The demo page in the next section extends this phase. It shows a visitor one run. It uses the same rule set. It is not a second way to score.
 
@@ -112,7 +114,7 @@ Suggested cut: the rule file and a model-free scorer, then the agent that walks 
 
 ---
 
-## Demo page (extends phase 8)
+## Demo page (extends the parked agent proposal)
 
 **Outcome:** A visitor with the gate can read a finished example run, see how the rules score it, and start one live run that cannot spend the API credit without a cap.
 

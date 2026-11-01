@@ -59,6 +59,6 @@ Push the branch and open the pull request with `gh`. The description is the pull
 
 A removed coverage line says why in that description. Exploratory notes stay a few bullets there, as QA workflow describes.
 
-Do not post the issue comment that lists tests added or updated. That comment is [`definition-of-done`](./definition-of-done.md). Do not move the board. Do not write a pass/fail report. That report is [FF-006](../../docs/FUTURE_FEATURES.md).
+Do not post the issue comment that lists tests added or updated. That comment is [`definition-of-done`](./definition-of-done.md). Do not move the board. Do not write a pass/fail report. That report is phase 10 in [`docs/PHASES.md`](../../docs/PHASES.md).
 
 Then stop.

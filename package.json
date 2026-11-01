@@ -15,6 +15,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "jest",
+    "test:mutation": "stryker run",
     "test:api": "jest --config jest.api.config.mjs",
     "test:api:db": "dotenv -e .env.local -- jest --config jest.api-db.config.mjs --runInBand",
     "test:e2e": "playwright test",
@@ -45,6 +46,8 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",
     "@playwright/test": "^1.55.0",
+    "@stryker-mutator/core": "^10.1.1",
+    "@stryker-mutator/jest-runner": "^10.1.1",
     "@tailwindcss/postcss": "^4",
     "@types/jest": "^29.5.14",
     "@types/node": "^20",
