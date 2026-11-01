@@ -1,7 +1,8 @@
 name: Midnight
 
-# Phone viewports, then visual baselines. k6 and the Sunday mutation run
-# are later jobs on this workflow. A pull request does not run it.
+# Phone viewports, then visual baselines. The mutation job scores on Sunday
+# and on a manual run. A score under 90 fails that job. k6 is a later job.
+# A pull request does not run it.
 on:
   schedule:
     - cron: "0 5 * * *"
@@ -139,3 +140,45 @@ jobs:
             test-results/
           retention-days: 7
           if-no-files-found: ignore
+
+  mutation:
+    name: Mutation score
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Decide whether to score
+        id: when
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          elif [ "$(date -u +%u)" = "7" ]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Mutation score
+        if: steps.when.outputs.run == 'true'
+        run: npm run test:mutation
+
+      - name: Upload mutation report
+        if: steps.when.outputs.run == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: mutation-report
+          path: reports/mutation/
+          retention-days: 7
+          if-no-files-found: error
