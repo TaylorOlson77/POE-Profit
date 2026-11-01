@@ -31,8 +31,9 @@ Open [http://localhost:3000](http://localhost:3000).
 | `npm run test`                         | Jest unit tests (`src/**/*.test.ts`)                    |
 | `npm run test:api`                     | Jest API tests (`tests/api/`)                           |
 | `npm run test:api:db`                  | Jest persistence round-trips on the Neon `local` branch |
-| `npm run test:e2e`                     | Desktop Chromium. Skips `e2e/viewport.spec.ts`.        |
+| `npm run test:e2e`                     | Desktop Chromium. Skips the phone and visual specs.    |
 | `npm run test:e2e:phone`               | iPhone 13 and Pixel 7. Midnight workflow, not a pull request. |
+| `npm run test:e2e:visual`              | Screenshots of the six pages. Midnight workflow, not a pull request. |
 | `npm run db:generate`                  | Generate Prisma Client                                  |
 | `npm run db:migrate`                   | Create + apply a migration (dev)                        |
 | `npm run db:migrate:deploy`            | Apply existing migrations (local)                       |
@@ -78,6 +79,7 @@ The live app is [poe-profit.vercel.app](https://poe-profit.vercel.app/). CI does
 | API persistence | Jest       | `tests/api/db/`              | `npm run test:api:db` |
 | E2E             | Playwright | `e2e/`                       | `npm run test:e2e`       |
 | Phone           | Playwright | `e2e/viewport.spec.ts`       | `npm run test:e2e:phone` |
+| Visual          | Playwright | `e2e/visual.spec.ts`         | `npm run test:e2e:visual` |
 
 Jest does **not** run Playwright specs, and Playwright does **not** run unit/API math cases.
 
@@ -96,7 +98,7 @@ GitHub Actions ([`.github/workflows/ci.yml`](../.github/workflows/ci.yml)) on pu
 5. Production build
 6. Playwright E2E (Chromium), after migrating and resetting the Neon `ci` branch
 
-`.github/workflows/midnight.yml` runs on `main` at 05:00 UTC and from a manual dispatch. It migrates and resets the Neon `ci` branch, then runs `npm run test:e2e:phone`. A pull request does not run it. The job joins the same `e2e-ci-database` queue.
+`.github/workflows/midnight.yml` runs on `main` at 05:00 UTC and from a manual dispatch. It migrates and resets the Neon `ci` branch, runs `npm run test:e2e:phone`, then runs `npm run test:e2e:visual`. A pull request does not run it. Both jobs join the same `e2e-ci-database` queue. Dispatch can pass `update_visual_baselines` so the visual job writes new screenshots instead of comparing. The saved screenshots come from that Ubuntu runner. A Windows run is not a baseline.
 
 `main` is the production branch. Vercel deploys it. Feature work merges through a pull request. CI on that pull request has to be green, and the docs in the pull request have to match the code.
 

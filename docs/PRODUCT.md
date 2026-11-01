@@ -104,7 +104,7 @@ One or two sentences on the issue. Who it is for, and why it matters.
 
 ### Acceptance criteria
 
-About three to five conditions. Each one is done or not done. Present tense. No "should". One condition per bullet. Two things the player sees from the same save can share a bullet.
+About three to five conditions. Each one is done or not done. Present tense. No "should". One condition per bullet. Each condition is one short sentence. Paths, schedules, and queue names go in the boundary note. Two things the player sees from the same save can share a bullet.
 
 A failure the player can hit says why, in that bullet. The exact wording is not required on the issue. The test locks the string the API returns (`error.message`). A later ticket is a copy change, after this behavior works.
 

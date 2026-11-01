@@ -14,7 +14,7 @@ const isCi = !!process.env.CI;
  */
 export default defineConfig({
   testDir: "./e2e",
-  testIgnore: "**/viewport.spec.ts",
+  testIgnore: ["**/viewport.spec.ts", "**/visual.spec.ts"],
   fullyParallel: true,
   forbidOnly: isCi,
   retries: isCi ? 1 : 0,
