@@ -113,15 +113,15 @@ jobs:
         run: npm run build
 
       - name: Compare pages to saved screenshots
-        if: inputs.update_visual_baselines != 'true'
+        if: ${{ !inputs.update_visual_baselines }}
         run: npm run test:e2e:visual
 
       - name: Update visual baselines
-        if: inputs.update_visual_baselines == 'true'
+        if: ${{ inputs.update_visual_baselines }}
         run: npm run test:e2e:visual -- --update-snapshots
 
       - name: Upload updated baselines
-        if: inputs.update_visual_baselines == 'true' && success()
+        if: ${{ inputs.update_visual_baselines && success() }}
         uses: actions/upload-artifact@v4
         with:
           name: visual-baselines
