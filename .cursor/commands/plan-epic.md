@@ -15,6 +15,10 @@ Also read:
 
 If this run hit a pain point in the command, name it and the one-line change. Wait. After Taylor accepts, add that line here.
 
+Learned on 2026-11-01, from the six settled pages:
+
+- When a ticket walks a list an earlier spec already walks, name that spec in the ticket note and say whether this story keeps its own copy. A second copy can be the right design. Sharing can be the right design. Say which, and why, before the code. Do not leave that choice for review.
+
 If this run learns something the product docs should say, propose that edit and wait. Do not change the docs until he accepts.
 
 ## Epics, then stop
