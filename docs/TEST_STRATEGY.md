@@ -253,7 +253,7 @@ CI runs that list on every push to `main` and every pull request. The contract A
 
 The e2e job runs against the Neon `ci` branch (`CI_DATABASE_URL` / `CI_DATABASE_URL_UNPOOLED` injected as `DATABASE_URL` / `DATABASE_URL_UNPOOLED`). Once per job, Actions applies migrations and `prisma/reset-to-seed.ts`, then runs `npm run test:api:db`, then resets to the seed again, then Playwright. A failed persistence step skips Playwright. The second reset does not run when that step fails; the next job's first reset clears leftover `api-db-` rows. Resets run only when `DATABASE_RESET=ci` and `CI=true`, so CI cannot wipe the local or public database. The homepage smoke runs in the same job. E2E jobs queue so two runs do not share that wipe.
 
-The phone check is not one of these gates. A midnight workflow on `main` opens the six settled pages at iPhone 13 and Pixel 7. A pull request does not run it.
+The phone check and the visual check are not gates. A midnight workflow on `main` opens the six settled pages at iPhone 13 and Pixel 7, then compares those pages and desktop Chromium to a saved screenshot. A pull request does not run it.
 
 On E2E failure, CI should retain:
 

@@ -5,7 +5,7 @@
 | Status | Agreed (2026-09-28) |
 | Applies | What to build after MVP v1, and in what order. |
 | Related | [`PRODUCT.md`](./PRODUCT.md), [`FUTURE_FEATURES.md`](./FUTURE_FEATURES.md), [`TESTING_ROADMAP.md`](./TESTING_ROADMAP.md), [`MVP_SPEC.md`](./MVP_SPEC.md) §4, [ADR-008](./DECISIONS.md), [ADR-011](./DECISIONS.md) |
-| Next epic | The same pages work on a phone-sized viewport |
+| Next epic | A pixel change at a known viewport fails the visual run |
 
 v1 is live. Phase 1 shipped on 2026-10-23. These are the next phases. [`FUTURE_FEATURES.md`](./FUTURE_FEATURES.md) holds everything that did not make a phase.
 
@@ -173,7 +173,7 @@ This phase can overlap phase 2.
 
 **Player outcome:** Every new check publishes a result, and a pull request still finishes on the gates it has today. The accessibility gate is the one exception, once its tickets say the pull request fails.
 
-`plan-epic` order: WCAG A, WCAG AA, phone sizes, visual baselines, mutation testing, then k6. WCAG A shipped on 2026-10-31. On 2026-10-31 Taylor left WCAG AA waiting and planned phone sizes next. AA stays in this phase. The scan still logs AA, and a pull request still passes. Phone sizes is filed as #36, one ticket, with no epic issue.
+`plan-epic` order: WCAG A, WCAG AA, phone sizes, visual baselines, mutation testing, then k6. WCAG A shipped on 2026-10-31. On 2026-10-31 Taylor left WCAG AA waiting and planned phone sizes next. AA stays in this phase. The scan still logs AA, and a pull request still passes. Phone sizes shipped on 2026-11-01 (#36, one ticket, no epic issue). Visual baselines is filed as #38, one ticket, with no epic issue.
 
 The six pages are `/`, `/strategies/new`, `/strategies/[id]`, `/sessions`, `/sessions/new`, and `/sessions/[id]`. The two id routes open the seeded demo strategy and the seeded demo session. The accessibility scan, the phone checks, and the screenshots use this list.
 
@@ -193,7 +193,7 @@ Area: the six pages.
 
 Must already be true: the A epic has shipped, and the scan already logs AA. On 2026-10-31 Taylor left this epic waiting and planned phone sizes next. Left for later: failing the job on AAA, and every unsaved state of every form.
 
-**Epic: The same pages work on a phone-sized viewport.** CI opens the app as desktop Chromium only. A control can sit past the edge of a phone and the desktop journeys still pass.
+**Epic: The same pages work on a phone-sized viewport.** Shipped on 2026-11-01 (#36). CI opens the app as desktop Chromium only. A control can sit past the edge of a phone and the desktop journeys still pass.
 
 Area: the six pages.
 
@@ -211,7 +211,7 @@ Area: the six pages, at the viewport list from the phone epic.
 
 Must already be true: the phone epic has written the viewport list.
 
-Playwright screenshot comparison. One committed baseline per page per viewport. A pixel diff fails the run, and the diff is the artifact. The same run fails when session history overflows the viewport. Baselines are generated on the CI image. This reopens the visual-regression line in [`TEST_STRATEGY.md`](./TEST_STRATEGY.md) §8 for these pages only. The run is a job on the midnight workflow, not a pull-request gate.
+Playwright screenshot comparison. One committed baseline per page per viewport. A pixel diff fails the run, and the diff is the artifact. Baselines are generated on the CI image. This reopens the visual-regression line in [`TEST_STRATEGY.md`](./TEST_STRATEGY.md) §8 for these pages only. The run is a job on the midnight workflow, not a pull-request gate.
 
 Left for later: a pixel diff of every component state. A full-app suite stays out.
 

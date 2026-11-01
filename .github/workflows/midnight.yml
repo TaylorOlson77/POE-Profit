@@ -1,11 +1,16 @@
 name: Midnight
 
-# Phone viewports. Visual baselines, k6, and the Sunday mutation run
+# Phone viewports, then visual baselines. k6 and the Sunday mutation run
 # are later jobs on this workflow. A pull request does not run it.
 on:
   schedule:
     - cron: "0 5 * * *"
   workflow_dispatch:
+    inputs:
+      update_visual_baselines:
+        description: Write new visual screenshots instead of comparing
+        type: boolean
+        default: false
 
 jobs:
   phone:
@@ -59,6 +64,76 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: playwright-phone-artifacts
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
+          if-no-files-found: ignore
+
+  visual:
+    name: Visual baselines
+    needs: phone
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    concurrency:
+      group: e2e-ci-database
+      cancel-in-progress: false
+    env:
+      DATABASE_URL: ${{ secrets.CI_DATABASE_URL }}
+      DATABASE_URL_UNPOOLED: ${{ secrets.CI_DATABASE_URL_UNPOOLED }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: Migrate and reset CI database
+        run: |
+          npx prisma migrate deploy
+          npx tsx prisma/reset-to-seed.ts
+        env:
+          CI: true
+          DATABASE_RESET: ci
+
+      - name: Production build
+        run: npm run build
+
+      - name: Compare pages to saved screenshots
+        if: ${{ !inputs.update_visual_baselines }}
+        run: npm run test:e2e:visual
+
+      - name: Update visual baselines
+        if: ${{ inputs.update_visual_baselines }}
+        run: npm run test:e2e:visual -- --update-snapshots
+
+      - name: Upload updated baselines
+        if: ${{ inputs.update_visual_baselines && success() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-baselines
+          path: e2e/**/*-snapshots/**
+          retention-days: 7
+          if-no-files-found: error
+
+      - name: Upload Playwright artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-visual-artifacts
           path: |
             playwright-report/
             test-results/

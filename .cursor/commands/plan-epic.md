@@ -27,8 +27,6 @@ Wait. Do not write tickets yet.
 
 ## Tickets, then stop
 
-When he accepts the epic, rename this chat to a few words from that epic title.
-
 For the one epic he accepts, show each ticket in the shape [`docs/PRODUCT.md`](../../docs/PRODUCT.md) shows: title, description, and acceptance criteria. One epic. The next epic is a later run of this command.
 
 Wait.
@@ -40,8 +38,6 @@ File only after he accepts the tickets. If he changes the split, file his.
 Use `gh`. Create the epic first and label it `epic`. The title is the outcome. Do not prefix it with `EPIC -`. Create each ticket with `--parent` set to that epic, so GitHub records the sub-issue. Do not write `Part of #` in the body. One ticket and no siblings: file that one issue, and skip the epic label and the parent. If a second story is accepted later, file the epic then and set the parent on the ticket that already exists. Add the issues to the POE Profit board, Backlog column. If that column is missing, ask. Leave them in Backlog.
 
 If the epic list in `PHASES.md` changed and he accepted the change, update that phase in `PHASES.md` so the next run reads the same split.
-
-After filing, rename this chat to the epic number when an epic issue exists, otherwise the ticket number, then a space and a few words from the title.
 
 Post a comment on the ticket that starts with `## Boundary notes`, the way [`docs/PRODUCT.md`](../../docs/PRODUCT.md) describes. One ticket and no epic: the comment goes on that issue. The note is a start for the test command. When a decision changes, edit that comment. Do not post a second one with the same heading.
 

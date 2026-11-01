@@ -682,6 +682,41 @@ The list scanned during a PoE1 league still uses the PoE2 word.
 
 ---
 
+## FF-032: A shorter session history
+
+| Field | Value |
+| --- | --- |
+| Status | Idea |
+| Horizon | Whenever. Not part of the visual baselines. |
+| Date | 2026-11-01 |
+| Related | [FF-027](#ff-027-session-history-says-maps-for-a-poe1-run) |
+
+### Summary
+
+Session history is nine columns, and the row slides sideways inside its own box. The phone check allows that slide. A later change makes the row five columns: season, strategy, maps, investment, and profit per hour.
+
+Season replaces the date. Waystones becomes Maps. Duration, revenue, and profit come off the row. The list sorts by season, then strategy, then newest session first. Edit and delete may move under the row title so the row does not have to slide. That placement waits until the columns exist.
+
+There is no season field today. FF-027 is only the PoE1 header saying Maps. This idea is the column set. FF-027 stays.
+
+### Why
+
+The row is a comparison of a run, and nine columns do not fit a phone. Five columns are the ones worth scanning.
+
+### Risks
+
+- Maps as the header for a PoE2 run reopens the Waystone label that was left on purpose.
+- A season with no stored value has nothing to sort on.
+- Edit and delete under the row title is a layout choice for when the columns exist.
+
+### Open questions
+
+1. Does duration stay off, or return as a short label?
+2. Where does the season name come from?
+3. Do edit and delete sit under the strategy name?
+
+---
+
 ## Folded on 2026-09-28
 
 Do not bring these back as new ideas unless the reason below is wrong.
@@ -736,3 +771,4 @@ Do not bring these back as new ideas unless the reason below is wrong.
 | FF-026 | Number fields refuse letters | Idea |
 | FF-027 | Session history says Maps for a PoE1 run | Idea |
 | FF-030 | Explain a saved session, then grade the explanation | Idea |
+| FF-032 | A shorter session history | Idea |

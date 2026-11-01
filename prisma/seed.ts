@@ -171,6 +171,7 @@ async function writeDemoData(prisma: PrismaClient): Promise<void> {
     data: {
       id: MAP_SESSION_ID,
       strategyId: STRATEGY_ID,
+      createdAt: PRICED_AT,
       mapsCompleted: MAPS_COMPLETED,
       mapUnitCostChaos: MAP_UNIT_COST_CHAOS,
       divineRateChaos: "200",

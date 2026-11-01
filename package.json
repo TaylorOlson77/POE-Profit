@@ -19,6 +19,7 @@
     "test:api:db": "dotenv -e .env.local -- jest --config jest.api-db.config.mjs --runInBand",
     "test:e2e": "playwright test",
     "test:e2e:phone": "playwright test --config=playwright.phone.config.ts",
+    "test:e2e:visual": "playwright test --config=playwright.visual.config.ts",
     "db:generate": "dotenv -e .env.local -- prisma generate",
     "db:migrate": "dotenv -e .env.local -- prisma migrate dev",
     "db:migrate:deploy": "dotenv -e .env.local -- prisma migrate deploy",

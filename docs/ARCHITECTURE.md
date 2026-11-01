@@ -180,7 +180,7 @@ Implemented in `prisma/schema.prisma` (B3): cuid string IDs, `Decimal(20, 8)` fo
 | API persistence | Jest, in-process Route Handlers, real Prisma. Local: Neon `local`. CI: the e2e job, Neon `ci`. | `tests/api/db/` |
 | E2E | Playwright | `e2e/` (specs, `pages/` helpers, `fixtures.ts`, `dbCleanup.ts`) |
 
-CI: lint → typecheck → unit → API contract → build, then the e2e job. That job migrates and resets the Neon `ci` branch, runs the persistence suite, resets to the seed again, builds, and runs Playwright. The homepage smoke runs in that same job. A midnight workflow on `main` runs the phone viewport spec against that same `ci` branch. A pull request does not.
+CI: lint → typecheck → unit → API contract → build, then the e2e job. That job migrates and resets the Neon `ci` branch, runs the persistence suite, resets to the seed again, builds, and runs Playwright. The homepage smoke runs in that same job. A midnight workflow on `main` runs the phone viewport spec, then the visual screenshot spec, against that same `ci` branch. A pull request does not.
 
 ---
 
