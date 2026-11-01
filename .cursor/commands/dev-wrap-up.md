@@ -19,6 +19,10 @@ Do not edit [`docs/QA_WORKFLOW.md`](../../docs/QA_WORKFLOW.md), [`docs/TEST_STRA
 
 If this run hit a pain point in the command, name it and the one-line change. Wait. After Taylor accepts, add that line here.
 
+Learned on 2026-11-01, from the Cost label wrap-up:
+
+- [`docs/AGENTS.md`](../../docs/AGENTS.md) is gitignored. If the file tools say it is missing, read it from the shell. Leave it gitignored.
+
 ## Notes
 
 From the diff, open the docs that describe behavior this branch changed, including a gitignored study note and [`tests/catalog/README.md`](../../tests/catalog/README.md) when the diff touches them. Skip a doc the diff does not affect. This pass is for stale sentences. It is not a second read of the pipeline.
