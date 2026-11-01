@@ -69,6 +69,8 @@ plan-epic  →  ticket-test-plan  →  implement  →  dev-wrap-up  →  definit
 | 4 | `.cursor/commands/dev-wrap-up.md`, same chat | The commit, doc updates Taylor accepted, and the pull request | The definition-of-done comment. A pass/fail report (FF-006). |
 | 5 | `.cursor/commands/definition-of-done.md` | A traceability comment on the issue; move the board only after the checks pass | New product scope. It does not invent whether a line belongs on the page. |
 
+Amended 2026-11-01. A later check may open the same pages as an earlier spec and keep its own list. The ticket note names that spec and says the copy is deliberate, or names the shared list. Keeping the specs separate is a valid choice. Sharing the list is a valid choice. The note is where that is decided. Review is not where it is discovered.
+
 The test-plan command reads this file, [`TEST_STRATEGY.md`](./TEST_STRATEGY.md) §4, and [`tests/catalog/README.md`](../tests/catalog/README.md). When a session disagrees with a rule here, the command proposes a dated amendment in this file. The amendment is not in force until Taylor accepts it.
 
 Name the branch from the story, because that issue is the one the pull request closes.

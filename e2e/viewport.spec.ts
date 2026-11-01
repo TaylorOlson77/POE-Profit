@@ -1,4 +1,5 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
+import { settledPages, type SettledPageName } from "./settledPages";
 
 /**
  * Settled pages at phone size. Vertical scrolling may bring a control into view.
@@ -6,114 +7,66 @@ import { expect, test, type Locator, type Page } from "@playwright/test";
  * The desktop journeys stay on the pull-request config.
  */
 
-const DEMO_STRATEGY = "Expedition + Temple tablets (demo)";
-const STRATEGY_PATH = "/strategies/seed_strategy_poe2_expedition";
-const SESSION_PATH = "/sessions/seed_map_session_poe2_expedition";
-
 type Control = {
   name: string;
   locator: (page: Page) => Locator;
 };
 
 /** A control is a link, field, or button this test measures. It does not click it. */
-const pages: {
-  path: string;
-  ready: (page: Page) => Promise<void>;
-  controls: Control[];
-}[] = [
-  {
-    path: "/",
-    ready: async (page) => {
-      await expect(page.getByText(DEMO_STRATEGY)).toBeVisible();
+const controls: Record<SettledPageName, Control[]> = {
+  home: [
+    {
+      name: "New strategy",
+      locator: (page) => page.getByRole("link", { name: "New strategy" }),
     },
-    controls: [
-      {
-        name: "New strategy",
-        locator: (page) => page.getByRole("link", { name: "New strategy" }),
-      },
-    ],
-  },
-  {
-    path: "/strategies/new",
-    ready: async (page) => {
-      await expect(page.getByLabel("Name", { exact: true })).toBeVisible();
+  ],
+  "strategies-new": [
+    {
+      name: "Name",
+      locator: (page) => page.getByLabel("Name", { exact: true }),
     },
-    controls: [
-      {
-        name: "Name",
-        locator: (page) => page.getByLabel("Name", { exact: true }),
-      },
-      {
-        name: "Save strategy",
-        locator: (page) => page.getByRole("button", { name: "Save strategy" }),
-      },
-    ],
-  },
-  {
-    path: STRATEGY_PATH,
-    ready: async (page) => {
-      await expect(page.getByLabel("Name", { exact: true })).toHaveValue(
-        DEMO_STRATEGY,
-      );
+    {
+      name: "Save strategy",
+      locator: (page) => page.getByRole("button", { name: "Save strategy" }),
     },
-    controls: [
-      {
-        name: "Name",
-        locator: (page) => page.getByLabel("Name", { exact: true }),
-      },
-      {
-        name: "Save strategy",
-        locator: (page) => page.getByRole("button", { name: "Save strategy" }),
-      },
-    ],
-  },
-  {
-    path: "/sessions",
-    ready: async (page) => {
-      await expect(
-        page.getByRole("table", { name: "Map session history" }),
-      ).toBeVisible();
+  ],
+  strategy: [
+    {
+      name: "Name",
+      locator: (page) => page.getByLabel("Name", { exact: true }),
     },
-    controls: [
-      {
-        name: "New session",
-        locator: (page) => page.getByRole("link", { name: "New session" }),
-      },
-    ],
-  },
-  {
-    path: "/sessions/new",
-    ready: async (page) => {
-      await expect(page.getByLabel("Waystones completed")).toBeVisible();
+    {
+      name: "Save strategy",
+      locator: (page) => page.getByRole("button", { name: "Save strategy" }),
     },
-    controls: [
-      {
-        name: "Waystones completed",
-        locator: (page) => page.getByLabel("Waystones completed"),
-      },
-      {
-        name: "Save session",
-        locator: (page) => page.getByRole("button", { name: "Save session" }),
-      },
-    ],
-  },
-  {
-    path: SESSION_PATH,
-    ready: async (page) => {
-      await expect(page.getByLabel("Waystones completed")).toHaveValue("40");
+  ],
+  sessions: [
+    {
+      name: "New session",
+      locator: (page) => page.getByRole("link", { name: "New session" }),
     },
-    controls: [
-      {
-        name: "Waystones completed",
-        locator: (page) => page.getByLabel("Waystones completed"),
-      },
-      {
-        name: "Save session",
-        locator: (page) => page.getByRole("button", { name: "Save session" }),
-      },
-    ],
-  },
-];
+  ],
+  "sessions-new": [
+    {
+      name: "Waystones completed",
+      locator: (page) => page.getByLabel("Waystones completed"),
+    },
+    {
+      name: "Save session",
+      locator: (page) => page.getByRole("button", { name: "Save session" }),
+    },
+  ],
+  session: [
+    {
+      name: "Waystones completed",
+      locator: (page) => page.getByLabel("Waystones completed"),
+    },
+    {
+      name: "Save session",
+      locator: (page) => page.getByRole("button", { name: "Save session" }),
+    },
+  ],
+};
 
 async function scrollVerticallyIntoView(locator: Locator): Promise<void> {
   await locator.evaluate((element) => {
@@ -158,14 +111,14 @@ async function assertPageDoesNotScrollSideways(page: Page): Promise<void> {
 }
 
 test.describe("Phone pages", () => {
-  for (const target of pages) {
+  for (const target of settledPages) {
     test(`${target.path} keeps its controls inside the viewport width`, async ({
       page,
     }) => {
       await page.goto(target.path);
       await target.ready(page);
       await assertPageDoesNotScrollSideways(page);
-      for (const control of target.controls) {
+      for (const control of controls[target.name]) {
         await assertInsideViewportWidth(
           page,
           control.locator(page),

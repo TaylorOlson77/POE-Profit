@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
-import { expect, test, type Page, type TestInfo } from "@playwright/test";
+import { test, type Page, type TestInfo } from "@playwright/test";
+import { settledPages } from "./settledPages";
 
 /**
  * One pass per settled page. Violations are attached for the HTML report.
@@ -17,10 +18,6 @@ const LEVEL_TAGS = new Set([
   "wcag21aa",
   "wcag22aa",
 ]);
-
-const DEMO_STRATEGY = "Expedition + Temple tablets (demo)";
-const STRATEGY_PATH = "/strategies/seed_strategy_poe2_expedition";
-const SESSION_PATH = "/sessions/seed_map_session_poe2_expedition";
 
 type ScanResults = Awaited<ReturnType<AxeBuilder["analyze"]>>;
 type Violation = ScanResults["violations"][number];
@@ -79,53 +76,13 @@ async function publishScan(page: Page, testInfo: TestInfo): Promise<void> {
 }
 
 test.describe("Scan the six pages", () => {
-  test("has no WCAG A violation on /", async ({ page }, testInfo) => {
-    await page.goto("/");
-    await expect(page.getByText(DEMO_STRATEGY)).toBeVisible();
-    await publishScan(page, testInfo);
-  });
-
-  test("has no WCAG A violation on /strategies/new", async ({
-    page,
-  }, testInfo) => {
-    await page.goto("/strategies/new");
-    await expect(page.getByLabel("Name", { exact: true })).toBeVisible();
-    await publishScan(page, testInfo);
-  });
-
-  test("has no WCAG A violation on /strategies/[id]", async ({
-    page,
-  }, testInfo) => {
-    await page.goto(STRATEGY_PATH);
-    await expect(page.getByLabel("Name", { exact: true })).toHaveValue(
-      DEMO_STRATEGY,
-    );
-    await publishScan(page, testInfo);
-  });
-
-  test("has no WCAG A violation on /sessions", async ({
-    page,
-  }, testInfo) => {
-    await page.goto("/sessions");
-    await expect(
-      page.getByRole("table", { name: "Map session history" }),
-    ).toBeVisible();
-    await publishScan(page, testInfo);
-  });
-
-  test("has no WCAG A violation on /sessions/new", async ({
-    page,
-  }, testInfo) => {
-    await page.goto("/sessions/new");
-    await expect(page.getByLabel("Waystones completed")).toBeVisible();
-    await publishScan(page, testInfo);
-  });
-
-  test("has no WCAG A violation on /sessions/[id]", async ({
-    page,
-  }, testInfo) => {
-    await page.goto(SESSION_PATH);
-    await expect(page.getByLabel("Waystones completed")).toHaveValue("40");
-    await publishScan(page, testInfo);
-  });
+  for (const target of settledPages) {
+    test(`has no WCAG A violation on ${target.path}`, async ({
+      page,
+    }, testInfo) => {
+      await page.goto(target.path);
+      await target.ready(page);
+      await publishScan(page, testInfo);
+    });
+  }
 });
