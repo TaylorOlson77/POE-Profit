@@ -11,6 +11,7 @@ When I choose Log session for [this strategy](#data)
 - The method is already Extrapolated
 
 And I enter [this session](#data) and save
+- The investment table and the revenue table each show Cost
 
 Then the address is that session, and the Performance block shows the saved totals below
 
@@ -27,22 +28,22 @@ The strategy is the demo row. Log session selects it.
 | Sample minutes | `20` |
 | Investment item | `Expedition Tablet` |
 | Qty | `40` |
-| Unit | `7` |
+| Cost | `7` |
 | Investment item | `Temple Tablet` |
 | Qty | `40` |
-| Unit | `1` |
+| Cost | `1` |
 | Category | Currency |
 | Revenue item | `Divine Orb` |
 | Qty | `7` |
-| Unit | `200` |
+| Cost | `200` |
 | Category | Currency |
 | Revenue item | `Exalted Orb` |
 | Qty | `30` |
-| Unit | `14` |
+| Cost | `14` |
 | Category | Tablets |
 | Revenue item | `Expedition Tablet` |
 | Qty | `60` |
-| Unit | `5` |
+| Cost | `5` |
 
 Saved totals:
 

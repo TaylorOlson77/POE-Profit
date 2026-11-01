@@ -640,7 +640,7 @@ export function SessionForm(
                   Qty
                 </th>
                 <th className="px-2 py-2 font-medium" scope="col">
-                  Unit
+                  Cost
                 </th>
                 <th className="px-2 py-2 font-medium" scope="col">
                   Total
@@ -688,7 +688,7 @@ export function SessionForm(
                   <td className="px-2 py-2 align-top">
                     <CellInput
                       id={`${formId}-inv-${line.key}-unit`}
-                      label={`Investment unit value ${index + 1}`}
+                      label={`Investment cost ${index + 1}`}
                       value={line.unitValueChaos}
                       inputMode="decimal"
                       error={messageFor(
@@ -767,7 +767,7 @@ export function SessionForm(
                   Qty
                 </th>
                 <th className="px-2 py-2 font-medium" scope="col">
-                  Unit
+                  Cost
                 </th>
                 <th className="px-2 py-2 font-medium" scope="col">
                   Total
@@ -836,7 +836,7 @@ export function SessionForm(
                   <td className="px-2 py-2 align-top">
                     <CellInput
                       id={`${formId}-rev-${line.key}-unit`}
-                      label={`Revenue unit value ${index + 1}`}
+                      label={`Revenue cost ${index + 1}`}
                       value={line.unitValueChaos}
                       inputMode="decimal"
                       error={messageFor(

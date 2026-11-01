@@ -244,7 +244,7 @@ A run can contain zero or more investment items.
 
 Example:
 
-| Item | Quantity | Unit Value | Total |
+| Item | Quantity | Cost | Total |
 | --- | --- | --- | --- |
 | Alchemy Orb | 250 | 0.20c | 50c |
 | Scour | 60 | 0.26c | 15.60c |
@@ -454,7 +454,7 @@ Waystone Tier: 16
 --------------------------------------------------
 INVESTMENT
 
-Item              Qty     Unit       Total
+Item              Qty     Cost       Total
 Alchemy           250     0.20c      50.00c
 Scour              60     0.26c      15.60c
 ...
@@ -466,7 +466,7 @@ REVENUE
 
 Currency
 
-Item              Qty     Unit       Total
+Item              Qty     Cost       Total
 Divine              1      200c      200c
 Exalt               1       14c       14c
 Chaos              79        1c       79c
