@@ -18,7 +18,7 @@ These are not repeated below. See [`PHASES.md`](./PHASES.md).
 - A tablet's price split across its uses. That epic also includes entering a tablet price in divines, and confirming before a game change clears the rows. It shipped on 2026-10-23 (#21, #22, #23). Showing the list cost in divines, and filling the rate from poe.ninja, stay below as FF-024 and FF-025.
 - Session logging as category totals, divine input, extrapolated time, and costs filled in from the strategy. On 2026-10-29 the session-cost epic waits. Category totals wait while this league is logged as item lines.
 - The README shows CI status and the latest Playwright report. That is phase 6. It shipped on 2026-10-30. The `/quality` page is phase 10.
-- An axe scan of the six pages, phone viewports, screenshot baselines, a weekly mutation report on the calc engine, and a k6 script against Preview. That is phase 7. Visual baselines shipped on 2026-11-01 (#38). Mutation testing shipped on 2026-11-01 (#44).
+- An axe scan of the six pages, phone viewports, screenshot baselines, a weekly mutation report on the calc engine, and a k6 script against Preview. That is phase 7. WCAG AA fails the pull request as of 2026-11-01 (#46). Visual baselines shipped on 2026-11-01 (#38). Mutation testing shipped on 2026-11-01 (#44).
 - Session history as five columns, with a season that defaults to `standard`. That is phase 8. The history header says Maps for every row. That folds FF-027.
 - Paste a drop list into a session, and a checked run that proves the lines match the paste. That is phase 9.
 - `/quality`, linked from the home page and the README. That is phase 10.
