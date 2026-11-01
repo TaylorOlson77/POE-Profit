@@ -7,5 +7,7 @@ package-lock.json
 docs
 test-results
 playwright-report
+reports
+.stryker-tmp
 blob-report
 playwright/.cache
