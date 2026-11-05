@@ -12,9 +12,9 @@ Then the page shows the results in [these results](#data)
 
 ## Data
 
-| Result | When | Outcome |
-| --- | --- | --- |
-| CI | Nov 1 | Passed |
-| Playwright | Nov 1 | Passed |
-| Visual | Nov 5 | Passed |
-| Mutation | Nov 5 | 100. 84 killed. None survived. |
+| Result | Covers | When | Outcome |
+| --- | --- | --- | --- |
+| CI | Lint, typecheck, unit tests, API tests, and the production build. | Nov 1 | Passed |
+| Playwright | Browser journeys through strategies and sessions. | Nov 1 | Passed |
+| Visual | Screenshots of the six settled pages on a desktop and two phones. | Nov 5 | Passed |
+| Mutation | Changes to the profit calc that the unit tests still catch. | Nov 5 | 100. 84 killed. None survived. |

@@ -13,14 +13,29 @@ test("shows the latest results on /quality", async ({ page }) => {
 
   await expect(page).toHaveURL("/quality");
   await expect(page.getByRole("heading", { name: "Quality" })).toBeVisible();
+  await expect(
+    page.getByText("The latest CI run, Playwright report, midnight run"),
+  ).toHaveCount(0);
 
   const rows = page.getByRole("listitem");
+  await expect(rows.filter({ hasText: "CI" })).toContainText(
+    "Lint, typecheck, unit tests, API tests, and the production build.",
+  );
   await expect(rows.filter({ hasText: "CI" })).toContainText("Nov 1");
   await expect(rows.filter({ hasText: "CI" })).toContainText("Passed");
+  await expect(rows.filter({ hasText: "Playwright" })).toContainText(
+    "Browser journeys through strategies and sessions.",
+  );
   await expect(rows.filter({ hasText: "Playwright" })).toContainText("Nov 1");
   await expect(rows.filter({ hasText: "Playwright" })).toContainText("Passed");
+  await expect(rows.filter({ hasText: "Visual" })).toContainText(
+    "Screenshots of the six settled pages on a desktop and two phones.",
+  );
   await expect(rows.filter({ hasText: "Visual" })).toContainText("Nov 5");
   await expect(rows.filter({ hasText: "Visual" })).toContainText("Passed");
+  await expect(rows.filter({ hasText: "Mutation" })).toContainText(
+    "Changes to the profit calc that the unit tests still catch.",
+  );
   await expect(rows.filter({ hasText: "Mutation" })).toContainText("Nov 5");
   await expect(rows.filter({ hasText: "Mutation" })).toContainText("100");
   await expect(rows.filter({ hasText: "Mutation" })).toContainText(
