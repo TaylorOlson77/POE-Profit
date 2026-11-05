@@ -8,7 +8,7 @@
 
 `plan-epic` reads [`PHASES.md`](./PHASES.md). This file keeps the parked agent proposal. This file has no acceptance criteria.
 
-Phases 1–10 are in [`PHASES.md`](./PHASES.md). Phase 6 shipped on 2026-10-30. Phase 7 can overlap phase 2. Phases 4 and 5 are paused. After phase 7, the run is the session list, then the paste check, then `/quality`.
+Phases 1–10 are in [`PHASES.md`](./PHASES.md). Phase 6 shipped on 2026-10-30. Phase 7 can overlap phase 2. Phases 4 and 5 are paused. On 2026-11-05 Taylor pulled `/quality` ahead. After phase 7, the run is the session list, then the paste check.
 
 ## Already in place
 

@@ -1,7 +1,8 @@
 name: Midnight
 
 # Phone viewports, then visual baselines. The mutation job scores on Sunday
-# and on a manual run. A score under 90 fails that job. k6 is a later job.
+# and on a manual run, then posts that score as a commit status. A score under
+# 90 fails that job. k6 is a later job.
 # A pull request does not run it.
 on:
   schedule:
@@ -143,6 +144,9 @@ jobs:
 
   mutation:
     name: Mutation score
+    permissions:
+      contents: read
+      statuses: write
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
@@ -171,8 +175,40 @@ jobs:
           fi
 
       - name: Mutation score
+        id: score
         if: steps.when.outputs.run == 'true'
-        run: npm run test:mutation
+        shell: bash
+        run: |
+          set +e
+          set +o pipefail
+          npm run test:mutation 2>&1 | tee mutation-log.txt
+          code=${PIPESTATUS[0]}
+          node scripts/read-mutation-log.mjs mutation-log.txt >> "$GITHUB_OUTPUT"
+          parse=$?
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          if [ "$parse" -ne 0 ]; then
+            exit "$parse"
+          fi
+          exit "$code"
+
+      - name: Publish mutation score
+        if: always() && steps.when.outputs.run == 'true' && steps.score.outputs.score != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          if [ "${{ steps.score.outputs.exit_code }}" = "0" ]; then
+            state=success
+          else
+            state=failure
+          fi
+          gh api --method POST \
+            -H "Accept: application/vnd.github+json" \
+            "/repos/${{ github.repository }}/statuses/${{ github.sha }}" \
+            -f state="$state" \
+            -f context="mutation" \
+            -f description="score=${{ steps.score.outputs.score }} killed=${{ steps.score.outputs.killed }} survived=${{ steps.score.outputs.survived }}" \
+            -f target_url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 
       - name: Upload mutation report
         if: steps.when.outputs.run == 'true'
