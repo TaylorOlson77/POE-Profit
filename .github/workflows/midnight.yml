@@ -1,7 +1,7 @@
 name: Midnight
 
 # Phone viewports, then visual baselines. The mutation job scores on Sunday
-# and on a manual run. A score under 90 fails that job. k6 is a later job.
+# and on a manual run. A score under 90 fails that job.
 # A pull request does not run it.
 on:
   schedule:

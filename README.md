@@ -10,12 +10,13 @@ Live demo: [poe-profit.vercel.app](https://poe-profit.vercel.app/) (demo data, n
 
 ## Tests
 
-| Layer           | Tool       | Tests | Location           | Covers                                                            |
-| --------------- | ---------- | ----: | ------------------ | ----------------------------------------------------------------- |
-| Unit            | Jest       |   145 | `src/**/*.test.ts` | Calculation engine, rounding, form transforms                     |
-| API contract    | Jest       |    33 | `tests/api/`       | Status codes, validation errors, calculated fields in responses   |
-| API persistence | Jest       |     7 | `tests/api/db/`    | Round-trips against real Postgres: decimal scale, limits, deletes |
+| Layer           | Tool       | Tests | Location           | Covers                                                                                      |
+| --------------- | ---------- | ----: | ------------------ | ------------------------------------------------------------------------------------------- |
+| Unit            | Jest       |   145 | `src/**/*.test.ts` | Calculation engine, rounding, form transforms                                               |
+| API contract    | Jest       |    33 | `tests/api/`       | Status codes, validation errors, calculated fields in responses                             |
+| API persistence | Jest       |     7 | `tests/api/db/`    | Round-trips against real Postgres: decimal scale, limits, deletes                           |
 | E2E             | Playwright |    15 | `e2e/`             | Create, edit, and delete for strategies and sessions; home smoke; axe scan of the six pages |
+| Load            | k6         |     - | `k6/preview.js`    | Hand run, 5 then 10 users, against a Preview. Not in CI                                     |
 
 Counts as of 2026-10-31.
 
@@ -42,12 +43,13 @@ flowchart LR
 - A failed Playwright test retries once.
 - The [latest Playwright report](https://taylorolson77.github.io/POE-Profit/) is the last run on `main` that executed Playwright. The next one replaces it. A pull request does not.
 - A failed run also uploads `playwright-report/` and `test-results/` for 7 days. That zip is the trace download.
+- `npm run test:load` is a hand run against the load Preview. CI does not run it.
 
 ## Design notes
 
 - Money is handled with `decimal.js` and stored as `Decimal(20, 8)`, never as a JavaScript `number`. Values are rounded only for display (ADR-015, ADR-021).
 - The server calculates and stores derived fields on save. The UI displays the API response and doesn't do its own math (ADR-008, ADR-018).
-- Local, CI, and production each use their own Neon database branch.
+- Local, CI, production, and the load preview each use their own Neon database branch.
 
 ## AI-assisted development
 

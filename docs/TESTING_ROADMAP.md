@@ -31,11 +31,11 @@ Earlier notes disagree with this plan. This file wins when Taylor accepts the ph
 
 | Earlier note | This plan |
 | --- | --- |
-| Former FF-028. axe inside the existing journeys. A serious violation fails the run. | Its own spec over the six pages. The first ticket logs and stays green. WCAG A fails the pull request after the A fixes. AA stays in the log. On 2026-10-31 that epic waits. Phone sizes shipped on 2026-11-01. |
-| Former FF-029. k6 against `next start` on the runner. Parked. It must not hit the public site or the Neon `ci` branch. | One script against a Vercel Preview, after that Preview has a database. Last epic in phase 7. Production and the Neon `ci` branch stay off limits. |
+| Former FF-028. axe inside the existing journeys. A serious violation fails the run. | Its own spec over the six pages. The first ticket logs and stays green. WCAG A fails the pull request after the A fixes. WCAG AA fails the pull request. AA shipped on 2026-11-02 (#46). Phone sizes shipped on 2026-11-01. |
+| Former FF-029. k6 against `next start` on the runner. Parked. It must not hit the public site or the Neon `ci` branch. | One script against a Vercel Preview. The preview database is work inside that ticket. Last epic in phase 7 (#48). A hand run replaces one summary file. Production and the Neon `ci` branch stay off limits. |
 | Former FF-031. A screenshot of a page a journey already opens. Parked. | Pixel baselines per viewport, after the phone epic writes the viewport list. Midnight workflow, not the pull request. |
 | FF-030. A model explains one saved session. | The agent proposal is parked as FF-033. Phase 9 pastes a drop list and checks the lines. FF-030 stays its own idea. |
-| FF-006. An in-app `/quality` page. | Phase 10. Phase 7 still stores the k6 summary JSON that page will read. |
+| FF-006. An in-app `/quality` page. | Phase 10. Phase 7 stores one k6 summary file in the repo, replaced on the next passed run. That page reads it. |
 
 ## Pages and viewports
 
@@ -66,19 +66,20 @@ Emulation only. No device lab, and no second browser engine. Session history is 
 
 Accepted on 2026-10-30. The epics are in [`PHASES.md`](./PHASES.md). This section keeps the cuts that changed, and the k6 numbers the ticket note still needs.
 
-`plan-epic` order: WCAG A, WCAG AA, phone sizes, visual baselines, mutation testing, then k6. WCAG A shipped on 2026-10-31. AA waits. Phone sizes shipped on 2026-11-01 (#36). Visual baselines shipped on 2026-11-01 (#38). Mutation testing shipped on 2026-11-01 (#44).
+`plan-epic` order: WCAG A, WCAG AA, phone sizes, visual baselines, mutation testing, then k6. WCAG A shipped on 2026-10-31. WCAG AA shipped on 2026-11-02 (#46). Phone sizes shipped on 2026-11-01 (#36). Visual baselines shipped on 2026-11-01 (#38). Mutation testing shipped on 2026-11-01 (#44). k6 is filed as #48.
 
-- The midnight workflow is not its own epic. The phone epic adds it. The visual job waits on the phone job. The mutation job does not. k6 still adds its job later. The schedule stays `0 5 * * *`.
-- The accessibility scan is its own spec. The first ticket logs every violation and the run stays green. WCAG A fails the pull request after the A fixes. AA stays in the log. On 2026-10-31 Taylor left that epic waiting. Phone sizes shipped on 2026-11-01. AAA stays in the log.
-- k6 is last. Preview has no database today, so the first ticket is that database. Production and the Neon `ci` branch stay closed.
+- The midnight workflow is not its own epic. The phone epic adds it. The visual job waits on the phone job. The mutation job does not. k6 does not join it. The schedule stays `0 5 * * *`.
+- The accessibility scan is its own spec. The first ticket logs every violation and the run stays green. WCAG A fails the pull request after the A fixes. A WCAG AA violation fails the pull request (#46). AAA stays in the log.
+- k6 is last. One ticket, no epic issue. The preview database is work inside that ticket. Production and the Neon `ci` branch stay closed.
 - The mutation run reports a score. A score under 90 fails the Sunday run and a manual dispatch. It is not a pull request.
 
 Decisions that stay for the k6 ticket note:
 
-- One script file. 5–10 virtual users.
-- Starting pair, for the HTTP scenarios: `http_req_duration` p(95) under 200ms, and `http_req_failed` under 1%. Replace the pair in the ticket note if Taylor picks different numbers. Do not copy them off the first run.
-- One k6 browser-module scenario is in the same file, as a light UI pass. It does not own the 200ms line.
-- The run writes a k6 summary JSON as an Actions artifact. The `/quality` page is phase 10. Do not commit a history of summaries.
+- One script file, `k6/preview.js`. It holds 5 virtual users for 2 minutes, then 10 for 2 minutes.
+- Starting pair, for each HTTP level: `http_req_duration` p(95) under 200ms, and `http_req_failed` under 1%. Do not copy them off the first run.
+- One browser loads the home page 3 times during each level. Page-load time is the navigation time. The summary records the average and the highest for that level. Those times do not own the 200ms line. This pass keeps its own one-page list.
+- A passed run replaces `k6/summary.json`. A failed run leaves the previous file. The file holds the per-level numbers and the run time. The `/quality` page is phase 10. Do not commit a history of summaries.
+- The run is started by hand. It does not join the midnight workflow or the pull request.
 
 ---
 

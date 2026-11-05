@@ -46,13 +46,14 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Database (Neon + Prisma)
 
-Three Neon branches. Each has its own pooled `DATABASE_URL` (hostname contains `-pooler`) and direct `DATABASE_URL_UNPOOLED` (same string with `-pooler` removed from the host).
+Four Neon branches. Each has its own pooled `DATABASE_URL` (hostname contains `-pooler`) and direct `DATABASE_URL_UNPOOLED` (same string with `-pooler` removed from the host).
 
 | Branch       | Who uses it                                                         | Where the URLs live                                                              |
 | ------------ | ------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
 | `local`      | `npm run dev` and the `db:*` scripts without a `:production` suffix | `.env.local`                                                                     |
 | `production` | The public Vercel app                                               | Vercel Production, and `.env.neon-production` for the one-time migrate and reset |
 | `ci`         | GitHub Actions                                                      | Secrets `CI_DATABASE_URL` and `CI_DATABASE_URL_UNPOOLED`                         |
+| `load`       | The hand-run k6 script, through the `load` Preview                  | `.env.neon-load`, and Vercel Preview scoped to the git branch `load`            |
 
 1. Copy the two URL lines from [`.env.example`](../.env.example) into `.env.local` and fill in the `local` branch. Leave `DATABASE_RESET` out of that file.
 2. `npm run db:generate`
@@ -61,13 +62,15 @@ Three Neon branches. Each has its own pooled `DATABASE_URL` (hostname contains `
 
 `.env.neon-production` holds the public branch URLs and `DATABASE_RESET=production`. `npm run db:migrate:deploy:production` applies migrations there from this machine. A production Vercel build does the same apply before it compiles. `npm run db:reset:production` deletes every strategy and session on that branch, then inserts the demo seed. Those scripts do not read `.env.local`.
 
+`.env.neon-load` holds the load branch URLs. `npm run db:migrate:deploy:load` applies migrations there. `npm run db:seed:load` inserts the demo seed. Those scripts do not read `.env.local`. Create that Neon branch empty, then migrate and seed it from this machine. Do not copy production data onto it. The git branch `load` is the Vercel Preview those URLs belong to. Set `DATABASE_URL` and `DATABASE_URL_UNPOOLED` on that git branch only. Do not set them for every Preview deployment, and do not use the production URLs.
+
 Schema lives in [`prisma/schema.prisma`](../prisma/schema.prisma); committed SQL in `prisma/migrations/`. Money and quantities are `Decimal(20, 8)` (ADR-015) and calculated fields are persisted compute-on-write results (ADR-018). The seed's calculated columns come from the calc engine ([`prisma/seed.ts`](../prisma/seed.ts)).
 
-Never commit `.env.local`, `.env.neon-production`, or `.env.neon-ci`. Anyone with the public URL can create, edit, and delete rows on the production branch. That does not reach `local` or `ci`. Keep real league sessions on `local`. `npm run db:reset:production` restores the demo seed.
+Never commit `.env.local`, `.env.neon-production`, `.env.neon-ci`, or `.env.neon-load`. Anyone with the public URL can create, edit, and delete rows on the production branch. That does not reach `local`, `ci`, or `load`. Keep real league sessions on `local`. `npm run db:reset:production` restores the demo seed.
 
 ## Deploy (Vercel)
 
-Production environment only: `DATABASE_URL` and `DATABASE_URL_UNPOOLED` from the Neon `production` branch. Node.js 22. Do not set `DATABASE_RESET` on Vercel, and do not give Preview those URLs. [`vercel.json`](../vercel.json) sets the build command to `npm run build:vercel`. That script runs `prisma migrate deploy` when `VERCEL_ENV` is `production`, then `prisma generate` and `next build`. Preview builds and `npm run build` generate the client and build, and they do not migrate. `npm run db:migrate:deploy:production` remains the way to apply a migration from this machine when a deploy is not running.
+Production environment only: `DATABASE_URL` and `DATABASE_URL_UNPOOLED` from the Neon `production` branch. Node.js 22. Do not set `DATABASE_RESET` on Vercel, and do not give Preview the production URLs. The git branch `load` is the exception: its Preview receives the Neon `load` URLs only. [`vercel.json`](../vercel.json) sets the build command to `npm run build:vercel`. That script runs `prisma migrate deploy` when `VERCEL_ENV` is `production`, then `prisma generate` and `next build`. Preview builds and `npm run build` generate the client and build, and they do not migrate. `npm run db:migrate:deploy:production` remains the way to apply a migration from this machine when a deploy is not running.
 
 The live app is [poe-profit.vercel.app](https://poe-profit.vercel.app/). CI does not test that URL. Playwright on Actions starts `next start` on the runner and talks to the Neon `ci` branch.
 
@@ -82,8 +85,11 @@ The live app is [poe-profit.vercel.app](https://poe-profit.vercel.app/). CI does
 | Phone           | Playwright | `e2e/viewport.spec.ts`       | `npm run test:e2e:phone` |
 | Visual          | Playwright | `e2e/visual.spec.ts`         | `npm run test:e2e:visual` |
 | Mutation        | Stryker    | `src/domain/calc`            | `npm run test:mutation` |
+| Load            | k6         | `k6/preview.js`              | `npm run test:load`     |
 
-Jest does **not** run Playwright specs, and Playwright does **not** run unit/API math cases.
+Jest does **not** run Playwright specs, and Playwright does **not** run unit/API math cases. The load script does not run in CI or in the midnight workflow.
+
+**Load:** `npm run test:load` calls the Preview for the git branch `load`. It does not call `https://poe-profit.vercel.app/`, and it does not use the Neon `ci` branch. `K6_BASE_URL` is that preview origin. When the preview asks for a Vercel login, `VERCEL_AUTOMATION_BYPASS_SECRET` is sent as the bypass header and is not written into the summary. A passed run replaces `k6/summary.json`. A failed run leaves the previous file. k6 is a local binary, and Chrome has to be installed for the home-page loads.
 
 **E2E server:** locally Playwright starts `next dev` (or reuses one already running) against the Neon database in `.env.local`. The demo seed has to be applied (`npm run db:seed`). Restarting the dev server does not reset that database. When the journey groups start, and again when they finish (including after a failure), each group deletes the strategies it owns. The create/update/delete strategy is removed. The seed strategy stays, and any session on it other than the seeded demo session is removed. Strategies created by hand, under other names, stay. In CI the workflow builds on a GitHub-hosted runner, then Playwright starts `next start` on that same machine against the Neon `ci` branch. It uses real Chromium. It does not open the Vercel site. Once per job, before Playwright, that branch is migrated and reset to the seed. It is not reset after each test. A failed test is retried once.
 

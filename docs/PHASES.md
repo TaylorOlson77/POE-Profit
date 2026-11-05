@@ -5,7 +5,7 @@
 | Status | Agreed (2026-09-28) |
 | Applies | What to build after MVP v1, and in what order. |
 | Related | [`PRODUCT.md`](./PRODUCT.md), [`FUTURE_FEATURES.md`](./FUTURE_FEATURES.md), [`TESTING_ROADMAP.md`](./TESTING_ROADMAP.md), [`MVP_SPEC.md`](./MVP_SPEC.md) §4, [ADR-008](./DECISIONS.md), [ADR-011](./DECISIONS.md) |
-| Next epic | Each page reports zero WCAG AA violations |
+| Next epic | A short k6 run against Preview stays inside limits set first |
 
 v1 is live. Phase 1 shipped on 2026-10-23. These are the next phases. [`FUTURE_FEATURES.md`](./FUTURE_FEATURES.md) holds everything that did not make a phase.
 
@@ -181,7 +181,7 @@ This phase can overlap phase 2.
 
 **Player outcome:** Every new check publishes a result, and a pull request still finishes on the gates it has today. The accessibility gate is the one exception, once its tickets say the pull request fails.
 
-`plan-epic` order: WCAG A, WCAG AA, phone sizes, visual baselines, mutation testing, then k6. WCAG A shipped on 2026-10-31. On 2026-10-31 Taylor left WCAG AA waiting and planned phone sizes next. AA stays in this phase, after mutation testing. The scan still logs AA, and a pull request still passes. Phone sizes shipped on 2026-11-01 (#36, one ticket, no epic issue). Visual baselines shipped on 2026-11-01 (#38, one ticket, no epic issue). Mutation testing shipped on 2026-11-01 (#44, one ticket, no epic issue). The AA gate follows it. k6 is last in this phase.
+`plan-epic` order: WCAG A, WCAG AA, phone sizes, visual baselines, mutation testing, then k6. WCAG A shipped on 2026-10-31. WCAG AA shipped on 2026-11-02 (#46). Phone sizes shipped on 2026-11-01 (#36, one ticket, no epic issue). Visual baselines shipped on 2026-11-01 (#38, one ticket, no epic issue). Mutation testing shipped on 2026-11-01 (#44, one ticket, no epic issue). k6 is last in this phase (#48, one ticket, no epic issue).
 
 The six pages are `/`, `/strategies/new`, `/strategies/[id]`, `/sessions`, `/sessions/new`, and `/sessions/[id]`. The two id routes open the seeded demo strategy and the seeded demo session. The accessibility scan, the phone checks, and the screenshots use this list.
 
@@ -193,13 +193,13 @@ Must already be true: Playwright runs on the pull request and publishes its HTML
 
 The scan is axe-core, one pass per page, in its own spec. The first ticket logs every violation and the run stays green. The next ticket fixes the WCAG A violations the log names and makes a WCAG A violation fail the pull-request job. AA, AAA, and best-practice rules stay in the log.
 
-Left for later: failing the job on AA. That epic stays in this phase and waits. Every unsaved state of every form stays out.
+Left for later: failing the job on AAA, and every unsaved state of every form. Failing on AA shipped on 2026-11-02 (#46).
 
-**Epic: Each page reports zero WCAG AA violations.** The scan logs AA, and the pull request still passes. The #31 log named no AA rule.
+**Epic: Each page reports zero WCAG AA violations.** Shipped on 2026-11-02 (#46). A WCAG AA violation fails the pull request.
 
 Area: the six pages.
 
-Must already be true: the A epic has shipped, and the scan already logs AA. On 2026-10-31 Taylor left this epic waiting and planned phone sizes next. Left for later: failing the job on AAA, and every unsaved state of every form.
+Must already be true: the A epic has shipped, and the scan already logs AA. Left for later: failing the job on AAA, and every unsaved state of every form.
 
 **Epic: The same pages work on a phone-sized viewport.** Shipped on 2026-11-01 (#36). CI opens the app as desktop Chromium only. A control can sit past the edge of a phone and the desktop journeys still pass.
 
@@ -207,7 +207,7 @@ Area: the six pages.
 
 Must already be true: the page list above.
 
-Playwright device emulation opens each page at iPhone 13 and Pixel 7. The action that page is for can be reached. This epic does not re-run the seven desktop journeys at each size. Horizontal overflow that hides the action fails the run. This epic adds the midnight workflow, because the check stays off the pull request. One workflow on `main`, scheduled at `0 5 * * *` (05:00 UTC): midnight Eastern Standard Time, and 1:00 a.m. Eastern Daylight Time. This epic's job is first. The visual job waits on it. The mutation job does not: it scores `src/domain/calc` on Sunday and does not use the `ci` branch. k6 still adds its job later. A job that uses the Neon `ci` branch joins the existing `e2e-ci-database` queue.
+Playwright device emulation opens each page at iPhone 13 and Pixel 7. The action that page is for can be reached. This epic does not re-run the seven desktop journeys at each size. Horizontal overflow that hides the action fails the run. This epic adds the midnight workflow, because the check stays off the pull request. One workflow on `main`, scheduled at `0 5 * * *` (05:00 UTC): midnight Eastern Standard Time, and 1:00 a.m. Eastern Daylight Time. This epic's job is first. The visual job waits on it. The mutation job does not: it scores `src/domain/calc` on Sunday and does not use the `ci` branch. k6 does not join this workflow. A job that uses the Neon `ci` branch joins the existing `e2e-ci-database` queue.
 
 The viewport list is desktop Chromium, iPhone 13, and Pixel 7. The visual epic uses that list.
 
@@ -233,13 +233,13 @@ Stryker mutates `src/domain/calc` only. The run is Sunday, inside the midnight w
 
 Left for later: UI, Route Handlers, or the whole repo. Every pull request.
 
-**Epic: A short k6 run against Preview stays inside limits set first.** There is no load check. The public app is on Vercel's free tier, so the script cannot discover its limits by hitting production.
+**Epic: A short k6 run against Preview stays inside limits set first.** There is no load check. The public app is on Vercel's free tier, so the script cannot discover its limits by hitting production. Filed on 2026-11-02 (#48, one ticket, no epic issue).
 
-Area: repository. The result is an artifact, not a new page.
+Area: repository. The result is one summary file in the repo, not a new page.
 
-Must already be true: a Vercel Preview answers the routes the script calls, and that Preview has a database. Preview does not receive the production database URLs today ([`DEVELOPMENT.md`](./DEVELOPMENT.md)), so the first ticket is that database. The script also stays off the Neon `ci` branch. Production (`https://poe-profit.vercel.app/`) stays closed.
+Must already be true: a long-lived Preview answers the routes the script calls, from a Neon branch that is not production and not `ci`. That database is work inside the ticket. Preview does not receive the production database URLs today ([`DEVELOPMENT.md`](./DEVELOPMENT.md)). The script stays off the Neon `ci` branch. Production (`https://poe-profit.vercel.app/`) stays closed.
 
-One script file. 5–10 virtual users. Thresholds are written into the file before the first measured run. The run writes a k6 summary JSON as an Actions artifact. The `/quality` page is phase 10. This reopens the load-test line in [`TEST_STRATEGY.md`](./TEST_STRATEGY.md) §8. The run joins the midnight workflow. It does not join the pull request.
+One script file. It holds 5 virtual users, then 10, and finishes in under 5 minutes. For each level the summary records the average response time, the highest, the p(95), and the failure rate. Thresholds are written into the file before the first measured run. The same script loads the home page 3 times during each level and records the average and highest page-load time. Those times do not use the 200ms line. The run is started by hand. A passed run replaces one summary file in the repo. It does not join the midnight workflow or the pull request. This reopens the load-test line in [`TEST_STRATEGY.md`](./TEST_STRATEGY.md) §8. The `/quality` page is phase 10 and reads that file.
 
 Left for later: more users, production, and the `/quality` page. That page is phase 10.
 
