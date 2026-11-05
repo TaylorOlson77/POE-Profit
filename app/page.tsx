@@ -18,6 +18,9 @@ export default function Home() {
           <Link href="/sessions" className={buttonClass}>
             Sessions
           </Link>
+          <Link href="/quality" className={buttonClass}>
+            Quality
+          </Link>
           <Link href="/strategies/new" className={buttonClass}>
             New strategy
           </Link>

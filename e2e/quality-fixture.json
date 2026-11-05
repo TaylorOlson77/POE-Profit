@@ -1,0 +1,10 @@
+{
+  "ci": { "text": "Passed", "at": "2026-11-01T23:19:56Z" },
+  "playwright": { "text": "Passed", "at": "2026-11-01T23:19:56Z" },
+  "visual": { "text": "Passed", "at": "2026-11-05T05:00:00Z" },
+  "mutation": {
+    "score": "100",
+    "detail": "84 killed. None survived.",
+    "at": "2026-11-05T08:11:29Z"
+  }
+}

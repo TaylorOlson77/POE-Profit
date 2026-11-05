@@ -5,13 +5,13 @@
 | Status | Agreed (2026-09-28) |
 | Applies | What to build after MVP v1, and in what order. |
 | Related | [`PRODUCT.md`](./PRODUCT.md), [`FUTURE_FEATURES.md`](./FUTURE_FEATURES.md), [`TESTING_ROADMAP.md`](./TESTING_ROADMAP.md), [`MVP_SPEC.md`](./MVP_SPEC.md) §4, [ADR-008](./DECISIONS.md), [ADR-011](./DECISIONS.md) |
-| Next epic | Each page reports zero WCAG AA violations |
+| Next epic | The home page and the README link to /quality, and that page shows the latest generated results |
 
 v1 is live. Phase 1 shipped on 2026-10-23. These are the next phases. [`FUTURE_FEATURES.md`](./FUTURE_FEATURES.md) holds everything that did not make a phase.
 
 `plan-epic` reads one phase, confirms the epics, then writes tickets for one epic. The rules are [`PRODUCT.md`](./PRODUCT.md). It does not start a later phase while an earlier one is open, except where this file says a phase can overlap. Tickets and acceptance criteria are written in that command, not here.
 
-On 2026-11-01 Taylor paused phases 4 and 5. They stay in this file. After phase 7, the run is phase 8, then phase 9, then phase 10. Those phases can overlap phase 2. Phase 2's cost epic stays the next game epic when logging resumes.
+On 2026-11-01 Taylor paused phases 4 and 5. They stay in this file. After phase 7, the run is phase 8, then phase 9. Those phases can overlap phase 2. On 2026-11-05 Taylor pulled phase 10 ahead of that run. Phase 10 can overlap phase 2, the open tail of phase 7, phase 8, and phase 9. WCAG AA and the k6 epic stay in phase 7. Phase 2's cost epic stays the next game epic when logging resumes.
 
 A documented MVP non-goal stays closed unless this file says Taylor reopened it.
 
@@ -281,13 +281,13 @@ Left for later: an LLM-as-judge, a page-walking agent, and a public try button. 
 
 ## 10. Open /quality and read the latest results
 
-This phase follows phase 9. It can overlap phase 2.
+Pulled ahead on 2026-11-05. It can overlap phase 2, the open tail of phase 7, phase 8, and phase 9.
 
 **Player outcome:** Someone can open one page and read the latest test results without opening GitHub.
 
 **Epic: The home page and the README link to /quality, and that page shows the latest generated results.** Actions history shows that CI ran. It does not show the results in one place. Area: quality. A visitor can open the page without the strategy form or the session form.
 
-Must already be true: a push to `main` publishes the Playwright report, and the phase 7 jobs publish their results. The phase 9 check is one of the results once that phase has shipped.
+Must already be true: a push to `main` publishes the Playwright report. The midnight workflow runs phone and visual every night, and the mutation score on Sunday. The phase 9 check is one of the results once that phase has shipped. The k6 summary joins this page once #48 has written the file.
 
 The numbers come from the generated run. A hand-counted figure stays out. The page does not commit a history of full logs.
 
