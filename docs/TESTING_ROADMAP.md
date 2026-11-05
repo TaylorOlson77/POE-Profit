@@ -25,7 +25,7 @@ The pull-request gates stay the list in [`TEST_STRATEGY.md`](./TEST_STRATEGY.md)
 
 ## Lines this roadmap reopens
 
-[`TEST_STRATEGY.md`](./TEST_STRATEGY.md) §8 closed a full visual-regression suite and load testing beyond a smoke for MVP. Both come back here, after MVP, on the midnight workflow. They stay off the pull request.
+[`TEST_STRATEGY.md`](./TEST_STRATEGY.md) §8 closed a full visual-regression suite and load testing beyond a smoke for MVP. The visual baselines come back on the midnight workflow. The k6 script comes back as a hand run. Both stay off the pull request.
 
 Earlier notes disagree with this plan. This file wins when Taylor accepts the phase.
 
