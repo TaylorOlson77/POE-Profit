@@ -51,7 +51,7 @@ Run these gates locally, in this order. [`.github/workflows/ci.yml`](../../.gith
 4. `npm run test:api`
 5. `npm run build`
 6. `npm run test:api:db`
-7. `npm run test:e2e`
+7. `npm run test:e2e`. If Chromium is missing, run `npx playwright install chromium` and run this gate again. `npm install` does not download the browser.
 
 ## Pull request, then stop
 

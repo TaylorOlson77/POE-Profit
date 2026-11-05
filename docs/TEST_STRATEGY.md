@@ -103,7 +103,7 @@ Postgres rolls back a transaction that throws. The fake's `$transaction` does no
 - Record run with investment + revenue + prices + duration → displayed totals match expected fixture
 - Edit quantity → totals recalculate after save
 - Delete run → confirmation required → run gone from history
-- An axe scan of the six settled pages. Each page's violations are attached to that test in the HTML report. A WCAG A violation fails the pull request and names the rule and the element. AA stays in the log.
+- An axe scan of the six settled pages. Each page's violations are attached to that test in the HTML report. A WCAG A violation fails the pull request and names the rule and the element. A WCAG AA violation fails the pull request.
 
 **Does not own**
 
@@ -254,6 +254,8 @@ CI runs that list on every push to `main` and every pull request. The contract A
 The e2e job runs against the Neon `ci` branch (`CI_DATABASE_URL` / `CI_DATABASE_URL_UNPOOLED` injected as `DATABASE_URL` / `DATABASE_URL_UNPOOLED`). Once per job, Actions applies migrations and `prisma/reset-to-seed.ts`, then runs `npm run test:api:db`, then resets to the seed again, then Playwright. A failed persistence step skips Playwright. The second reset does not run when that step fails; the next job's first reset clears leftover `api-db-` rows. Resets run only when `DATABASE_RESET=ci` and `CI=true`, so CI cannot wipe the local or public database. The homepage smoke runs in the same job. E2E jobs queue so two runs do not share that wipe.
 
 The phone check and the visual check are not gates. A midnight workflow on `main` opens the six settled pages at iPhone 13 and Pixel 7, then compares those pages and desktop Chromium to a saved screenshot. On Sunday, and on a manual dispatch, the same workflow scores `src/domain/calc` with Stryker. A score under 90 fails that job (2026-11-01). The mutation job does not use the Neon `ci` branch. A pull request does not run any of these.
+
+The k6 run is started by hand against a Vercel Preview. It is not a workflow.
 
 On E2E failure, CI should retain:
 
