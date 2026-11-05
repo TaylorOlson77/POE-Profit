@@ -181,21 +181,21 @@ This phase can overlap phase 2.
 
 **Player outcome:** Every new check publishes a result, and a pull request still finishes on the gates it has today. The accessibility gate is the one exception, once its tickets say the pull request fails.
 
-`plan-epic` order: WCAG A, WCAG AA, phone sizes, visual baselines, mutation testing, then k6. WCAG A shipped on 2026-10-31. On 2026-10-31 Taylor left WCAG AA waiting and planned phone sizes next. AA stays in this phase, after mutation testing. The scan still logs AA, and a pull request still passes. Phone sizes shipped on 2026-11-01 (#36, one ticket, no epic issue). Visual baselines shipped on 2026-11-01 (#38, one ticket, no epic issue). Mutation testing shipped on 2026-11-01 (#44, one ticket, no epic issue). The AA gate follows it. k6 is last in this phase.
+`plan-epic` order: WCAG A, WCAG AA, phone sizes, visual baselines, mutation testing, then k6. WCAG A shipped on 2026-10-31. On 2026-10-31 Taylor left WCAG AA waiting and planned phone sizes next. Phone sizes shipped on 2026-11-01 (#36, one ticket, no epic issue). Visual baselines shipped on 2026-11-01 (#38, one ticket, no epic issue). Mutation testing shipped on 2026-11-01 (#44, one ticket, no epic issue). WCAG AA shipped on 2026-11-01 (#46, one ticket, no epic issue). A WCAG A or AA violation fails the pull request. k6 is last in this phase.
 
 The six pages are `/`, `/strategies/new`, `/strategies/[id]`, `/sessions`, `/sessions/new`, and `/sessions/[id]`. The two id routes open the seeded demo strategy and the seeded demo session. The accessibility scan, the phone checks, and the screenshots use this list.
 
-**Epic: Each page reports zero WCAG A violations.** Shipped on 2026-10-31 (#31, #32, #33). The scan runs, and a WCAG A violation fails the pull request and names the rule and the element. AA, AAA, and best-practice rules stay in the log.
+**Epic: Each page reports zero WCAG A violations.** Shipped on 2026-10-31 (#31, #32, #33). The scan runs, and a WCAG A violation fails the pull request and names the rule and the element. That epic left AA in the log.
 
 Area: the six pages.
 
 Must already be true: Playwright runs on the pull request and publishes its HTML report from `main`. The seeded demo strategy and session exist.
 
-The scan is axe-core, one pass per page, in its own spec. The first ticket logs every violation and the run stays green. The next ticket fixes the WCAG A violations the log names and makes a WCAG A violation fail the pull-request job. AA, AAA, and best-practice rules stay in the log.
+The scan is axe-core, one pass per page, in its own spec. The first ticket logs every violation and the run stays green. The next ticket fixes the WCAG A violations the log names and makes a WCAG A violation fail the pull-request job. Those tickets left AA, AAA, and best-practice rules in the log.
 
-Left for later: failing the job on AA. That epic stays in this phase and waits. Every unsaved state of every form stays out.
+Left for later: every unsaved state of every form stays out. Failing the job on AA shipped with the next epic.
 
-**Epic: Each page reports zero WCAG AA violations.** The scan logs AA, and the pull request still passes. The #31 log named no AA rule.
+**Epic: Each page reports zero WCAG AA violations.** Shipped on 2026-11-01 (#46, one ticket, no epic issue). A WCAG AA violation fails the pull request and names the rule and the element. A WCAG A violation still fails that run. AAA and best-practice tags stay out of the scan. The #31 log named no AA rule.
 
 Area: the six pages.
 

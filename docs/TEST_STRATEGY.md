@@ -103,7 +103,7 @@ Postgres rolls back a transaction that throws. The fake's `$transaction` does no
 - Record run with investment + revenue + prices + duration → displayed totals match expected fixture
 - Edit quantity → totals recalculate after save
 - Delete run → confirmation required → run gone from history
-- An axe scan of the six settled pages. Each page's violations are attached to that test in the HTML report. A WCAG A violation fails the pull request and names the rule and the element. AA stays in the log.
+- An axe scan of the six settled pages. Each page's violations are attached to that test in the HTML report. A WCAG A or AA violation fails the pull request and names the rule and the element. AAA and best-practice tags stay out of the scan.
 
 **Does not own**
 
