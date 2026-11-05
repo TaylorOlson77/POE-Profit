@@ -6,6 +6,7 @@ How to run, test, migrate, and deploy the app. The project overview is the [READ
 
 - Node.js 22 (CI and Vercel use **22**)
 - npm
+- Chromium for Playwright. `npm install` does not download it. Run `npx playwright install chromium` before `npm run test:e2e`, or that command fails with `Executable doesn't exist`.
 
 ## Local development
 
@@ -31,7 +32,7 @@ Open [http://localhost:3000](http://localhost:3000).
 | `npm run test`                         | Jest unit tests (`src/**/*.test.ts`)                    |
 | `npm run test:api`                     | Jest API tests (`tests/api/`)                           |
 | `npm run test:api:db`                  | Jest persistence round-trips on the Neon `local` branch |
-| `npm run test:e2e`                     | Desktop Chromium. Skips the phone and visual specs.    |
+| `npm run test:e2e`                     | Desktop Chromium. Skips the phone and visual specs. Needs `npx playwright install chromium` first. |
 | `npm run test:e2e:phone`               | iPhone 13 and Pixel 7. Midnight workflow, not a pull request. |
 | `npm run test:e2e:visual`              | Screenshots of the six pages. Midnight workflow, not a pull request. |
 | `npm run test:mutation`                | Stryker on `src/domain/calc`. A score under 90 fails. Sunday midnight job, and this command. Not a pull request. |
