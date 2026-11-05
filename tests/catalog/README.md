@@ -2,7 +2,7 @@
 
 How to write a coverage page and a step file. Whether a line belongs on the page is [QA workflow](../../docs/QA_WORKFLOW.md) (Catalog). Which layer owns the behavior is [test strategy §4](../../docs/TEST_STRATEGY.md).
 
-Open [`strategies/coverage.md`](./strategies/coverage.md) and [`sessions/coverage.md`](./sessions/coverage.md). One folder per product area. Not a sprint, a ticket number, or an epic. Create, update, and delete are sections on that page, added when those behaviors exist.
+Open [`strategies/coverage.md`](./strategies/coverage.md), [`sessions/coverage.md`](./sessions/coverage.md), and [`quality/coverage.md`](./quality/coverage.md). One folder per product area. Not a sprint, a ticket number, or an epic. Create, update, and delete are sections on that page, added when those behaviors exist.
 
 There is no `calculations/` page. A calculation earns a line on the capability it belongs to when someone might recheck that rule, or it stays only in the unit file.
 

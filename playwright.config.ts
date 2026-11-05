@@ -34,7 +34,11 @@ export default defineConfig({
   webServer: {
     command: isCi ? "npm run start" : "npm run dev",
     url: "http://127.0.0.1:3000",
-    reuseExistingServer: !isCi,
+    // A server already on this port would not have the quality fixture.
+    reuseExistingServer: false,
     timeout: 120_000,
+    env: {
+      QUALITY_RESULTS_FIXTURE: "e2e/quality-fixture.json",
+    },
   },
 });
