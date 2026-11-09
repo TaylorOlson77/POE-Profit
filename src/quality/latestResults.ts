@@ -23,6 +23,7 @@ export type MutationScore = {
 
 export type WorkflowRun = {
   id: number;
+  htmlUrl: string;
   event: string;
   status: string;
   conclusion: string | null;
@@ -34,11 +35,11 @@ export type WorkflowRun = {
 };
 
 export type CheckResult =
-  | { text: "Passed" | "Failed"; at: string }
+  | { text: "Passed" | "Failed"; at: string; href: string }
   | { text: typeof NOT_AVAILABLE };
 
 export type MutationResult =
-  | { score: string; detail: string; at: string }
+  | { score: string; detail: string; at: string; href: string }
   | { text: typeof NOT_AVAILABLE };
 
 export type LatestResults = {
@@ -130,6 +131,7 @@ function jobResult(
   return {
     text: job.conclusion === "success" ? "Passed" : "Failed",
     at: run.createdAt,
+    href: run.htmlUrl,
   };
 }
 
@@ -151,6 +153,7 @@ function latestMutation(runs: WorkflowRun[]): MutationResult {
       match.mutationScore.survived,
     ),
     at: match.createdAt,
+    href: match.htmlUrl,
   };
 }
 

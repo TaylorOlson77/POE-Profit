@@ -20,6 +20,8 @@ import {
 const SCORE_LINE =
   "All files | 100.00 |  100.00 |       84 |         0 |          0 |        0 |        0 |";
 
+const RUN_URL = "https://github.com/runs/default";
+
 function job(name: string, conclusion: string | null = "success"): WorkflowJob {
   return { id: 1, name, conclusion };
 }
@@ -29,6 +31,7 @@ function run(
 ): WorkflowRun {
   return {
     id: 1,
+    htmlUrl: RUN_URL,
     event: "push",
     status: "completed",
     conclusion: "success",
@@ -70,12 +73,13 @@ describe("latestResults", () => {
             job(PLAYWRIGHT_JOB_NAME, "success"),
           ],
         }),
-        run({ createdAt: "2026-11-05T00:00:00Z" }),
+        run({ createdAt: "2026-11-05T00:00:00Z", htmlUrl: "https://github.com/runs/ci" }),
       ],
       midnightRuns: [
         night({ createdAt: "2026-11-03T05:00:00Z" }),
         night({
           createdAt: "2026-11-04T05:00:00Z",
+          htmlUrl: "https://github.com/runs/night",
           jobs: [job(VISUAL_JOB_NAME, "failure")],
         }),
       ],
@@ -84,17 +88,19 @@ describe("latestResults", () => {
     expect(results.ci).toEqual({
       text: "Passed",
       at: "2026-11-05T00:00:00Z",
+      href: "https://github.com/runs/ci",
     });
     expect(results.playwright).toEqual({
       text: "Passed",
       at: "2026-11-05T00:00:00Z",
+      href: "https://github.com/runs/ci",
     });
     expect(results.visual).toEqual({
       text: "Failed",
       at: "2026-11-04T05:00:00Z",
+      href: "https://github.com/runs/night",
     });
     expect(formatResultDate("2026-11-01T23:19:56Z")).toBe("Nov 1");
-    expect(results.ci).not.toHaveProperty("href");
   });
 
   it("keeps a failed Playwright job off the CI row", () => {
@@ -114,10 +120,12 @@ describe("latestResults", () => {
     expect(results.ci).toEqual({
       text: "Passed",
       at: "2026-11-05T00:00:00Z",
+      href: RUN_URL,
     });
     expect(results.playwright).toEqual({
       text: "Failed",
       at: "2026-11-05T00:00:00Z",
+      href: RUN_URL,
     });
   });
 
@@ -137,6 +145,7 @@ describe("latestResults", () => {
     expect(results.ci).toEqual({
       text: "Passed",
       at: "2026-11-01T00:00:00Z",
+      href: RUN_URL,
     });
   });
 
@@ -157,6 +166,7 @@ describe("latestResults", () => {
     expect(results.ci).toEqual({
       text: "Passed",
       at: "2026-11-01T00:00:00Z",
+      href: RUN_URL,
     });
   });
 
@@ -181,10 +191,12 @@ describe("latestResults", () => {
     expect(results.ci).toEqual({
       text: "Passed",
       at: "2026-11-01T00:00:00Z",
+      href: RUN_URL,
     });
     expect(results.visual).toEqual({
       text: "Passed",
       at: "2026-11-03T05:00:00Z",
+      href: RUN_URL,
     });
   });
 
@@ -218,10 +230,12 @@ describe("latestResults", () => {
       score: "100",
       detail: "84 killed. None survived.",
       at: "2026-11-01T05:00:00Z",
+      href: RUN_URL,
     });
     expect(results.visual).toEqual({
       text: "Passed",
       at: "2026-11-04T05:00:00Z",
+      href: RUN_URL,
     });
   });
 
@@ -246,6 +260,7 @@ describe("latestResults", () => {
       score: "92.5",
       detail: "80 killed. 2 survived.",
       at: "2026-11-03T12:00:00Z",
+      href: RUN_URL,
     });
   });
 
@@ -278,6 +293,7 @@ describe("latestResults", () => {
       score: "100",
       detail: "84 killed. None survived.",
       at: "2026-10-02T05:00:00Z",
+      href: RUN_URL,
     });
   });
 
@@ -321,6 +337,7 @@ describe("latestResults", () => {
     expect(results.visual).toEqual({
       text: "Passed",
       at: "2026-11-01T05:00:00Z",
+      href: RUN_URL,
     });
     expect(results.mutation).toEqual({ text: NOT_AVAILABLE });
   });
