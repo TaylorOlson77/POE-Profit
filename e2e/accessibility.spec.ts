@@ -4,8 +4,8 @@ import { settledPages } from "./settledPages";
 
 /**
  * One pass per settled page. Violations are attached for the HTML report.
- * A WCAG A violation fails the run and names the rule and the element.
- * AA stays in the attachment.
+ * A WCAG A or AA violation fails the run and names the rule and the element.
+ * AAA and best-practice tags are not in the scan.
  */
 
 const TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
@@ -67,17 +67,14 @@ async function publishScan(page: Page, testInfo: TestInfo): Promise<void> {
     body: formatViolations(results.violations),
     contentType: "text/plain",
   });
-  const aViolations = results.violations.filter(
-    (violation) => levelOf(violation.tags).rank === 0,
-  );
-  if (aViolations.length > 0) {
-    throw new Error(formatViolations(aViolations));
+  if (results.violations.length > 0) {
+    throw new Error(formatViolations(results.violations));
   }
 }
 
 test.describe("Scan the six pages", () => {
   for (const target of settledPages) {
-    test(`has no WCAG A violation on ${target.path}`, async ({
+    test(`has no WCAG A or AA violation on ${target.path}`, async ({
       page,
     }, testInfo) => {
       await page.goto(target.path);
