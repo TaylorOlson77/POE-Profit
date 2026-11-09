@@ -61,7 +61,8 @@ function isCheck(value: unknown): boolean {
   if (value.text === "Not available") return true;
   return (
     (value.text === "Passed" || value.text === "Failed") &&
-    typeof value.at === "string"
+    typeof value.at === "string" &&
+    typeof value.href === "string"
   );
 }
 
@@ -71,7 +72,8 @@ function isMutation(value: unknown): boolean {
   return (
     typeof value.score === "string" &&
     typeof value.detail === "string" &&
-    typeof value.at === "string"
+    typeof value.at === "string" &&
+    typeof value.href === "string"
   );
 }
 
@@ -140,8 +142,10 @@ function parseRuns(body: unknown): WorkflowRun[] | null {
     }
     if (typeof run.created_at !== "string") return null;
     if (typeof run.head_sha !== "string") return null;
+    if (typeof run.html_url !== "string") return null;
     runs.push({
       id: run.id,
+      htmlUrl: run.html_url,
       event: run.event,
       status: run.status,
       conclusion: run.conclusion,
